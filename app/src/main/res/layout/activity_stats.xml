@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StatsActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/graph_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/info_exercise_layout"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/all_days_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/workouts"
+                android:textSize="@dimen/basic_text_size"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/all_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="@dimen/basic_text_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/all_days_label"
+                app:layout_constraintTop_toTopOf="@+id/all_days_label"
+                tools:text="8" />
+
+            <TextView
+                android:id="@+id/result_record_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/best"
+                android:textSize="@dimen/basic_text_size"
+                android:layout_marginStart="20dp"
+                app:layout_constraintStart_toEndOf="@+id/all_days"
+                app:layout_constraintTop_toTopOf="@+id/all_days_label" />
+
+            <TextView
+                android:id="@+id/result_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="@dimen/basic_text_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/result_record_label"
+                app:layout_constraintTop_toTopOf="@+id/result_record_label"
+                tools:text="16" />
+
+            <TextView
+                android:id="@+id/div_comma"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/basic_text_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/result_record"
+                app:layout_constraintTop_toTopOf="@+id/result_record_label"
+                android:text="," />
+
+            <TextView
+                android:id="@+id/result_record_set"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="@dimen/basic_text_size"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/div_comma"
+                app:layout_constraintTop_toTopOf="@+id/result_record_label"
+                tools:text="50" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph_view"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/divider">
+
+        <Button
+            android:id="@+id/button_date_start"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2023.01.05"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/green_main"/>
+
+        <ImageButton
+            android:id="@+id/button_graph_visibility"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/ic_g_arrow_up"
+            style="@style/Widget.AppCompat.Light.ActionButton"
+            app:layout_constraintEnd_toStartOf="@+id/button_date_end"
+            app:layout_constraintStart_toEndOf="@+id/button_date_start"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="graph" />
+
+        <Button
+            android:id="@+id/button_date_end"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2023.02.06"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/green_main"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stats_view"
+        android:scrollbarSize="2dp"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

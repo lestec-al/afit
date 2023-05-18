@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_set_date"
+        android:icon="@drawable/ic_up_rename"
+        android:title="@string/set_date"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_date_now"
+        android:icon="@drawable/ic_up_calendar_now"
+        android:title="@string/set_date"
+        app:showAsAction="ifRoom" />
+
+</menu>

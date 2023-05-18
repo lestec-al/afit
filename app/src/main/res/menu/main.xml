@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_up_calendar"
+        android:title="@string/calendar"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_up_menu"
+        android:title="@string/more"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_add_ex"
+                android:icon="@drawable/ic_up_add"
+                android:title="@string/add_ex" />
+
+            <item
+                android:id="@+id/action_add_stats"
+                android:icon="@drawable/ic_up_add_stats"
+                android:title="@string/add_st" />
+
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/ic_up_setting"
+                android:title="@string/about" />
+        </menu>
+    </item>
+
+</menu>

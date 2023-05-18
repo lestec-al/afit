@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    tools:context=".TrainingActivity">
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/tr_progress_result_w"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_progress_result"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:progressDrawable="@drawable/progress_h"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/tr_reps_result_layout_w"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="@+id/tr_progress_result_w"
+        app:layout_constraintStart_toStartOf="parent">
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/tr_up_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/tr_count_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/tr_button_minus_w"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:contentDescription="-"
+            style="@style/Widget.AppCompat.Light.ActionButton"
+            app:srcCompat="@drawable/ic_t_minus" />
+
+        <TextView
+            android:id="@+id/tr_text_weight"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".3"
+            android:textAlignment="center"
+            android:textSize="@dimen/basic_text_size"
+            tools:text="60.0" />
+
+        <ImageButton
+            android:id="@+id/tr_button_plus_w"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:contentDescription="+"
+            style="@style/Widget.AppCompat.Light.ActionButton"
+            app:srcCompat="@drawable/ic_t_plus" />
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/tr_count_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintBottom_toTopOf="@+id/tr_progress_result"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tr_progress_result_w">
+
+        <ProgressBar
+            android:id="@+id/tr_progress_time"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/progress_circle" />
+
+        <Button
+            android:id="@+id/tr_button_sets"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle"
+            android:textSize="80sp"
+            app:backgroundTint="@null"
+            tools:text="16" />
+
+        <Button
+            android:id="@+id/tr_button_time"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle"
+            android:textSize="80sp"
+            android:visibility="gone"
+            tools:text="120" />
+
+        <TextView
+            android:id="@+id/tr_info_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="30dp"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:text="@string/ok"
+            android:textColor="@color/white"
+            android:textSize="@dimen/basic_text_size" />
+    </FrameLayout>
+
+
+    <ImageButton
+        android:id="@+id/tr_button_minus"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:contentDescription="-"
+        style="@style/Widget.AppCompat.Light.ActionButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tr_count_layout"
+        app:srcCompat="@drawable/ic_t_minus" />
+
+    <ImageButton
+        android:id="@+id/tr_button_plus"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin"
+        android:contentDescription="+"
+        style="@style/Widget.AppCompat.Light.ActionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tr_count_layout"
+        app:srcCompat="@drawable/ic_t_plus" />
+
+
+    <ProgressBar
+        android:id="@+id/tr_progress_result"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_progress_result"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        android:progressDrawable="@drawable/progress_h"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/tr_reps_result_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/tr_progress_result"
+        app:layout_constraintStart_toStartOf="parent">
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

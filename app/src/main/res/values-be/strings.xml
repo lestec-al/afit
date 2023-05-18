@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="workout">Трэнінг</string>
+    <string name="do_exercise">Рабі</string>
+    <string name="stop">СПЫНІЦЬ</string>
+    <string name="stats">Статыстыка</string>
+    <string name="rest">Адпачынак</string>
+    <string name="reps">Паўторы</string>
+    <string name="sets">Сэты</string>
+    <string name="name">Назва</string>
+    <string name="weight">Вага</string>
+    <string name="delete">Выдаліць?</string>
+    <string name="save_results">Захаваць вынікі?</string>
+    <string name="no">Не</string>
+    <string name="cancel">Скасаваць</string>
+    <string name="workouts">Трэніроўкі</string>
+    <string name="best">Рэкорд</string>
+    <string name="add_st">Дадаць статыстыку</string>
+    <string name="add_ex">Дадаць трэніроўку</string>
+    <string name="type_text">Увядзіце тэкст</string>
+    <string name="settings">Налады</string>
+    <string name="color">Колер</string>
+    <string name="default_t">Стандартны</string>
+    <string name="data">Даныя</string>
+    <string name="export_db">Экспарт</string>
+    <string name="import_db">Імпарт</string>
+    <string name="error">Памылка</string>
+    <string name="calendar">Каляндар</string>
+    <string name="set_date">Устанавіць дату</string>
+    <string name="about">Пра праграму</string>
+    <string name="more">Больш</string>
+    <string name="app_long_info">AFit - трэкер трэніровак і статыстыкі, версія</string>
+    <string name="app_error_info">Прыкладанне можа мець памылкі. Калі вы знойдзеце іх, калі ласка, звяжыцеся са мной</string>
+</resources>

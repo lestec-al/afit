@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="green_light">#FF4CAF50</color>
+    <color name="green_main">#008807</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="grey">#7E7E7E</color>
+    <color name="grey_on_dark">@android:color/darker_gray</color>
+    <color name="grey_on_light">#E6616161</color>
+    <color name="grey_progress">#42979797</color>
+</resources>

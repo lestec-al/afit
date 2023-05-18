@@ -1,0 +1,36 @@
+<resources>
+    <style name="Theme.AFit" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/green_main</item>
+        <item name="colorPrimaryVariant">@color/green_main</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/green_light</item>
+        <item name="colorSecondaryVariant">@color/green_light</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="actionBarTheme">@style/ActionBar</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="ActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:homeAsUpIndicator">@drawable/ic_up_back</item>
+        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@color/grey_on_light</item>
+    </style>
+
+    <style name="DateDialog" parent="@style/Theme.MaterialComponents.DayNight.Dialog">
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlActivated">@color/grey_progress</item>
+        <item name="colorControlHighlight">@color/grey_progress</item>
+        <item name="android:textColorPrimaryInverse">@color/black</item>
+        <item name="android:textColorSecondaryInverse">@color/black</item>
+    </style>
+
+    <style name="DynamicColors" parent="Theme.Material3.DynamicColors.Light">
+    </style>
+
+    <style name="TextTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorAccent">@color/grey</item>
+    </style>
+
+</resources>

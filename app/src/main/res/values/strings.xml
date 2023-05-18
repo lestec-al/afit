@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">AFit</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="email" translatable="false">alexyurgel@gmail.com</string>
+    <string name="workout">Workout</string>
+    <string name="do_exercise">Do</string>
+    <string name="stop">STOP</string>
+    <string name="stats">Statistics</string>
+    <string name="rest">Rest</string>
+    <string name="reps">Reps</string>
+    <string name="sets">Sets</string>
+    <string name="name">Name</string>
+    <string name="weight">Weight</string>
+    <string name="delete">Delete?</string>
+    <string name="save_results">Save results?</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="workouts">Workouts</string>
+    <string name="best">Best</string>
+    <string name="add_st">Add statistic</string>
+    <string name="add_ex">Add exercise</string>
+    <string name="type_text">Type text</string>
+    <string name="settings">Settings</string>
+    <string name="color">Color</string>
+    <string name="default_t">Default</string>
+    <string name="data">Data</string>
+    <string name="export_db">Export</string>
+    <string name="import_db">Import</string>
+    <string name="error">Error</string>
+    <string name="calendar">Calendar</string>
+    <string name="set_date">Set date</string>
+    <string name="about">About</string>
+    <string name="more">More</string>
+    <string name="app_long_info">AFit - workout &amp; stats tracker, version</string>
+    <string name="app_error_info">The application may have bugs. If you find them please contact me</string>
+</resources>
