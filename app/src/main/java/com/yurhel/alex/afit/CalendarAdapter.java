@@ -116,10 +116,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                         if (h > stepHeight) {
                             holder.layout.removeViewAt(holder.layout.getChildCount()-1);
                             stop = true;
-                            assert last != null;
-                            last.setText("+");
+                            if (last != null)
+                                last.setText("+");
                         } else {
-                            t.setText((entry.result_s == null) ? ""+entry.value: ""+entry.result_s);
+                            String text = (entry.result_s == null) ? ""+entry.value: ""+entry.result_s;
+                            t.setText((text.length() > 4)?text.substring(0,4): text);
                             last = t;
                         }
                     }

@@ -118,7 +118,8 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void updateCalendar() {
-        actionBar.setTitle(DateFormat.format("MMM, yyyy", calendar));
+        String d = String.valueOf(DateFormat.format("LLLL yyyy", calendar));
+        actionBar.setTitle(d.substring(0, 1).toUpperCase() + d.substring(1));
         calendarView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         calendarView.setHasFixedSize(true);
         calendarView.setAdapter(new CalendarAdapterBig());

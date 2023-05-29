@@ -14,74 +14,79 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/info_exercise_layout"
+            android:orientation="horizontal"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/all_days_label"
+            <ImageView
+                android:id="@+id/all_entries_label"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/workouts"
-                android:textSize="@dimen/basic_text_size"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:contentDescription="entries"
+                android:src="@drawable/ic_st_entries"
+                tools:ignore="HardcodedText" />
 
             <TextView
-                android:id="@+id/all_days"
+                android:id="@+id/all_entries"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
+                android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/all_days_label"
-                app:layout_constraintTop_toTopOf="@+id/all_days_label"
                 tools:text="8" />
 
-            <TextView
-                android:id="@+id/result_record_label"
+            <ImageView
+                android:id="@+id/result_max_label"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/best"
-                android:textSize="@dimen/basic_text_size"
+                android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
-                app:layout_constraintStart_toEndOf="@+id/all_days"
-                app:layout_constraintTop_toTopOf="@+id/all_days_label" />
+                android:contentDescription="max"
+                android:src="@drawable/ic_st_up"
+                tools:ignore="HardcodedText" />
 
             <TextView
-                android:id="@+id/result_record"
+                android:id="@+id/record_1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
+                android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/result_record_label"
-                app:layout_constraintTop_toTopOf="@+id/result_record_label"
-                tools:text="16" />
+                tools:text="16000.1" />
 
             <TextView
                 android:id="@+id/div_comma"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/result_record"
-                app:layout_constraintTop_toTopOf="@+id/result_record_label"
-                android:text="," />
+                android:text=","
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:id="@+id/result_min_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:contentDescription="min"
+                android:src="@drawable/ic_st_down"
+                tools:ignore="HardcodedText"/>
 
             <TextView
-                android:id="@+id/result_record_set"
+                android:id="@+id/record_2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
+                android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/div_comma"
-                app:layout_constraintTop_toTopOf="@+id/result_record_label"
-                tools:text="50" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:text="50212.2" />
+        </LinearLayout>
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graph_view"
@@ -115,7 +120,8 @@
             app:layout_constraintEnd_toStartOf="@+id/button_date_end"
             app:layout_constraintStart_toEndOf="@+id/button_date_start"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="graph" />
+            android:contentDescription="graph"
+            tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/button_date_end"

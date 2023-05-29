@@ -3,7 +3,6 @@
     <string name="workout">Трэнінг</string>
     <string name="do_exercise">Рабі</string>
     <string name="stop">СПЫНІЦЬ</string>
-    <string name="stats">Статыстыка</string>
     <string name="rest">Адпачынак</string>
     <string name="reps">Паўторы</string>
     <string name="sets">Сэты</string>
@@ -13,8 +12,6 @@
     <string name="save_results">Захаваць вынікі?</string>
     <string name="no">Не</string>
     <string name="cancel">Скасаваць</string>
-    <string name="workouts">Трэніроўкі</string>
-    <string name="best">Рэкорд</string>
     <string name="add_st">Дадаць статыстыку</string>
     <string name="add_ex">Дадаць трэніроўку</string>
     <string name="type_text">Увядзіце тэкст</string>

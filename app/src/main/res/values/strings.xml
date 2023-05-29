@@ -6,7 +6,6 @@
     <string name="workout">Workout</string>
     <string name="do_exercise">Do</string>
     <string name="stop">STOP</string>
-    <string name="stats">Statistics</string>
     <string name="rest">Rest</string>
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
@@ -16,8 +15,6 @@
     <string name="save_results">Save results?</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
-    <string name="workouts">Workouts</string>
-    <string name="best">Best</string>
     <string name="add_st">Add statistic</string>
     <string name="add_ex">Add exercise</string>
     <string name="type_text">Type text</string>

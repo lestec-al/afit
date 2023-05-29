@@ -154,7 +154,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|end"
                 android:text="@string/weight"
                 android:textSize="@dimen/basic_text_size" />
 
@@ -167,10 +167,10 @@
                 android:ems="10"
                 android:maxLength="7"
                 android:inputType="numberDecimal"
-                android:textAlignment="textEnd"
                 android:textSize="@dimen/basic_text_size"
                 android:background="@null"
-                tools:text="60.0" />
+                tools:text="60.0"
+                tools:ignore="LabelFor" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -184,7 +184,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|end"
                 android:text="@string/rest"
                 android:textSize="@dimen/basic_text_size" />
 
@@ -197,10 +197,10 @@
                 android:ems="10"
                 android:maxLength="4"
                 android:inputType="number"
-                android:textAlignment="textEnd"
                 android:textSize="@dimen/basic_text_size"
                 android:background="@null"
-                tools:text="120" />
+                tools:text="120"
+                tools:ignore="LabelFor" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -214,7 +214,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|end"
                 android:text="@string/reps"
                 android:textSize="@dimen/basic_text_size" />
 
@@ -227,10 +227,10 @@
                 android:ems="10"
                 android:maxLength="3"
                 android:inputType="number"
-                android:textAlignment="textEnd"
                 android:textSize="@dimen/basic_text_size"
                 android:background="@null"
-                tools:text="16" />
+                tools:text="16"
+                tools:ignore="LabelFor" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -244,7 +244,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|end"
                 android:text="@string/sets"
                 android:textSize="@dimen/basic_text_size" />
 
@@ -257,10 +257,10 @@
                 android:ems="10"
                 android:maxLength="2"
                 android:inputType="number"
-                android:textAlignment="textEnd"
                 android:textSize="@dimen/basic_text_size"
                 android:background="@null"
-                tools:text="5" />
+                tools:text="5"
+                tools:ignore="LabelFor" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -273,7 +273,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|end"
                 android:text="@string/name"
                 android:textSize="@dimen/basic_text_size" />
 
@@ -286,10 +286,10 @@
                 android:ems="10"
                 android:maxLength="30"
                 android:inputType="textPersonName"
-                android:textAlignment="textEnd"
                 android:textSize="@dimen/basic_text_size"
                 android:background="@null"
-                tools:text="Pull-Ups" />
+                tools:text="Pull-Ups"
+                tools:ignore="LabelFor" />
         </RelativeLayout>
     </LinearLayout>
 

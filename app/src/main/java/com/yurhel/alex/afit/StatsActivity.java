@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
@@ -143,11 +146,16 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         endDateB.setText(Help.dateFormat(this, endDate));
         Help.setButtonsTextColor(themeColor, new Button[] {startDateB, endDateB});
         Help.setImageButtonsColor(themeColor, new ImageButton[] {graphVisB});
-        // Update info for exercise
-        if (exercise) {
-            int record = 0;
-            int recordSet = 0;
-            for (MyObject item: data) {
+        // Update short info
+        int record = 0;
+        int recordSet = 0;
+        double recordMin = 0.0;
+        double recordMax = 0.0;
+        for (MyObject item: data) {
+            if (exercise) {
+                int r = Integer.parseInt(item.result_s);
+                if (r > recordSet)
+                    recordSet = r;
                 for (String i: item.result_l.split(" ")) {
                     if (!i.equals("+")) {
                         int iInt = Integer.parseInt(i);
@@ -155,18 +163,28 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                             record = iInt;
                     }
                 }
-                int r = Integer.parseInt(item.result_s);
-                if (r > recordSet)
-                    recordSet = r;
+            } else {
+                double r = item.value;
+                if (r > recordMax)
+                    recordMax = r;
+                if (recordMin == 0)
+                    recordMin = r;
+                else if (r < recordMin)
+                    recordMin = r;
             }
-            TextView allDays = findViewById(R.id.all_days);
-            TextView resultRecord = findViewById(R.id.result_record);
-            TextView resultRecordSet = findViewById(R.id.result_record_set);
-            allDays.setText(String.valueOf(data.size()));
-            resultRecord.setText(String.valueOf(record));
-            resultRecordSet.setText(String.valueOf(recordSet));
-        } else {
-            findViewById(R.id.info_exercise_layout).setVisibility(View.GONE);
+        }
+        ((TextView) findViewById(R.id.all_entries)).setText(String.valueOf(data.size()));
+        ((TextView) findViewById(R.id.record_1)).setText((exercise)?""+record:""+recordMax);
+        ((TextView) findViewById(R.id.record_2)).setText((exercise)?""+recordSet:""+recordMin);
+        if (exercise)
+            findViewById(R.id.result_min_label).setVisibility(View.GONE);
+        else
+            findViewById(R.id.div_comma).setVisibility(View.GONE);
+        if (nightMode) {
+            int white = getColor(R.color.white);
+            ((ImageView)findViewById(R.id.all_entries_label)).setColorFilter(white);
+            ((ImageView)findViewById(R.id.result_max_label)).setColorFilter(white);
+            ((ImageView)findViewById(R.id.result_min_label)).setColorFilter(white);
         }
         // Graph setup
         if (dataSize > 1) {
@@ -222,7 +240,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         Button cancel = dialog.findViewById(R.id.button_cancel_stats_dialog);
         NumberPicker numberPicker0 = dialog.findViewById(R.id.number_picker_0);
         NumberPicker numberPicker1 = dialog.findViewById(R.id.number_picker_1);
-        numberPicker0.setMaxValue(1000);
+        numberPicker0.setMaxValue(99999);
         numberPicker0.setMinValue(1);
         numberPicker0.setWrapSelectorWheel(false);
         numberPicker0.setOnValueChangedListener((picker, oldVal, newVal) -> {
@@ -366,6 +384,27 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 date.setVisibility(View.GONE);
             }
             Help.setButtonsTextColor(themeColor, new Button[] {date});
+            for (EditText e: new EditText[] {textExerciseName, textSeconds, textFirstSet, textWeight, textReps}) {
+                e.addTextChangedListener(new TextWatcher() {
+                    final ColorStateList defColor = e.getTextColors();
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if ((e == textExerciseName && !s.toString().equals(obj.name)) || (exercise && (
+                                e == textSeconds && !s.toString().equals(String.valueOf(obj.seconds)) ||
+                                e == textFirstSet && !s.toString().equals(String.valueOf(obj.first)) ||
+                                e == textReps && !s.toString().equals(String.valueOf(obj.reps)) ||
+                                e == textWeight && !s.toString().equals(String.valueOf(obj.weight))
+                        )))
+                            e.setTextColor(themeColor);
+                        else
+                            e.setTextColor(defColor);
+                    }
+                });
+            }
             // Colors
             final int[] c = {Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor)};
             SeekBar seekR = dialog.findViewById(R.id.seek_color_r);
