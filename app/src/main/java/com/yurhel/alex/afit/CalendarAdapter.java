@@ -48,7 +48,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         this.day1 = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         this.calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
         this.whiteColor = context.getColor(R.color.white);
-        this.blackColor = context.getColor(R.color.black);
+        this.blackColor = context.getColor(R.color.dark);
         this.isNight = Help.isNightMode(context);
     }
 

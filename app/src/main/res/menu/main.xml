@@ -6,29 +6,32 @@
         android:id="@+id/action_calendar"
         android:icon="@drawable/ic_up_calendar"
         android:title="@string/calendar"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_more"
         android:icon="@drawable/ic_up_menu"
         android:title="@string/more"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
         <menu>
-            <item
-                android:id="@+id/action_add_ex"
-                android:icon="@drawable/ic_up_add"
-                android:title="@string/add_ex" />
+            <group android:id="@+id/group1">
+                <item
+                    android:id="@+id/action_add_ex"
+                    android:icon="@drawable/ic_up_add"
+                    android:title="@string/add_ex" />
 
-            <item
-                android:id="@+id/action_add_stats"
-                android:icon="@drawable/ic_up_add_stats"
-                android:title="@string/add_st" />
+                <item
+                    android:id="@+id/action_add_stats"
+                    android:icon="@drawable/ic_up_add_stats"
+                    android:title="@string/add_st" />
+            </group>
 
-            <item
-                android:id="@+id/action_settings"
-                android:icon="@drawable/ic_up_setting"
-                android:title="@string/about" />
+            <group android:id="@+id/group2">
+                <item
+                    android:id="@+id/action_settings"
+                    android:icon="@drawable/ic_up_setting"
+                    android:title="@string/about" />
+            </group>
         </menu>
     </item>
-
 </menu>

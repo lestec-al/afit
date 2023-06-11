@@ -11,6 +11,7 @@
     <LinearLayout
         android:id="@+id/graph_layout"
         android:orientation="vertical"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -36,7 +37,6 @@
                 android:layout_marginStart="5dp"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
-                android:textStyle="bold"
                 tools:text="8" />
 
             <ImageView
@@ -55,7 +55,6 @@
                 android:layout_marginStart="5dp"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
-                android:textStyle="bold"
                 tools:text="16000.1" />
 
             <TextView
@@ -64,7 +63,6 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
-                android:textStyle="bold"
                 android:text=","
                 tools:ignore="HardcodedText" />
 
@@ -84,26 +82,25 @@
                 android:layout_marginStart="5dp"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/basic_text_size"
-                android:textStyle="bold"
                 tools:text="50212.2" />
         </LinearLayout>
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graph_view"
             android:layout_width="match_parent"
-            android:layout_height="250dp" />
+            android:layout_height="230dp" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         android:background="@drawable/divider">
 
         <Button
             android:id="@+id/button_date_start"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -114,8 +111,8 @@
         <ImageButton
             android:id="@+id/button_graph_visibility"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:srcCompat="@drawable/ic_g_arrow_up"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_arrow_up"
             style="@style/Widget.AppCompat.Light.ActionButton"
             app:layout_constraintEnd_toStartOf="@+id/button_date_end"
             app:layout_constraintStart_toEndOf="@+id/button_date_start"
@@ -126,7 +123,7 @@
         <Button
             android:id="@+id/button_date_end"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

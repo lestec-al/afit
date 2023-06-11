@@ -3,16 +3,17 @@ package com.yurhel.alex.afit;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        themeColor = Help.getMainGreyColor(this);
+        themeColor = Help.getMainColor(this);
         db = new DB(this);
         dataEx = db.getAllEntries(null, true);
         dataSt = db.getAllEntries(null, false);
@@ -72,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     // TOOLBAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater mi = getMenuInflater();
-        mi.inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuCompat.setGroupDividerEnabled(menu, true);
         Help.setActionIconsColor(
                 themeColor, menu, new int[] {R.id.action_add_ex, R.id.action_add_stats, R.id.action_settings, R.id.action_calendar, R.id.action_more}
         );
@@ -105,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
             dialog.findViewById(R.id.button_date_dialog).setVisibility(View.GONE);
             TextView title = dialog.findViewById(R.id.title_settings);
             title.setText(R.string.about);
+            ImageButton sendFeedback = dialog.findViewById(R.id.button_send_feedback_dialog);
+            sendFeedback.setOnClickListener(v ->
+                startActivity(new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", getString(R.string.email), null)))
+            );
             try {// Get version
                 TextView info_tv = dialog.findViewById(R.id.info_app_tv);
                 PackageInfo pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
@@ -129,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
             Help.setButtonsTextColor(themeColor, new Button[] {exportDB, importDB});
             ImageButton back = dialog.findViewById(R.id.button_back_settings_dialog);
             back.setOnClickListener(view -> dialog.cancel());
-            Help.setImageButtonsColor(themeColor, new ImageButton[] {back});
+            Help.setImageButtonsColor(themeColor, new ImageButton[] {back, sendFeedback});
             dialog.show();
             return true;
         }

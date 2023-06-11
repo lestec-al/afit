@@ -84,10 +84,10 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             LinearLayout l = findViewById(R.id.graph_layout);
             if (l.getVisibility() == View.VISIBLE) {
                 l.setVisibility(View.GONE);
-                graphVisB.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_g_arrow_down));
+                graphVisB.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_down));
             } else {
                 l.setVisibility(View.VISIBLE);
-                graphVisB.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_g_arrow_up));
+                graphVisB.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_up));
             }
             Help.setImageButtonsColor(themeColor, new ImageButton[] {graphVisB});
         });
@@ -100,8 +100,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         data = db.getAllEntries(oneID, exercise);
         obj = db.getOneInfo(oneID, exercise);
         objColor = db.getObjColor(objColorID);
-        themeColor = Help.getMainGreyColor(this);
-        themeColor = (objColor[0] != 0) ? objColor[0]: themeColor;
+        int mainColor = Help.getMainColor(this);
+        themeColor = (objColor[0] != 0) ? objColor[0]: mainColor;
         if (!onCreate)
             setUpActionBar();
         graphView.removeAllSeries();
@@ -180,12 +180,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             findViewById(R.id.result_min_label).setVisibility(View.GONE);
         else
             findViewById(R.id.div_comma).setVisibility(View.GONE);
-        if (nightMode) {
-            int white = getColor(R.color.white);
-            ((ImageView)findViewById(R.id.all_entries_label)).setColorFilter(white);
-            ((ImageView)findViewById(R.id.result_max_label)).setColorFilter(white);
-            ((ImageView)findViewById(R.id.result_min_label)).setColorFilter(white);
-        }
+        ((ImageView)findViewById(R.id.all_entries_label)).setColorFilter(mainColor);
+        ((ImageView)findViewById(R.id.result_max_label)).setColorFilter(mainColor);
+        ((ImageView)findViewById(R.id.result_min_label)).setColorFilter(mainColor);
         // Graph setup
         if (dataSize > 1) {
             Viewport graphViewPort = graphView.getViewport();
@@ -198,10 +195,6 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         graphLabelRenderer.setHorizontalLabelsVisible(false);
         graphLabelRenderer.setNumHorizontalLabels(1);
         graphLabelRenderer.setHighlightZeroLines(false);
-        if (!nightMode) {
-            graphLabelRenderer.setVerticalLabelsColor(getColor(R.color.grey_on_light));
-            graphLabelRenderer.reloadStyles();
-        }
         // Check data within boundaries
         if (dataSize > 0) {
             if (dataSize > 1) {

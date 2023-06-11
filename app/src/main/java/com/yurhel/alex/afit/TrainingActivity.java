@@ -10,6 +10,7 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.Menu;
@@ -57,6 +58,7 @@ public class TrainingActivity extends AppCompatActivity {
     int progressHeight;
     int colorWhite;
     Intent notificationIntent;
+    PowerManager.WakeLock wakeLock;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -68,7 +70,7 @@ public class TrainingActivity extends AppCompatActivity {
         exerciseID = getIntent().getIntExtra("ex_id", 0);
         obj = db.getOneInfo(exerciseID, true);
 
-        themeColor = Help.getMainGreyColor(this);
+        themeColor = Help.getMainColor(this);
         int[] objColor = db.getObjColor(exerciseID +"_ex");
         themeColor = (objColor[0] != 0) ? objColor[0]: themeColor;
 
@@ -82,6 +84,10 @@ public class TrainingActivity extends AppCompatActivity {
         requestPermissions(new String[] { "android.permission.POST_NOTIFICATIONS" }, 1);
         notificationIntent = new Intent(this, NotificationService.class);
         updateNotification(doInfo);
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AFit::WakelockKeepTag");
+        wakeLock.acquire(10*60*1000L /*10 minutes*/);
 
         actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -218,7 +224,7 @@ public class TrainingActivity extends AppCompatActivity {
             }
         });
         if (themeColor == colorWhite)
-            buttonSets.setTextColor(getColor(R.color.black));
+            buttonSets.setTextColor(getColor(R.color.dark));
     }
 
     public void updateNotification(String msg) {
@@ -245,6 +251,8 @@ public class TrainingActivity extends AppCompatActivity {
             stop = false;
         }
         if (closeActivity) {
+            if (wakeLock.isHeld())
+                wakeLock.release();
             stopService(notificationIntent);
             progressResult.setProgress(0);
             if (obj.weight > 0)
@@ -352,7 +360,7 @@ public class TrainingActivity extends AppCompatActivity {
         TextView tv = new TextView(this);
         tv.setText(text);
         if (themeColor == colorWhite)
-            tv.setTextColor(getColor(R.color.black));
+            tv.setTextColor(getColor(R.color.dark));
         else
             tv.setTextColor(colorWhite);
         tv.setHeight(progressHeight);

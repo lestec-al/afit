@@ -26,6 +26,6 @@
     <string name="set_date">Устанавіць дату</string>
     <string name="about">Пра праграму</string>
     <string name="more">Больш</string>
-    <string name="app_long_info">AFit - трэкер трэніровак і статыстыкі, версія</string>
-    <string name="app_error_info">Прыкладанне можа мець памылкі. Калі вы знойдзеце іх, калі ласка, звяжыцеся са мной</string>
+    <string name="app_long_info">Версія</string>
+    <string name="app_error_info">Водгук і прапановы вітаюцца</string>
 </resources>

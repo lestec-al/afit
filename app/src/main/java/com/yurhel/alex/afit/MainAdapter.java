@@ -32,7 +32,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
         this.clickInterface = clickInterface;
         this.color = color;
         this.colors = colors;
-        this.blackColor = context.getColor(R.color.black);
+        this.blackColor = context.getColor(R.color.dark);
         this.whiteColor = context.getColor(R.color.white);
     }
 

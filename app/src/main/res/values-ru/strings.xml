@@ -26,6 +26,6 @@
     <string name="set_date">Установить дату</string>
     <string name="about">О приложении</string>
     <string name="more">Более</string>
-    <string name="app_long_info">AFit - трекер тренировок и статистики, версия</string>
-    <string name="app_error_info">Приложение может иметь ошибки. Если вы найдете их, пожалуйста, свяжитесь со мной</string>
+    <string name="app_long_info">Версия</string>
+    <string name="app_error_info">Отзывы и предложения приветствуются</string>
 </resources>

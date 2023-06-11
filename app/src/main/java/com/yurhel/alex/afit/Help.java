@@ -24,11 +24,8 @@ import java.util.Date;
 public class Help {
 
     // COLORS
-    public static int getMainGreyColor(Context context) {
-        if (isNightMode(context))
-            return context.getColor(R.color.white);
-        else
-            return context.getColor(R.color.grey_on_light);
+    public static int getMainColor(Context context) {
+        return (isNightMode(context)) ? context.getColor(R.color.white): context.getColor(R.color.dark);
     }
 
     public static void setImageButtonsColor(int color, ImageButton[] buttons) {

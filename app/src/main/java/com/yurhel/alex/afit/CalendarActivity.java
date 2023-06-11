@@ -30,6 +30,7 @@ import java.util.Objects;
 public class CalendarActivity extends AppCompatActivity {
     int themeColor;
     Calendar calendar;
+    Calendar today;
     RecyclerView calendarView;
     LinkedHashMap<MyObject, MyObject> data;
     LinkedHashMap<String, Integer> colors;
@@ -42,10 +43,12 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
-        themeColor = Help.getMainGreyColor(this);
+        themeColor = Help.getMainColor(this);
         DB db = new DB(this);
         data = db.getAll();
         colors = db.getAllObjColors();
+        db.close();
+        today = Calendar.getInstance();
         calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendarView = findViewById(R.id.calendar_grid);
@@ -95,7 +98,7 @@ public class CalendarActivity extends AppCompatActivity {
                         RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(CalendarActivity.this) {
                             @Override
                             protected int calculateTimeForScrolling(int dx) {
-                                return dx/2;
+                                return dx/3;
                             }
                         };
                         int scrollNumber = offset - calendarViewWidth;
@@ -118,7 +121,11 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public void updateCalendar() {
-        String d = String.valueOf(DateFormat.format("LLLL yyyy", calendar));
+        String d;
+        if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR))
+            d = String.valueOf(DateFormat.format("LLLL", calendar));
+        else
+            d = String.valueOf(DateFormat.format("LLLL yyyy", calendar));
         actionBar.setTitle(d.substring(0, 1).toUpperCase() + d.substring(1));
         calendarView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         calendarView.setHasFixedSize(true);
@@ -166,7 +173,7 @@ public class CalendarActivity extends AppCompatActivity {
             String[] months = new String[max+1];
             for (int i = 0; i <= max; i += 1) {
                 c.set(Calendar.MONTH, i);
-                months[i] = String.valueOf(DateFormat.format("MMM", c));
+                months[i] = String.valueOf(DateFormat.format("LLL", c));
             }
             pickerMonth.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
             pickerMonth.setMaxValue(max);

@@ -29,6 +29,6 @@
     <string name="set_date">Set date</string>
     <string name="about">About</string>
     <string name="more">More</string>
-    <string name="app_long_info">AFit - workout &amp; stats tracker, version</string>
-    <string name="app_error_info">The application may have bugs. If you find them please contact me</string>
+    <string name="app_long_info">Version</string>
+    <string name="app_error_info">Feedback and suggestions are welcome</string>
 </resources>

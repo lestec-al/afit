@@ -145,6 +145,7 @@ public class DB extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE STATS_VALUES_TABLE_"+id+" (STATS_VALUES_ID INTEGER PRIMARY KEY AUTOINCREMENT, STATS_VALUES_VALUE REAL, STATS_VALUES_DATE TEXT)"
         );
+        setObjColor(context.getColor(R.color.green_main),id+"_st");
         db.close();
     }
 
@@ -188,6 +189,7 @@ public class DB extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE STATS_EXERCISE_TABLE_"+id+" (STATS_EXERCISE_ID INTEGER PRIMARY KEY AUTOINCREMENT, STATS_EXERCISE_RESULT_S INT, STATS_EXERCISE_RESULT_L TEXT, STATS_EXERCISE_TIME TEXT, STATS_EXERCISE_DATE TEXT, STATS_EXERCISE_WEIGHTS TEXT)"
         );
+        setObjColor(context.getColor(R.color.green_main),id+"_ex");
         db.close();
     }
 

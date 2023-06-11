@@ -15,7 +15,6 @@
         android:layout_marginEnd="10dp"
         android:gravity="center"
         android:textSize="34sp"
-        android:textStyle="bold"
         tools:text="50" />
 
     <LinearLayout
@@ -37,7 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="11sp"
-            android:textStyle="bold"
             android:maxLines="1"
             tools:text="10 + 10 + 10 + 10 + 10" />
 
@@ -59,6 +57,5 @@
         android:layout_marginEnd="5dp"
         android:gravity="center"
         android:textSize="16sp"
-        android:textStyle="bold"
         tools:text="Sun, Feb 24, 2023" />
 </LinearLayout>

@@ -15,7 +15,7 @@
     <string name="add_st">Додати статистику</string>
     <string name="add_ex">Додати тренування</string>
     <string name="type_text">Введіть текст</string>
-    <string name="settings">Налаштування</string>
+    <string name="settings">Параметри</string>
     <string name="color">Колір</string>
     <string name="default_t">Стандартний</string>
     <string name="data">Дані</string>
@@ -26,6 +26,6 @@
     <string name="set_date">Встановити дату</string>
     <string name="about">Про програму</string>
     <string name="more">Більше</string>
-    <string name="app_long_info">AFit - трекер тренувань і статистики, версія</string>
-    <string name="app_error_info">Додаток може мати помилки. Якщо ви знайдете їх, зв\'яжіться зі мною</string>
+    <string name="app_long_info">Версія</string>
+    <string name="app_error_info">Відгуки та пропозиції вітаються</string>
 </resources>

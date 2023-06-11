@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_set_date"
-        android:icon="@drawable/ic_up_rename"
+        android:icon="@drawable/ic_up_calendar_edit"
         android:title="@string/set_date"
         app:showAsAction="ifRoom" />
 
