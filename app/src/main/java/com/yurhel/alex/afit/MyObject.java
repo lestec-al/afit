@@ -4,9 +4,9 @@ import androidx.annotation.NonNull;
 
 public class MyObject {
     int id;
-    int seconds;
-    int first;
+    int rest;
     int reps;
+    int sets;
     double value;
     double weight;
     String weights;
@@ -17,17 +17,20 @@ public class MyObject {
     long date;
     String start;
     String end;
+    String notes;
+    int color;
 
-    public MyObject(int id, String name, int seconds, int first, int reps, String start, String end, Double weight) {
-        // Exercise obj
+    public MyObject(int id, String name, int rest, int reps, int sets, String start, String end, Double weight, int color) {
+        // Exercise
         this.id = id;
         this.name = name;
-        this.seconds = seconds;
-        this.first = first;
+        this.rest = rest;
         this.reps = reps;
+        this.sets = sets;
         this.start = start;
         this.end = end;
         this.weight = weight;
+        this.color = color;
     }
 
     public MyObject(int id, String result_s, String result_l, String time, String date, String weights) {
@@ -40,19 +43,21 @@ public class MyObject {
         this.weights = weights;
     }
 
-    public MyObject(int id, String name, String start, String end) {
-        // Stats obj
+    public MyObject(int id, String name, String start, String end, int color) {
+        // Stats
         this.id = id;
         this.name = name;
         this.start = start;
         this.end = end;
+        this.color = color;
     }
 
-    public MyObject(int id, double value, String date) {
+    public MyObject(int id, double value, String date, String notes) {
         // Stats entry
         this.id = id;
         this.value = value;
         this.date = Long.parseLong(date);
+        this.notes = notes;
     }
 
     @NonNull

@@ -24,7 +24,6 @@
             android:id="@+id/title_settings"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
             android:gravity="center_vertical"
             android:text="@string/settings"
             android:textSize="@dimen/basic_text_size" />
@@ -33,14 +32,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/button_date_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/set_date"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            tools:textColor="@color/green_main"/>
 
         <ImageButton
             android:id="@+id/button_delete_dialog"
@@ -52,52 +43,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/info_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="vertical"
-        android:background="@drawable/rectangle">
-
-        <TextView
-            android:id="@+id/info_app_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/app_long_info"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/button_send_feedback_dialog"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:srcCompat="@drawable/ic_send"
-                style="@style/Widget.AppCompat.Light.ActionButton"
-                android:contentDescription="@string/email" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="20sp"
-                android:text="@string/app_error_info" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/data_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -105,34 +50,34 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/rectangle"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <TextView
+        <Button
+            android:id="@+id/button_send_feedback_dialog"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_weight=".3"
-            android:gravity="center_vertical|start"
-            android:text="@string/data"
-            android:textSize="@dimen/basic_text_size" />
+            android:layout_weight="1"
+            android:text="@string/feedback"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark" />
 
         <Button
             android:id="@+id/button_import_dialog"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".3"
+            android:layout_weight="1"
             android:text="@string/import_db"
             style="@style/Widget.AppCompat.Button.Borderless"
-            tools:textColor="@color/green_main"/>
+            tools:textColor="@color/dark"/>
 
         <Button
             android:id="@+id/button_export_dialog"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".3"
+            android:layout_weight="1"
             android:text="@string/export_db"
             style="@style/Widget.AppCompat.Button.Borderless"
-            tools:textColor="@color/green_main"/>
+            tools:textColor="@color/dark"/>
     </LinearLayout>
 
     <LinearLayout
@@ -149,19 +94,43 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <RelativeLayout
+            android:id="@+id/date_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/divider">
+
+            <TextView
+                android:layout_marginStart="10dp"
+                android:id="@+id/tv_date_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/set_date"
+                android:textSize="@dimen/basic_text_size" />
+
+            <TextView
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/date"
+                android:textSize="@dimen/basic_text_size" />
+
+            <View
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/click_date"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/date"/>
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/weight_layout"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/divider">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="@string/weight"
-                android:textSize="@dimen/basic_text_size" />
 
             <EditText
                 android:theme="@style/TextTheme"
@@ -176,6 +145,13 @@
                 android:background="@null"
                 tools:text="60.0"
                 tools:ignore="LabelFor" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/weight"
+                android:textSize="@dimen/basic_text_size" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -186,17 +162,10 @@
             android:layout_height="48dp"
             android:background="@drawable/divider">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="@string/rest"
-                android:textSize="@dimen/basic_text_size" />
-
             <EditText
                 android:theme="@style/TextTheme"
                 android:importantForAutofill="no"
-                android:id="@+id/text_seconds"
+                android:id="@+id/text_rest"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -206,6 +175,13 @@
                 android:background="@null"
                 tools:text="120"
                 tools:ignore="LabelFor" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/rest"
+                android:textSize="@dimen/basic_text_size" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -216,17 +192,10 @@
             android:layout_height="48dp"
             android:background="@drawable/divider">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="@string/reps"
-                android:textSize="@dimen/basic_text_size" />
-
             <EditText
                 android:theme="@style/TextTheme"
                 android:importantForAutofill="no"
-                android:id="@+id/text_first_set"
+                android:id="@+id/text_reps"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -236,6 +205,13 @@
                 android:background="@null"
                 tools:text="16"
                 tools:ignore="LabelFor" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/reps"
+                android:textSize="@dimen/basic_text_size" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -246,17 +222,10 @@
             android:layout_height="48dp"
             android:background="@drawable/divider">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="@string/sets"
-                android:textSize="@dimen/basic_text_size" />
-
             <EditText
                 android:theme="@style/TextTheme"
                 android:importantForAutofill="no"
-                android:id="@+id/text_reps"
+                android:id="@+id/text_sets"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -266,6 +235,13 @@
                 android:background="@null"
                 tools:text="5"
                 tools:ignore="LabelFor" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/sets"
+                android:textSize="@dimen/basic_text_size" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -275,17 +251,10 @@
             android:layout_height="48dp"
             android:background="@drawable/divider">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="@string/name"
-                android:textSize="@dimen/basic_text_size" />
-
             <EditText
                 android:theme="@style/TextTheme"
                 android:importantForAutofill="no"
-                android:id="@+id/text_exercise_name"
+                android:id="@+id/text_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
@@ -295,37 +264,19 @@
                 android:background="@null"
                 tools:text="Pull-Ups"
                 tools:ignore="LabelFor" />
-        </RelativeLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/color_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/rectangle"
-        android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/name"
+                android:textSize="@dimen/basic_text_size" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/color_view"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:gravity="center_vertical|start"
-                android:text="@string/color"
-                android:textSize="@dimen/basic_text_size" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/button_default_color_dialog"
@@ -334,6 +285,20 @@
                 app:srcCompat="@drawable/ic_auto"
                 style="@style/Widget.AppCompat.Light.ActionButton"
                 android:contentDescription="@string/default_t" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/color_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical|start"
+                android:text="@string/color"
+                android:textSize="@dimen/basic_text_size" />
         </LinearLayout>
 
         <SeekBar

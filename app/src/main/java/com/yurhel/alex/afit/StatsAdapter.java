@@ -47,6 +47,7 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.MyViewHolder
             holder.tvResult.setText(obj.result_l);
             holder.tvTime.setText(obj.time);
         } else {
+            holder.tvResult.setText(obj.notes);
             holder.tvMain.setText(String.valueOf(obj.value));
         }
         Calendar c = Calendar.getInstance();
@@ -67,8 +68,8 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.MyViewHolder
             super(view);
             tvMain = view.findViewById(R.id.r_view_result_s);
             tvDate = view.findViewById(R.id.r_view_date);
+            tvResult = view.findViewById(R.id.r_view_result_l);
             if (exercise) {
-                tvResult = view.findViewById(R.id.r_view_result_l);
                 tvTime = view.findViewById(R.id.r_view_time);
                 tvWeights = view.findViewById(R.id.r_view_result_weight);
             } else {

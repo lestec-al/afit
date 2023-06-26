@@ -33,7 +33,6 @@ public class CalendarActivity extends AppCompatActivity {
     Calendar today;
     RecyclerView calendarView;
     LinkedHashMap<MyObject, MyObject> data;
-    LinkedHashMap<String, Integer> colors;
     int stepWidth;
     int stepHeight;
     int calendarViewWidth;
@@ -46,7 +45,6 @@ public class CalendarActivity extends AppCompatActivity {
         themeColor = Help.getMainColor(this);
         DB db = new DB(this);
         data = db.getAll();
-        colors = db.getAllObjColors();
         db.close();
         today = Calendar.getInstance();
         calendar = Calendar.getInstance();
@@ -206,10 +204,17 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     public class CalendarAdapterBig extends RecyclerView.Adapter<CalendarAdapterBig.MyViewHolder> {
-        Calendar cal;
+        Calendar calBefore;
+        Calendar calAfter;
         public CalendarAdapterBig() {
-            this.cal = Calendar.getInstance();
-            this.cal.setTime(calendar.getTime());
+            this.calBefore = Calendar.getInstance();
+            this.calBefore.setTime(calendar.getTime());
+            this.calBefore.set(Calendar.DAY_OF_MONTH, 1);
+            this.calBefore.set(Calendar.MONTH, calBefore.get(Calendar.MONTH)-1);
+            this.calAfter = Calendar.getInstance();
+            this.calAfter.setTime(calendar.getTime());
+            this.calAfter.set(Calendar.DAY_OF_MONTH, 1);
+            this.calAfter.set(Calendar.MONTH, calAfter.get(Calendar.MONTH)+1);
         }
         @NonNull
         @Override
@@ -219,15 +224,16 @@ public class CalendarActivity extends AppCompatActivity {
         }
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int pos) {
+            Calendar c;
             if (pos == 0)
-                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH)-1);
-            else if (pos == 1)
-                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+                c = calBefore;
             else if (pos == 2)
-                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH)+1);
+                c = calAfter;
+            else
+                c = calendar;
             holder.rv.setLayoutManager(new GridLayoutManager(CalendarActivity.this, 7));
             holder.rv.setHasFixedSize(true);
-            holder.rv.setAdapter(new CalendarAdapter(CalendarActivity.this, data, cal, themeColor, stepWidth, stepHeight, colors));
+            holder.rv.setAdapter(new CalendarAdapter(CalendarActivity.this, data, c, themeColor, stepWidth, stepHeight));
         }
         @Override
         public int getItemCount() {

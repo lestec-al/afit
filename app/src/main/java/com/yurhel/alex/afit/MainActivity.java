@@ -2,6 +2,7 @@ package com.yurhel.alex.afit;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,13 +29,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ClickInterface {
     DB db;
-    List<MyObject> dataSt;
-    List<MyObject> dataEx;
+    List<MyObject> data;
     int themeColor;
     Dialog dialog;
 
@@ -42,19 +41,12 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setTitle("");
         themeColor = Help.getMainColor(this);
         db = new DB(this);
-        dataEx = db.getAllEntries(null, true);
-        dataSt = db.getAllEntries(null, false);
-        LinkedHashMap<String, Integer> colors = db.getAllObjColors();
-        RecyclerView mainView = findViewById(R.id.main_view);
-        mainView.setLayoutManager(new LinearLayoutManager(this));
-        mainView.setHasFixedSize(true);
-        mainView.setAdapter(new MainAdapter(this, dataEx, true, this, themeColor, colors));
-        RecyclerView statsMainView = findViewById(R.id.stats_main_view);
-        statsMainView.setLayoutManager(new LinearLayoutManager(this));
-        statsMainView.setHasFixedSize(true);
-        statsMainView.setAdapter(new MainAdapter(this, dataSt, false, this, themeColor, colors));
+        updateAll();
     }
 
     @Override
@@ -64,10 +56,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
 
     @Override
     public void onClickItem(int pos, String option) {
-        if (option.equals("ex"))
-            startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra("ex_id", dataEx.get(pos).id));
-        else
-            startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra("st_id", dataSt.get(pos).id));
+        startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra(option, data.get(pos).id));
     }
 
     // TOOLBAR
@@ -102,19 +91,15 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             dialog.findViewById(R.id.stats_layout).setVisibility(View.GONE);
             dialog.findViewById(R.id.button_delete_dialog).setVisibility(View.GONE);
-            dialog.findViewById(R.id.color_layout).setVisibility(View.GONE);
-            dialog.findViewById(R.id.button_date_dialog).setVisibility(View.GONE);
-            TextView title = dialog.findViewById(R.id.title_settings);
-            title.setText(R.string.about);
-            ImageButton sendFeedback = dialog.findViewById(R.id.button_send_feedback_dialog);
-            sendFeedback.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", getString(R.string.email), null)))
-            );
+            Button sendFeedback = dialog.findViewById(R.id.button_send_feedback_dialog);
+            sendFeedback.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW)
+                    .setData(Uri.parse(getString(R.string.app_link)))
+                    .setPackage("com.android.vending")
+            ));
             try {// Get version
-                TextView info_tv = dialog.findViewById(R.id.info_app_tv);
                 PackageInfo pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-                String version = info_tv.getText().toString()+" "+pInfo.versionName;
-                info_tv.setText(version);
+                String version = getString(R.string.app_name)+" "+pInfo.versionName;
+                ((TextView)dialog.findViewById(R.id.title_settings)).setText(version);
             } catch (Exception ignored) {}
             Button exportDB = dialog.findViewById(R.id.button_export_dialog);
             exportDB.setOnClickListener(v -> {
@@ -131,14 +116,24 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 intent.setType("application/json");
                 resultImport.launch(intent);
             });
-            Help.setButtonsTextColor(themeColor, new Button[] {exportDB, importDB});
+            Help.setButtonsTextColor(themeColor, new Button[] {exportDB, importDB, sendFeedback});
             ImageButton back = dialog.findViewById(R.id.button_back_settings_dialog);
             back.setOnClickListener(view -> dialog.cancel());
-            Help.setImageButtonsColor(themeColor, new ImageButton[] {back, sendFeedback});
+            back.setColorFilter(themeColor);
             dialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // HELPS
+    private void updateAll() {
+        data = db.getTableEntries(null, true);
+        data.addAll(db.getTableEntries(null, false));
+        RecyclerView mainView = findViewById(R.id.main_view);
+        mainView.setLayoutManager(new LinearLayoutManager(this));
+        mainView.setHasFixedSize(true);
+        mainView.setAdapter(new MainAdapter(this, data, this, themeColor));
     }
 
     public void addDialog(int msg) {
@@ -150,14 +145,15 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 if (msg == R.string.add_ex)
                     db.addExercise(t);
                 else
-                    db.addCustomStats(t);
+                    db.addStats(t);
                 dialog1.cancel();
-                recreate();
+                updateAll();
             }
         });
         dialog1.show();
     }
 
+    // EXPORT / IMPORT
     private final ActivityResultLauncher<Intent> resultExport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             try {
@@ -188,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 if (!db.importDatabase(response.toString()))
                     throw new Exception("Import error");
                 dialog.cancel();
-                recreate();
+                updateAll();
             } catch (Exception e) {
                 e.printStackTrace();
                 dialog.cancel();

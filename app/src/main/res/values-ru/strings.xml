@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="workout">Тренировка</string>
+    <string name="app_name">Фитнес-дневник</string>
     <string name="do_exercise">Делай</string>
     <string name="stop">СТОП</string>
     <string name="rest">Отдых</string>
@@ -18,14 +18,13 @@
     <string name="settings">Настройки</string>
     <string name="color">Цвет</string>
     <string name="default_t">Стандартный</string>
-    <string name="data">Данные</string>
-    <string name="export_db">Экспорт</string>
-    <string name="import_db">Импорт</string>
+    <string name="feedback">Отправить отзыв</string>
+    <string name="export_db">Экспорт данных на устройство</string>
+    <string name="import_db">Импорт данных с устройства</string>
     <string name="error">Ошибка</string>
     <string name="calendar">Календарь</string>
     <string name="set_date">Установить дату</string>
-    <string name="about">О приложении</string>
+    <string name="date">Дата</string>
     <string name="more">Более</string>
-    <string name="app_long_info">Версия</string>
-    <string name="app_error_info">Отзывы и предложения приветствуются</string>
+    <string name="note">Заметка</string>
 </resources>

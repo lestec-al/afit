@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="workout">Трэнінг</string>
+    <string name="app_name">Фітнес дзённік</string>
     <string name="do_exercise">Рабі</string>
     <string name="stop">СПЫНІЦЬ</string>
     <string name="rest">Адпачынак</string>
@@ -18,14 +18,13 @@
     <string name="settings">Налады</string>
     <string name="color">Колер</string>
     <string name="default_t">Стандартны</string>
-    <string name="data">Даныя</string>
-    <string name="export_db">Экспарт</string>
-    <string name="import_db">Імпарт</string>
+    <string name="feedback">Адправіць водгук</string>
+    <string name="export_db">Экспарт дадзеных на прыладу</string>
+    <string name="import_db">Імпарт дадзеных з прылады</string>
     <string name="error">Памылка</string>
     <string name="calendar">Каляндар</string>
     <string name="set_date">Устанавіць дату</string>
-    <string name="about">Пра праграму</string>
+    <string name="date">Дата</string>
     <string name="more">Больш</string>
-    <string name="app_long_info">Версія</string>
-    <string name="app_error_info">Водгук і прапановы вітаюцца</string>
+    <string name="note">Нататка</string>
 </resources>

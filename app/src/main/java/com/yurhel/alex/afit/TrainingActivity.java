@@ -14,7 +14,6 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,7 +48,6 @@ public class TrainingActivity extends AppCompatActivity {
     String restInfo;
     LocalTime startTime = LocalTime.now();
     Thread thread;
-    int themeColor;
     MyObject obj;
     MediaPlayer sound;
     LinearLayout repsResultLayout;
@@ -68,14 +66,11 @@ public class TrainingActivity extends AppCompatActivity {
 
         db = new DB(TrainingActivity.this);
         exerciseID = getIntent().getIntExtra("ex_id", 0);
-        obj = db.getOneInfo(exerciseID, true);
-
-        themeColor = Help.getMainColor(this);
-        int[] objColor = db.getObjColor(exerciseID +"_ex");
-        themeColor = (objColor[0] != 0) ? objColor[0]: themeColor;
+        obj = db.getOneMainObj(exerciseID, true);
 
         repsResultLayout = findViewById(R.id.tr_reps_result_layout);
         infoButton = findViewById(R.id.tr_info_button);
+        infoButton.setShadowLayer(14,1,1,getColor(R.color.dark));
         progressHeight = getResources().getDimensionPixelSize(R.dimen.height_progress_result);
         colorWhite = getColor(R.color.white);
         doInfo = getText(R.string.do_exercise)+" "+obj.name;
@@ -93,16 +88,16 @@ public class TrainingActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(doInfo);
-        Help.setActionBackIconColor(this, themeColor, actionBar);
+        Help.setActionBackIconColor(this, obj.color, actionBar);
 
         progressTime = findViewById(R.id.tr_progress_time);
-        progressTime.setMax(obj.seconds);
+        progressTime.setMax(obj.rest);
         progressTime.setProgress(0);
         progressResult = findViewById(R.id.tr_progress_result);
-        progressResult.setMax(obj.reps);
+        progressResult.setMax(obj.sets);
         progressResult.setProgress(0);
-        progressResult.post(() -> progressOneSetPX = progressResult.getWidth() / obj.reps);
-        setProgressColor(themeColor, new ProgressBar[] {progressTime, progressResult});
+        progressResult.post(() -> progressOneSetPX = progressResult.getWidth() / obj.sets);
+        setProgressColor(obj.color, new ProgressBar[] {progressTime, progressResult});
 
         // Up row with weight
         if (obj.weight > 0) {
@@ -110,25 +105,24 @@ public class TrainingActivity extends AppCompatActivity {
             repsResultLayoutW = findViewById(R.id.tr_reps_result_layout_w);
 
             progressResultW = findViewById(R.id.tr_progress_result_w);
-            progressResultW.setMax(obj.reps);
+            progressResultW.setMax(obj.sets);
             progressResultW.setProgress(0);
             progressResultW.setVisibility(View.VISIBLE);
-            setProgressColor(themeColor, new ProgressBar[] {progressResultW});
+            setProgressColor(obj.color, new ProgressBar[] {progressResultW});
 
             editWeight = findViewById(R.id.tr_text_weight);
             editWeight.setText(String.valueOf(obj.weight));
             editWeight.setOnClickListener(v -> {
                 // Edit weight dialog
-                Object[] d = Help.editTextDialog(this, themeColor, null, editWeight.getText().toString(), true, false);
-                Dialog dialog1 = (Dialog)d[0];
+                Object[] d = Help.editTextDialog(this, obj.color, null, editWeight.getText().toString(), true, false);
                 ((Button)d[1]).setOnClickListener(v1 -> {
                     String t = ((EditText)d[2]).getText().toString();
                     if (!t.equals("")) {
                         editWeight.setText(t);
-                        dialog1.cancel();
+                        ((Dialog)d[0]).cancel();
                     }
                 });
-                dialog1.show();
+                ((Dialog)d[0]).show();
             });
 
             ImageButton buttonPlusW = findViewById(R.id.tr_button_plus_w);
@@ -142,7 +136,7 @@ public class TrainingActivity extends AppCompatActivity {
                 if (i > 0)
                     editWeight.setText(String.valueOf(i - 1));
             });
-            Help.setImageButtonsColor(themeColor, new ImageButton[] {buttonMinusW, buttonPlusW});
+            Help.setImageButtonsColor(obj.color, new ImageButton[] {buttonMinusW, buttonPlusW});
         }
 
         ImageButton buttonMinus = findViewById(R.id.tr_button_minus);
@@ -172,25 +166,26 @@ public class TrainingActivity extends AppCompatActivity {
                 progressTime.setMax(progressTime.getMax() + 30);
             }
         });
-        Help.setImageButtonsColor(themeColor, new ImageButton[] {buttonMinus, buttonPlus});
+        Help.setImageButtonsColor(obj.color, new ImageButton[] {buttonMinus, buttonPlus});
 
         buttonTime = findViewById(R.id.tr_button_time);
-        buttonTime.setTextColor(themeColor);
+        buttonTime.setTextColor(obj.color);
         buttonTime.setOnTouchListener(this::checkTouchCorners);
         buttonTime.setOnClickListener(view -> stopThread(false));
 
         buttonSets = findViewById(R.id.tr_button_sets);
         Drawable dr = AppCompatResources.getDrawable(this, R.drawable.circle);
-        assert dr != null;
-        dr.setTint(themeColor);
+        if (dr != null)
+            dr.setTint(obj.color);
         buttonSets.setBackground(dr);
-        buttonSets.setText(String.valueOf(obj.first));
+        buttonSets.setShadowLayer(14,1,1,getColor(R.color.dark));
+        buttonSets.setText(String.valueOf(obj.reps));
         buttonSets.setOnTouchListener(this::checkTouchCorners);
         buttonSets.setOnClickListener(view -> {
             textToProgress(repsResults, buttonSets.getText().toString(), repsResultLayout);
             if (obj.weight > 0)
                 textToProgress(repsWeights, editWeight.getText().toString(), repsResultLayoutW);
-            if (repsResults.size() >= obj.reps) {
+            if (repsResults.size() >= obj.sets) {
                 exitSaveResults();
             } else {
                 buttonSets.setVisibility(View.GONE);
@@ -202,7 +197,7 @@ public class TrainingActivity extends AppCompatActivity {
                 sound = MediaPlayer.create(this, Settings.System.DEFAULT_NOTIFICATION_URI);
                 actionBar.setTitle(restInfo);
                 infoButton.setText(R.string.stop);
-                infoButton.setTextColor(themeColor);
+                infoButton.setTextColor(obj.color);
                 thread = new Thread(() -> {
                     while (seconds > 0 && !stop) {
                         runOnUiThread(() -> {
@@ -223,7 +218,7 @@ public class TrainingActivity extends AppCompatActivity {
                 thread.start();
             }
         });
-        if (themeColor == colorWhite)
+        if (obj.color == colorWhite)
             buttonSets.setTextColor(getColor(R.color.dark));
     }
 
@@ -280,7 +275,7 @@ public class TrainingActivity extends AppCompatActivity {
             trainingTime = "0:"+((timeSec < 10)? "0"+timeSec: ""+timeSec);
         }
         String date = String.valueOf(getIntent().getLongExtra("date", 0));
-        db.addExStats(exerciseID, resultShort, resultFull, trainingTime, date, resultWeights);
+        db.addExerciseEntry(exerciseID, resultShort, resultFull, trainingTime, date, resultWeights);
         finish();
         startActivity(new Intent(TrainingActivity.this, StatsActivity.class).putExtra("ex_id", exerciseID));
     }
@@ -300,19 +295,17 @@ public class TrainingActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (repsResults.size() > 0) {
             // Save/not dialog
-            Object[] d = Help.editTextDialog(this, themeColor, R.string.save_results, "", null, true);
-            Dialog dialog1 = (Dialog)d[0];
+            Object[] d = Help.editTextDialog(this, obj.color, R.string.save_results, "", null, true);
             ((Button)d[1]).setOnClickListener(v1 -> {
-                dialog1.cancel();
+                ((Dialog)d[0]).cancel();
                 exitSaveResults();
             });
-            Button no = (Button)d[2];
-            no.setText(R.string.no);
-            no.setOnClickListener(v1 -> {
-                dialog1.cancel();
+            ((Button)d[2]).setText(R.string.no);
+            ((Button)d[2]).setOnClickListener(v1 -> {
+                ((Dialog)d[0]).cancel();
                 exitWithoutSave();
             });
-            dialog1.show();
+            ((Dialog)d[0]).show();
         } else {
             exitWithoutSave();
             super.onBackPressed();
@@ -322,9 +315,8 @@ public class TrainingActivity extends AppCompatActivity {
     // TOOLBAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater mi = getMenuInflater();
-        mi.inflate(R.menu.training, menu);
-        Help.setActionIconsColor(themeColor, menu, new int[] {R.id.action_save_training});
+        getMenuInflater().inflate(R.menu.training, menu);
+        Help.setActionIconsColor(obj.color, menu, new int[] {R.id.action_save_training});
         return true;
     }
 
@@ -355,14 +347,15 @@ public class TrainingActivity extends AppCompatActivity {
     public void textToProgress(ArrayList<String> results, String text, LinearLayout layout) {
         if (text.equals(""))
             text = "0.0";
-
         results.add(text);
         TextView tv = new TextView(this);
         tv.setText(text);
-        if (themeColor == colorWhite)
+        if (obj.color == colorWhite) {
             tv.setTextColor(getColor(R.color.dark));
-        else
+        } else {
             tv.setTextColor(colorWhite);
+            tv.setShadowLayer(14,1,1,getColor(R.color.dark));
+        }
         tv.setHeight(progressHeight);
         tv.setWidth(progressOneSetPX);
         tv.setGravity(Gravity.CENTER);

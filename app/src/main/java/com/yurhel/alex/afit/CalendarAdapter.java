@@ -23,7 +23,6 @@ import java.util.Objects;
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
     Context context;
     LinkedHashMap<MyObject, MyObject> data;
-    LinkedHashMap<String, Integer> colors;
     int themeColor;
     Calendar calendar;
     int days;
@@ -35,14 +34,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     int blackColor;
     boolean isNight;
 
-    public CalendarAdapter(Context context, LinkedHashMap<MyObject, MyObject> data, Calendar calendar, int color, int stepWidth, int stepHeight, LinkedHashMap<String, Integer> colors) {
+    public CalendarAdapter(Context context, LinkedHashMap<MyObject, MyObject> data, Calendar calendar, int color, int stepWidth, int stepHeight) {
         this.context = context;
         this.data = data;
         this.themeColor = color;
         this.calendar = calendar;
         this.stepWidth = stepWidth;
         this.stepHeight = stepHeight;
-        this.colors = colors;
         this.days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         this.calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)-1);
         this.day1 = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -90,7 +88,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             }
             // Set short data for day
             LinkedHashMap<MyObject, String> dataR = new LinkedHashMap<>();
-            Date d = null;
+            Date date = null;
             boolean stop = false;
             TextView last = null;
             for (MyObject entry: data.keySet()) {
@@ -101,13 +99,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                         // Set short
                         TextView t = new TextView(context);
                         t.setBackground(AppCompatResources.getDrawable(context, R.drawable.rectangle_calendar));
-                        Integer itemColor = colors.get((entry.result_s == null) ? objUp.id+"_st": objUp.id+"_ex");
-                        int backgroundColor = (itemColor != null && itemColor != 0) ? itemColor: themeColor;
-                        t.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
-                        if (backgroundColor == whiteColor)
+                        t.setBackgroundTintList(ColorStateList.valueOf(objUp.color));
+                        if (objUp.color == whiteColor) {
                             t.setTextColor(blackColor);
-                        else
+                        } else {
                             t.setTextColor(whiteColor);
+                            t.setShadowLayer(14,1,1,blackColor);
+                        }
                         t.setGravity(Gravity.CENTER);
                         holder.layout.addView(t);
                         // Get height
@@ -125,23 +123,23 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                         }
                     }
                     dataR.put(entry, objUp.name);
-                    d = c.getTime();
+                    date = c.getTime();
                 }
             }
             // Set full data for day
-            if (dataR.size() > 0) {
-                Date d1 = d;
-                holder.itemView.setOnClickListener(view1 -> {
+            Date dateDay = date;
+            holder.itemView.setOnClickListener(view1 -> {
+                if (dataR.size() > 0) {
                     // Calendar stats dialog
                     Dialog dialog = new Dialog(context);
                     dialog.setContentView(R.layout.dialog_calendar_stats);
                     dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     ImageButton back = dialog.findViewById(R.id.button_back_calendar_stats_dialog);
                     back.setOnClickListener(view -> dialog.cancel());
-                    Help.setImageButtonsColor(themeColor, new ImageButton[] {back});
+                    back.setColorFilter(themeColor);
                     LinearLayout ll = dialog.findViewById(R.id.stats_layout_calendar_dialog);
                     TextView title = dialog.findViewById(R.id.tv_label_calendar_stats_dialog);
-                    title.setText(Help.dateFormat(context, d1));
+                    title.setText(Help.dateFormat(context, dateDay));
                     // Add all stats for day
                     LayoutInflater inflater = LayoutInflater.from(context);
                     for (MyObject obj: dataR.keySet()) {
@@ -149,8 +147,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                         TextView tvMain, tvResultL, tvTime, tvWeights, tvName;
                         tvMain = v.findViewById(R.id.r_view_result_s);
                         tvName = v.findViewById(R.id.r_view_date);
+                        tvResultL = v.findViewById(R.id.r_view_result_l);
                         if (obj.result_s != null) {
-                            tvResultL = v.findViewById(R.id.r_view_result_l);
                             tvTime = v.findViewById(R.id.r_view_time);
                             tvWeights = v.findViewById(R.id.r_view_result_weight);
                             if (!obj.weights.equals("")) {
@@ -162,14 +160,15 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                             tvResultL.setText(obj.result_l);
                             tvTime.setText(obj.time);
                         } else {
+                            tvResultL.setText(obj.notes);
                             tvMain.setText(String.valueOf(obj.value));
                         }
                         tvName.setText(dataR.get(obj));
                         ll.addView(v);
                     }
                     dialog.show();
-                });
-            }
+                }
+            });
         } else { // Set last/next month day
             if (day < 1) {
                 holder.day.setText(String.valueOf(day1 + day));

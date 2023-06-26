@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,20 +17,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     private final ClickInterface clickInterface;
     Context context;
     List<MyObject> data;
-    boolean exercise;
     int color;
-    LinkedHashMap<String, Integer> colors;
     int blackColor;
     int whiteColor;
 
-
-    public MainAdapter(Context context, List<MyObject> data, boolean exercise, ClickInterface clickInterface, int color, LinkedHashMap<String, Integer> colors) {
+    public MainAdapter(Context context, List<MyObject> data, ClickInterface clickInterface, int color) {
         this.context = context;
         this.data = data;
-        this.exercise = exercise;
         this.clickInterface = clickInterface;
         this.color = color;
-        this.colors = colors;
         this.blackColor = context.getColor(R.color.dark);
         this.whiteColor = context.getColor(R.color.white);
     }
@@ -40,28 +34,28 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     @Override
     public MainAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        return new MainAdapter.MyViewHolder(inflater.inflate(R.layout.row_main, parent, false), clickInterface, exercise);
+        return new MainAdapter.MyViewHolder(inflater.inflate(R.layout.row_main, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull MainAdapter.MyViewHolder holder, int pos) {
         MyObject obj = data.get(pos);
-        Integer objColor = colors.get((exercise) ? obj.id+"_ex": obj.id+"_st");
-        int backgroundColor = (objColor != null && objColor != 0) ? objColor: color;
-        holder.name_icon.setBackgroundColor(backgroundColor);
+        holder.name_icon.setBackgroundColor(obj.color);
         holder.name_icon.setText(obj.name);
         Drawable d;
-        if (exercise)
+        if (obj.sets != 0)
             d = Objects.requireNonNull(AppCompatResources.getDrawable(context, R.drawable.ic_rv_exercise));
         else
             d = Objects.requireNonNull(AppCompatResources.getDrawable(context, R.drawable.ic_rv_stats));
-        if (backgroundColor == whiteColor) {
+        if (obj.color == whiteColor) {
             holder.name_icon.setTextColor(blackColor);
             d.setTint(blackColor);
         } else {
-            d.setTint(whiteColor);
+            holder.name_icon.setShadowLayer(14,1,1,blackColor);
         }
         holder.name_icon.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
+        if (clickInterface != null)
+            holder.name_icon.setOnClickListener(view1 -> clickInterface.onClickItem(pos, (obj.sets != 0) ? "ex_id": "st_id"));
     }
 
     @Override
@@ -72,20 +66,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         Button name_icon;
 
-        public MyViewHolder(@NonNull View view, ClickInterface clickInterface, boolean exercise_adapter) {
+        public MyViewHolder(@NonNull View view) {
             super(view);
             name_icon = view.findViewById(R.id.rv_main_name_icon);
-            name_icon.setOnClickListener(view1 -> {
-                if (clickInterface != null) {
-                    int pos = getAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION) {
-                        if (exercise_adapter)
-                            clickInterface.onClickItem(pos, "ex");
-                        else
-                            clickInterface.onClickItem(pos, "st");
-                    }
-                }
-            });
         }
     }
 }
