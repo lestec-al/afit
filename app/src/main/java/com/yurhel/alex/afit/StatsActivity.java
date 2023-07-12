@@ -1,5 +1,6 @@
 package com.yurhel.alex.afit;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -28,7 +29,6 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class StatsActivity extends AppCompatActivity implements ClickInterface {
     DB db;
@@ -56,6 +57,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     Button endDateB;
     GraphView graphView;
     boolean nightMode;
+    RecyclerView statsView;
+    Integer autoScrollPos = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         targetDate = new Date();
         graphView = findViewById(R.id.graph_view);
         nightMode = Help.isNightMode(this);
+        statsView = findViewById(R.id.stats_view);
         // Date buttons
         startDateB = findViewById(R.id.button_date_start);
         startDateB.setOnClickListener(v -> calendarDialog(startDate, startDateB, true));
@@ -90,6 +94,20 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 graphVisB.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_up));
             }
             graphVisB.setColorFilter(obj.color);
+        });
+        // Scroll
+        statsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (autoScrollPos != null) {
+                    RecyclerView.ViewHolder selectedItem = statsView.findViewHolderForAdapterPosition(autoScrollPos);
+                    if (selectedItem != null) {
+                        autoScrollPos = null;
+                        highlightRVItem(selectedItem.itemView);
+                    }
+                }
+            }
         });
         //
         updateAll(true);
@@ -205,16 +223,26 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 LineGraphSeries<DataPoint> series = new LineGraphSeries<>(XYData);
                 series.setThickness(7);
                 series.setColor(obj.color);
-                series.setOnDataPointTapListener((series1, dataPoint) -> Snackbar.make(
-                        findViewById(R.id.graph_view),
-                        Help.dateFormat(this, new Date((long) dataPoint.getX()))+" - "+dataPoint.getY(),
-                        Snackbar.LENGTH_LONG
-                ).show());
+                series.setOnDataPointTapListener((series1, dataPoint) -> {
+                    int pos = 0;
+                    for (MyObject item: data) {
+                        if (item.date == (long) dataPoint.getX() &&
+                                ((exercise)? Double.parseDouble(item.result_s): item.value) == dataPoint.getY())
+                            break;
+                        pos++;
+                    }
+                    RecyclerView.ViewHolder selectedItem = statsView.findViewHolderForAdapterPosition(pos);
+                    if (selectedItem != null) {
+                        highlightRVItem(selectedItem.itemView);
+                    } else {
+                        statsView.smoothScrollToPosition(pos);
+                        autoScrollPos = pos;
+                    }
+                });
                 graphView.addSeries(series);
             }
             // Update list
             Collections.reverse(data);
-            RecyclerView statsView = findViewById(R.id.stats_view);
             statsView.setLayoutManager(new LinearLayoutManager(this));
             statsView.setHasFixedSize(true);
             statsView.setAdapter(new StatsAdapter(this, data, exercise, this));
@@ -511,5 +539,15 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         seekG.setThumbTintList(ColorStateList.valueOf(Color.rgb(0, c[1], 0)));
         seekB.setThumbTintList(ColorStateList.valueOf(Color.rgb(0, 0, c[2])));
         colorView.setTextColor(Color.rgb(c[0], c[1], c[2]));
+    }
+
+    private void highlightRVItem(View view) {
+        new Thread(() -> {
+            runOnUiThread(() -> view.setBackground(AppCompatResources.getDrawable(StatsActivity.this, R.drawable.highlight)));
+            try {
+                TimeUnit.MILLISECONDS.sleep(300);
+            } catch (Exception ignored) {}
+            runOnUiThread(() -> view.setBackground(AppCompatResources.getDrawable(StatsActivity.this, R.drawable.divider)));
+        }).start();
     }
 }

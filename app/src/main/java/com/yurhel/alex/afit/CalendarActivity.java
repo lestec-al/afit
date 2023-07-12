@@ -52,9 +52,11 @@ public class CalendarActivity extends AppCompatActivity {
         calendarView = findViewById(R.id.calendar_grid);
         // Styling
         actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        Help.setActionBackIconColor(this, themeColor, actionBar);
+        if (actionBar != null) {
+            actionBar.setTitle("");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            Help.setActionBackIconColor(this, themeColor, actionBar);
+        }
         // Create days of week, update calendar
         LinearLayout headerDays = findViewById(R.id.calendar_header_days);
         headerDays.post(() -> {

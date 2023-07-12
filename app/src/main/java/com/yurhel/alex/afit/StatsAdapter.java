@@ -73,10 +73,11 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.MyViewHolder
                 tvTime = view.findViewById(R.id.r_view_time);
                 tvWeights = view.findViewById(R.id.r_view_result_weight);
             } else {
-                view.setOnClickListener(view1 -> {
+                view.setOnLongClickListener(v1 -> {
                     int pos = getAdapterPosition();
                     if (pos != RecyclerView.NO_POSITION)
                         clickInterface.onClickItem(pos, "");
+                    return true;
                 });
             }
         }
