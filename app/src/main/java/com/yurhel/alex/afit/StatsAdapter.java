@@ -42,6 +42,8 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.MyViewHolder
             if (!obj.weights.equals("")) {
                 holder.tvWeights.setVisibility(View.VISIBLE);
                 holder.tvWeights.setText(obj.weights);
+            } else {
+                holder.tvWeights.setVisibility(View.GONE);
             }
             holder.tvMain.setText(obj.result_s);
             holder.tvResult.setText(obj.result_l);

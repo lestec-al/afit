@@ -152,9 +152,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                             tvTime = v.findViewById(R.id.r_view_time);
                             tvWeights = v.findViewById(R.id.r_view_result_weight);
                             if (!obj.weights.equals("")) {
-                                tvResultL.setGravity(Gravity.CENTER);
                                 tvWeights.setVisibility(View.VISIBLE);
                                 tvWeights.setText(obj.weights);
+                            } else {
+                                tvWeights.setVisibility(View.GONE);
                             }
                             tvMain.setText(obj.result_s);
                             tvResultL.setText(obj.result_l);
