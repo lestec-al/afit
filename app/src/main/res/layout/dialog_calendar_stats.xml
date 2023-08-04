@@ -13,7 +13,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/button_back_calendar_stats_dialog"
+            android:id="@+id/buttonBack"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             app:srcCompat="@drawable/ic_up_back"
@@ -21,7 +21,7 @@
             android:contentDescription="@string/cancel" />
 
         <TextView
-            android:id="@+id/tv_label_calendar_stats_dialog"
+            android:id="@+id/label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
@@ -31,12 +31,12 @@
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:contentDescription="layout"
+        android:contentDescription="@string/all_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/stats_layout_calendar_dialog"
+            android:id="@+id/itemsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"

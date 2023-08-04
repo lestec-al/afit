@@ -68,8 +68,8 @@ public class TrainingActivity extends AppCompatActivity {
         exerciseID = getIntent().getIntExtra("ex_id", 0);
         obj = db.getOneMainObj(exerciseID, true);
 
-        repsResultLayout = findViewById(R.id.tr_reps_result_layout);
-        infoButton = findViewById(R.id.tr_info_button);
+        repsResultLayout = findViewById(R.id.repsResultLayout);
+        infoButton = findViewById(R.id.infoOnButton);
         infoButton.setShadowLayer(14,1,1,getColor(R.color.dark));
         progressHeight = getResources().getDimensionPixelSize(R.dimen.height_progress_result);
         colorWhite = getColor(R.color.white);
@@ -90,10 +90,10 @@ public class TrainingActivity extends AppCompatActivity {
         actionBar.setTitle(doInfo);
         Help.setActionBackIconColor(this, obj.color, actionBar);
 
-        progressTime = findViewById(R.id.tr_progress_time);
+        progressTime = findViewById(R.id.progressTime);
         progressTime.setMax(obj.rest);
         progressTime.setProgress(0);
-        progressResult = findViewById(R.id.tr_progress_result);
+        progressResult = findViewById(R.id.progressResult);
         progressResult.setMax(obj.sets);
         progressResult.setProgress(0);
         progressResult.post(() -> progressOneSetPX = progressResult.getWidth() / obj.sets);
@@ -101,16 +101,16 @@ public class TrainingActivity extends AppCompatActivity {
 
         // Up row with weight
         if (obj.weight > 0) {
-            findViewById(R.id.tr_up_layout).setVisibility(View.VISIBLE);
-            repsResultLayoutW = findViewById(R.id.tr_reps_result_layout_w);
+            findViewById(R.id.upLayout).setVisibility(View.VISIBLE);
+            repsResultLayoutW = findViewById(R.id.repsResultLayoutW);
 
-            progressResultW = findViewById(R.id.tr_progress_result_w);
+            progressResultW = findViewById(R.id.progressResultW);
             progressResultW.setMax(obj.sets);
             progressResultW.setProgress(0);
             progressResultW.setVisibility(View.VISIBLE);
             setProgressColor(obj.color, new ProgressBar[] {progressResultW});
 
-            editWeight = findViewById(R.id.tr_text_weight);
+            editWeight = findViewById(R.id.textWeightTraining);
             editWeight.setText(String.valueOf(obj.weight));
             editWeight.setOnClickListener(v -> {
                 // Edit weight dialog
@@ -125,12 +125,12 @@ public class TrainingActivity extends AppCompatActivity {
                 ((Dialog)d[0]).show();
             });
 
-            ImageButton buttonPlusW = findViewById(R.id.tr_button_plus_w);
+            ImageButton buttonPlusW = findViewById(R.id.buttonPlusW);
             buttonPlusW.setOnClickListener(view -> {
                 double i = Double.parseDouble(editWeight.getText().toString());
                 editWeight.setText(String.valueOf(i + 1));
             });
-            ImageButton buttonMinusW = findViewById(R.id.tr_button_minus_w);
+            ImageButton buttonMinusW = findViewById(R.id.buttonMinusW);
             buttonMinusW.setOnClickListener(view -> {
                 double i = Double.parseDouble(editWeight.getText().toString());
                 if (i > 0)
@@ -139,7 +139,7 @@ public class TrainingActivity extends AppCompatActivity {
             Help.setImageButtonsColor(obj.color, new ImageButton[] {buttonMinusW, buttonPlusW});
         }
 
-        ImageButton buttonMinus = findViewById(R.id.tr_button_minus);
+        ImageButton buttonMinus = findViewById(R.id.buttonMinus);
         buttonMinus.setOnClickListener(view -> {
             if (thread == null) {
                 int i = Integer.parseInt(buttonSets.getText().toString());
@@ -156,7 +156,7 @@ public class TrainingActivity extends AppCompatActivity {
                 }
             }
         });
-        ImageButton buttonPlus = findViewById(R.id.tr_button_plus);
+        ImageButton buttonPlus = findViewById(R.id.buttonPlus);
         buttonPlus.setOnClickListener(view -> {
             if (thread == null) {
                 int i = Integer.parseInt(buttonSets.getText().toString());
@@ -168,12 +168,12 @@ public class TrainingActivity extends AppCompatActivity {
         });
         Help.setImageButtonsColor(obj.color, new ImageButton[] {buttonMinus, buttonPlus});
 
-        buttonTime = findViewById(R.id.tr_button_time);
+        buttonTime = findViewById(R.id.buttonTime);
         buttonTime.setTextColor(obj.color);
         buttonTime.setOnTouchListener(this::checkTouchCorners);
         buttonTime.setOnClickListener(view -> stopThread(false));
 
-        buttonSets = findViewById(R.id.tr_button_sets);
+        buttonSets = findViewById(R.id.buttonSets);
         Drawable dr = AppCompatResources.getDrawable(this, R.drawable.circle);
         if (dr != null)
             dr.setTint(obj.color);
@@ -316,7 +316,7 @@ public class TrainingActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.training, menu);
-        Help.setActionIconsColor(obj.color, menu, new int[] {R.id.action_save_training});
+        Help.setActionIconsColor(obj.color, menu, new int[] {R.id.actionSaveTraining});
         return true;
     }
 
@@ -326,7 +326,7 @@ public class TrainingActivity extends AppCompatActivity {
             exitWithoutSave();
             return true;
 
-        } else if (item.getItemId() == R.id.action_save_training) {
+        } else if (item.getItemId() == R.id.actionSaveTraining) {
             if (repsResults.size() > 0)
                 exitSaveResults();
             return true;

@@ -6,9 +6,11 @@
     android:layout_height="60dp">
 
     <Button
-        android:id="@+id/rv_main_name_icon"
+        android:id="@+id/mainButton"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginEnd="@dimen/margin"
         android:drawableEnd="@drawable/ic_rv_exercise"
         android:gravity="start|center_vertical"
         android:textSize="16sp"

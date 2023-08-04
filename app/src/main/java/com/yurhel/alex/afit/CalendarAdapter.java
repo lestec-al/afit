@@ -117,7 +117,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                             if (last != null)
                                 last.setText("+");
                         } else {
-                            String text = (entry.result_s == null) ? ""+entry.value: ""+entry.result_s;
+                            String text = (entry.time != null/*Is exercise*/) ? ""+(int)entry.mainValue: ""+entry.mainValue;
                             t.setText((text.length() > 4)?text.substring(0,4): text);
                             last = t;
                         }
@@ -134,35 +134,35 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     Dialog dialog = new Dialog(context);
                     dialog.setContentView(R.layout.dialog_calendar_stats);
                     dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    ImageButton back = dialog.findViewById(R.id.button_back_calendar_stats_dialog);
+                    ImageButton back = dialog.findViewById(R.id.buttonBack);
                     back.setOnClickListener(view -> dialog.cancel());
                     back.setColorFilter(themeColor);
-                    LinearLayout ll = dialog.findViewById(R.id.stats_layout_calendar_dialog);
-                    TextView title = dialog.findViewById(R.id.tv_label_calendar_stats_dialog);
+                    LinearLayout ll = dialog.findViewById(R.id.itemsLayout);
+                    TextView title = dialog.findViewById(R.id.label);
                     title.setText(Help.dateFormat(context, dateDay));
                     // Add all stats for day
                     LayoutInflater inflater = LayoutInflater.from(context);
                     for (MyObject obj: dataR.keySet()) {
                         View v = inflater.inflate(R.layout.row_stats, ll, false);
                         TextView tvMain, tvResultL, tvTime, tvWeights, tvName;
-                        tvMain = v.findViewById(R.id.r_view_result_s);
-                        tvName = v.findViewById(R.id.r_view_date);
-                        tvResultL = v.findViewById(R.id.r_view_result_l);
-                        if (obj.result_s != null) {
-                            tvTime = v.findViewById(R.id.r_view_time);
-                            tvWeights = v.findViewById(R.id.r_view_result_weight);
-                            if (!obj.weights.equals("")) {
+                        tvMain = v.findViewById(R.id.mainValue);
+                        tvName = v.findViewById(R.id.rightValue);
+                        tvResultL = v.findViewById(R.id.addValue);
+                        if (obj.time != null/*Is exercise*/) {
+                            tvTime = v.findViewById(R.id.time);
+                            tvWeights = v.findViewById(R.id.addValue2);
+                            if (!obj.allWeights.equals("")) {
                                 tvWeights.setVisibility(View.VISIBLE);
-                                tvWeights.setText(obj.weights);
+                                tvWeights.setText(obj.allWeights);
                             } else {
                                 tvWeights.setVisibility(View.GONE);
                             }
-                            tvMain.setText(obj.result_s);
-                            tvResultL.setText(obj.result_l);
+                            tvMain.setText(String.valueOf((int) obj.mainValue));
+                            tvResultL.setText(obj.longerValue);
                             tvTime.setText(obj.time);
                         } else {
-                            tvResultL.setText(obj.notes);
-                            tvMain.setText(String.valueOf(obj.value));
+                            tvResultL.setText(obj.longerValue);
+                            tvMain.setText(String.valueOf(obj.mainValue));
                         }
                         tvName.setText(dataR.get(obj));
                         ll.addView(v);
@@ -198,8 +198,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
         public MyViewHolder(@NonNull View view, int stepWidth, int stepHeight) {
             super(view);
-            day = view.findViewById(R.id.text_day_calendar_row);
-            layout = view.findViewById(R.id.info_layout_calendar_row);
+            day = view.findViewById(R.id.dayItem);
+            layout = view.findViewById(R.id.dayItemsLayout);
             view.setMinimumHeight(stepHeight);
             view.setMinimumWidth(stepWidth);
         }

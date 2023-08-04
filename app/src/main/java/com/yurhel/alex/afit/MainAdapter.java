@@ -17,15 +17,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     private final ClickInterface clickInterface;
     Context context;
     List<MyObject> data;
-    int color;
     int blackColor;
     int whiteColor;
 
-    public MainAdapter(Context context, List<MyObject> data, ClickInterface clickInterface, int color) {
+    public MainAdapter(Context context, List<MyObject> data, ClickInterface clickInterface) {
         this.context = context;
         this.data = data;
         this.clickInterface = clickInterface;
-        this.color = color;
         this.blackColor = context.getColor(R.color.dark);
         this.whiteColor = context.getColor(R.color.white);
     }
@@ -33,8 +31,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MainAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        return new MainAdapter.MyViewHolder(inflater.inflate(R.layout.row_main, parent, false));
+        return new MainAdapter.MyViewHolder(LayoutInflater.from(context).inflate(R.layout.row_main, parent, false));
     }
 
     @Override
@@ -42,11 +39,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
         MyObject obj = data.get(pos);
         holder.name_icon.setBackgroundColor(obj.color);
         holder.name_icon.setText(obj.name);
-        Drawable d;
-        if (obj.sets != 0)
-            d = Objects.requireNonNull(AppCompatResources.getDrawable(context, R.drawable.ic_rv_exercise));
-        else
-            d = Objects.requireNonNull(AppCompatResources.getDrawable(context, R.drawable.ic_rv_stats));
+        Drawable d = Objects.requireNonNull(AppCompatResources.getDrawable(
+                context, (obj.sets != 0/*Is exercise*/) ? R.drawable.ic_rv_exercise: R.drawable.ic_rv_stats
+        ));
         if (obj.color == whiteColor) {
             holder.name_icon.setTextColor(blackColor);
             d.setTint(blackColor);
@@ -54,8 +49,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
             holder.name_icon.setShadowLayer(14,1,1,blackColor);
         }
         holder.name_icon.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
-        if (clickInterface != null)
-            holder.name_icon.setOnClickListener(view1 -> clickInterface.onClickItem(pos, (obj.sets != 0) ? "ex_id": "st_id"));
+        holder.name_icon.setOnClickListener(view1 -> clickInterface.onClickItem(pos, (obj.sets != 0/*Is exercise*/) ? "ex_id": "st_id"));
     }
 
     @Override
@@ -68,7 +62,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
 
         public MyViewHolder(@NonNull View view) {
             super(view);
-            name_icon = view.findViewById(R.id.rv_main_name_icon);
+            name_icon = view.findViewById(R.id.mainButton);
         }
     }
 }

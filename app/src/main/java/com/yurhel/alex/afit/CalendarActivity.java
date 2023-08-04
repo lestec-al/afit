@@ -49,7 +49,7 @@ public class CalendarActivity extends AppCompatActivity {
         today = Calendar.getInstance();
         calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendarView = findViewById(R.id.calendar_grid);
+        calendarView = findViewById(R.id.calendarRV);
         // Styling
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -58,7 +58,7 @@ public class CalendarActivity extends AppCompatActivity {
             Help.setActionBackIconColor(this, themeColor, actionBar);
         }
         // Create days of week, update calendar
-        LinearLayout headerDays = findViewById(R.id.calendar_header_days);
+        LinearLayout headerDays = findViewById(R.id.calendarHeaderDays);
         headerDays.post(() -> {
             Calendar c = Calendar.getInstance();
             int d = c.getFirstDayOfWeek();
@@ -138,8 +138,8 @@ public class CalendarActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = getMenuInflater();
         mi.inflate(R.menu.calendar, menu);
-        menu.findItem(R.id.action_date_now).setTitle(Help.dateFormat(this, new Date()));
-        Help.setActionIconsColor(themeColor, menu, new int[] {R.id.action_date_now, R.id.action_set_date});
+        menu.findItem(R.id.actionDateNow).setTitle(Help.dateFormat(this, new Date()));
+        Help.setActionIconsColor(themeColor, menu, new int[] {R.id.actionDateNow, R.id.actionSetDate});
         return true;
     }
 
@@ -150,22 +150,22 @@ public class CalendarActivity extends AppCompatActivity {
             onBackPressed();
             return true;
 
-        } else if (item.getItemId() == R.id.action_date_now) {
+        } else if (item.getItemId() == R.id.actionDateNow) {
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             updateCalendar();
             return true;
 
-        } else if (item.getItemId() == R.id.action_set_date) {
+        } else if (item.getItemId() == R.id.actionSetDate) {
             // Custom date picker dialog
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_add_stats);
-            Button ok = dialog.findViewById(R.id.button_create_stats_dialog);
-            Button cancel = dialog.findViewById(R.id.button_cancel_stats_dialog);
+            Button ok = dialog.findViewById(R.id.OkButton);
+            Button cancel = dialog.findViewById(R.id.cancelButton);
             Help.setButtonsTextColor(themeColor, new Button[] {ok, cancel});
-            dialog.findViewById(R.id.button_pick_date_stats_dialog).setVisibility(View.GONE);
-            NumberPicker pickerMonth = dialog.findViewById(R.id.number_picker_0);
-            NumberPicker pickerYear = dialog.findViewById(R.id.number_picker_1);
+            dialog.findViewById(R.id.pickDateButton).setVisibility(View.GONE);
+            NumberPicker pickerMonth = dialog.findViewById(R.id.numberPicker0);
+            NumberPicker pickerYear = dialog.findViewById(R.id.numberPicker1);
             // Get all months
             Calendar c = Calendar.getInstance();
             c.set(Calendar.DAY_OF_MONTH, 1);
@@ -222,7 +222,7 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(CalendarActivity.this);
-            return new MyViewHolder(inflater.inflate(R.layout.row_calendar_rv, parent, false));
+            return new MyViewHolder(inflater.inflate(R.layout.row_calendar_big, parent, false));
         }
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int pos) {
@@ -245,7 +245,7 @@ public class CalendarActivity extends AppCompatActivity {
             RecyclerView rv;
             public MyViewHolder(@NonNull View view) {
                 super(view);
-                rv = view.findViewById(R.id.calendar_grid_row);
+                rv = view.findViewById(R.id.calendarItem);
             }
         }
     }

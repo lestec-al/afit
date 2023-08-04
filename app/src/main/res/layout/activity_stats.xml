@@ -9,21 +9,21 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/graph_layout"
+        android:id="@+id/graphLayout"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/info_exercise_layout"
+            android:id="@+id/infoExerciseLayout"
             android:orientation="horizontal"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/all_entries_label"
+                android:id="@+id/allEntriesLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:contentDescription="entries"
@@ -31,7 +31,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
-                android:id="@+id/all_entries"
+                android:id="@+id/allEntriesText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
@@ -40,7 +40,7 @@
                 tools:text="8" />
 
             <ImageView
-                android:id="@+id/result_max_label"
+                android:id="@+id/recordMaxLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
@@ -49,7 +49,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
-                android:id="@+id/record_1"
+                android:id="@+id/record1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
@@ -58,7 +58,7 @@
                 tools:text="16000.1" />
 
             <TextView
-                android:id="@+id/div_comma"
+                android:id="@+id/comma"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -67,7 +67,7 @@
                 tools:ignore="HardcodedText" />
 
             <ImageView
-                android:id="@+id/result_min_label"
+                android:id="@+id/recordMinLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
@@ -76,7 +76,7 @@
                 tools:ignore="HardcodedText"/>
 
             <TextView
-                android:id="@+id/record_2"
+                android:id="@+id/record2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
@@ -85,10 +85,10 @@
                 tools:text="50212.2" />
         </LinearLayout>
 
-        <com.jjoe64.graphview.GraphView
-            android:id="@+id/graph_view"
+        <FrameLayout
+            android:id="@+id/graphViewLayout"
             android:layout_width="match_parent"
-            android:layout_height="230dp" />
+            android:layout_height="230dp"/>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -98,7 +98,7 @@
         android:background="@drawable/divider">
 
         <Button
-            android:id="@+id/button_date_start"
+            android:id="@+id/buttonDateStart"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -109,19 +109,19 @@
             tools:textColor="@color/green_main"/>
 
         <ImageButton
-            android:id="@+id/button_graph_visibility"
+            android:id="@+id/buttonGraphVisibility"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             app:srcCompat="@drawable/ic_arrow_up"
             style="@style/Widget.AppCompat.Light.ActionButton"
-            app:layout_constraintEnd_toStartOf="@+id/button_date_end"
-            app:layout_constraintStart_toEndOf="@+id/button_date_start"
+            app:layout_constraintEnd_toStartOf="@+id/buttonDateEnd"
+            app:layout_constraintStart_toEndOf="@+id/buttonDateStart"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="graph"
             tools:ignore="HardcodedText" />
 
         <Button
-            android:id="@+id/button_date_end"
+            android:id="@+id/buttonDateEnd"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -133,8 +133,8 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/stats_view"
-        android:scrollbarSize="2dp"
+        android:id="@+id/statsRV"
+        android:scrollbarSize="4dp"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -10,7 +10,7 @@
 
     <ProgressBar
         android:visibility="gone"
-        android:id="@+id/tr_progress_result_w"
+        android:id="@+id/progressResultW"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_progress_result"
@@ -23,37 +23,38 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/tr_reps_result_layout_w"
+        android:id="@+id/repsResultLayoutW"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="@+id/tr_progress_result_w"
+        app:layout_constraintTop_toTopOf="@+id/progressResultW"
         app:layout_constraintStart_toStartOf="parent">
     </LinearLayout>
 
     <LinearLayout
         android:visibility="gone"
-        android:id="@+id/tr_up_layout"
+        android:id="@+id/upLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginEnd="32dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/tr_count_layout"
+        app:layout_constraintBottom_toTopOf="@+id/countLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
-            android:id="@+id/tr_button_minus_w"
+            android:id="@+id/buttonMinusW"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:contentDescription="-"
             style="@style/Widget.AppCompat.Light.ActionButton"
-            app:srcCompat="@drawable/ic_t_minus" />
+            app:srcCompat="@drawable/ic_t_minus"
+            tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/tr_text_weight"
+            android:id="@+id/textWeightTraining"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".3"
@@ -62,31 +63,32 @@
             tools:text="60.0" />
 
         <ImageButton
-            android:id="@+id/tr_button_plus_w"
+            android:id="@+id/buttonPlusW"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:contentDescription="+"
             style="@style/Widget.AppCompat.Light.ActionButton"
-            app:srcCompat="@drawable/ic_t_plus" />
+            app:srcCompat="@drawable/ic_t_plus"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 
     <FrameLayout
-        android:id="@+id/tr_count_layout"
+        android:id="@+id/countLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin"
         android:layout_marginTop="@dimen/margin"
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
-        app:layout_constraintBottom_toTopOf="@+id/tr_progress_result"
+        app:layout_constraintBottom_toTopOf="@+id/progressResult"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tr_progress_result_w">
+        app:layout_constraintTop_toBottomOf="@+id/progressResultW">
 
         <ProgressBar
-            android:id="@+id/tr_progress_time"
+            android:id="@+id/progressTime"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -94,7 +96,7 @@
             android:progressDrawable="@drawable/progress_circle" />
 
         <Button
-            android:id="@+id/tr_button_sets"
+            android:id="@+id/buttonSets"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/circle"
@@ -103,7 +105,7 @@
             tools:text="16" />
 
         <Button
-            android:id="@+id/tr_button_time"
+            android:id="@+id/buttonTime"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -113,7 +115,7 @@
             tools:text="120" />
 
         <TextView
-            android:id="@+id/tr_info_button"
+            android:id="@+id/infoOnButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -127,30 +129,32 @@
 
 
     <ImageButton
-        android:id="@+id/tr_button_minus"
+        android:id="@+id/buttonMinus"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:contentDescription="-"
         style="@style/Widget.AppCompat.Light.ActionButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tr_count_layout"
-        app:srcCompat="@drawable/ic_t_minus" />
+        app:layout_constraintTop_toBottomOf="@+id/countLayout"
+        app:srcCompat="@drawable/ic_t_minus"
+        tools:ignore="HardcodedText" />
 
     <ImageButton
-        android:id="@+id/tr_button_plus"
+        android:id="@+id/buttonPlus"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin"
         android:contentDescription="+"
         style="@style/Widget.AppCompat.Light.ActionButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tr_count_layout"
-        app:srcCompat="@drawable/ic_t_plus" />
+        app:layout_constraintTop_toBottomOf="@+id/countLayout"
+        app:srcCompat="@drawable/ic_t_plus"
+        tools:ignore="HardcodedText" />
 
 
     <ProgressBar
-        android:id="@+id/tr_progress_result"
+        android:id="@+id/progressResult"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="@dimen/height_progress_result"
@@ -163,12 +167,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/tr_reps_result_layout"
+        android:id="@+id/repsResultLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/tr_progress_result"
+        app:layout_constraintBottom_toBottomOf="@+id/progressResult"
         app:layout_constraintStart_toStartOf="parent">
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.LabelFormatter;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -44,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 public class StatsActivity extends AppCompatActivity implements ClickInterface {
     DB db;
-    boolean exercise;
+    boolean isExercise;
     int oneID;
     ArrayList<MyObject> data;
     MyObject obj;
@@ -55,8 +58,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     ImageButton graphVisB;
     Button startDateB;
     Button endDateB;
-    GraphView graphView;
-    boolean nightMode;
+    FrameLayout graphViewLayout;
     RecyclerView statsView;
     Integer autoScrollPos = null;
 
@@ -70,22 +72,21 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             actionBar.setTitle("");
         }
         int exerciseID = getIntent().getIntExtra("ex_id", 0);
-        exercise = exerciseID != 0;
-        oneID = (exercise) ? exerciseID : getIntent().getIntExtra("st_id", 0);
+        isExercise = exerciseID != 0;
+        oneID = (isExercise) ? exerciseID : getIntent().getIntExtra("st_id", 0);
         db = new DB(this);
         targetDate = new Date();
-        graphView = findViewById(R.id.graph_view);
-        nightMode = Help.isNightMode(this);
-        statsView = findViewById(R.id.stats_view);
+        graphViewLayout = findViewById(R.id.graphViewLayout);
+        statsView = findViewById(R.id.statsRV);
         // Date buttons
-        startDateB = findViewById(R.id.button_date_start);
+        startDateB = findViewById(R.id.buttonDateStart);
         startDateB.setOnClickListener(v -> calendarDialog(startDate, startDateB, true));
-        endDateB = findViewById(R.id.button_date_end);
+        endDateB = findViewById(R.id.buttonDateEnd);
         endDateB.setOnClickListener(v -> calendarDialog(endDate, endDateB, false));
         // Show/Hide graph button
-        graphVisB = findViewById(R.id.button_graph_visibility);
+        graphVisB = findViewById(R.id.buttonGraphVisibility);
         graphVisB.setOnClickListener(v -> {
-            LinearLayout l = findViewById(R.id.graph_layout);
+            LinearLayout l = findViewById(R.id.graphLayout);
             if (l.getVisibility() == View.VISIBLE) {
                 l.setVisibility(View.GONE);
                 graphVisB.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_down));
@@ -95,7 +96,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             }
             graphVisB.setColorFilter(obj.color);
         });
-        // Scroll
+        // Auto scroll
         statsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -114,152 +115,134 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     }
 
     private void updateAll(boolean onCreate) {
-        data = db.getTableEntries(oneID, exercise);
-        obj = db.getOneMainObj(oneID, exercise);
         if (!onCreate)
             setUpActionBar();
-        graphView.removeAllSeries();
-        GridLabelRenderer graphLabelRenderer = graphView.getGridLabelRenderer();
+        obj = db.getOneMainObj(oneID, isExercise);
+        graphVisB.setColorFilter(obj.color);
+        data = db.getTableEntries(oneID, isExercise);
         int dataSize = data.size();
-        if (dataSize > 0) {
+        if (dataSize > 0)
             data.sort(Comparator.comparing(obj -> new Date(obj.date)));
-            // Date boundaries
-            if (obj.start.equals(""))
-                startDate = new Date(data.get(0).date);
-            else
-                startDate = new Date(Long.parseLong(obj.start));
-            if (obj.end.equals(""))
-                endDate = new Date(data.get(dataSize-1).date);
-            else
-                endDate = new Date(Long.parseLong(obj.end));
-            // Cut data within date boundaries
-            ArrayList<MyObject> newData = new ArrayList<>();
-            for (MyObject item: data) {
-                Date d = new Date(item.date);
-                if (d.compareTo(startDate) >= 0 && d.compareTo(endDate) <= 0)
-                    newData.add(item);
-            }
-            // Update data
-            data = newData;
-            dataSize = data.size();
-        }
-        if (dataSize == 0) {
-            // Date boundaries
-            Date dateToday = new Date();
-            if (obj.start.equals(""))
-                startDate = dateToday;
-            else
-                startDate = new Date(Long.parseLong(obj.start));
-            if (obj.end.equals(""))
-                endDate = dateToday;
-            else
-                endDate = new Date(Long.parseLong(obj.end));
-        }
-        // Date buttons
+        // Setup date boundaries
+        Date dateToday = new Date();
+        if (obj.start.equals(""))
+            startDate = (dataSize > 0) ? new Date(data.get(0).date): dateToday;
+        else
+            startDate = new Date(Long.parseLong(obj.start));
+        if (obj.end.equals(""))
+            endDate = (dataSize > 0) ? new Date(data.get(dataSize-1).date): dateToday;
+        else
+            endDate = new Date(Long.parseLong(obj.end));
         startDateB.setText(Help.dateFormat(this, startDate));
         endDateB.setText(Help.dateFormat(this, endDate));
         Help.setButtonsTextColor(obj.color, new Button[] {startDateB, endDateB});
-        graphVisB.setColorFilter(obj.color);
-        // Update short info
-        int record = 0;
-        int recordSet = 0;
-        double recordMin = 0.0;
-        double recordMax = 0.0;
+        // Cut data within date boundaries + get short info
+        int oneSetMax = 0;
+        double statsMin = 0.0;
+        double statsMax = 0.0;
+        ArrayList<MyObject> newData = new ArrayList<>();
+        ArrayList<DataPoint> xyData = new ArrayList<>();
         for (MyObject item: data) {
-            if (exercise) {
-                int r = Integer.parseInt(item.result_s);
-                if (r > recordSet)
-                    recordSet = r;
-                for (String i: item.result_l.split(" ")) {
-                    if (!i.equals("+")) {
-                        int iInt = Integer.parseInt(i);
-                        if (iInt > record)
-                            record = iInt;
+            Date d = new Date(item.date);
+            if (d.compareTo(startDate) >= 0 && d.compareTo(endDate) <= 0) {
+                newData.add(item);
+                xyData.add(new DataPoint(new Date(item.date), item.mainValue));
+                // Get short info
+                if (isExercise) {
+                    for (String i: item.longerValue.split(" ")) {
+                        if (!i.equals("+")) {
+                            int iInt = Integer.parseInt(i);
+                            if (iInt > oneSetMax)
+                                oneSetMax = iInt;
+                        }
                     }
                 }
-            } else {
-                double r = item.value;
-                if (r > recordMax)
-                    recordMax = r;
-                if (recordMin == 0)
-                    recordMin = r;
-                else if (r < recordMin)
-                    recordMin = r;
+                if (item.mainValue > statsMax)
+                    statsMax = item.mainValue;
+                if (statsMin == 0)
+                    statsMin = item.mainValue;
+                else if (item.mainValue < statsMin)
+                    statsMin = item.mainValue;
             }
         }
-        ((TextView) findViewById(R.id.all_entries)).setText(String.valueOf(data.size()));
-        ((TextView) findViewById(R.id.record_1)).setText((exercise)?""+record:""+recordMax);
-        ((TextView) findViewById(R.id.record_2)).setText((exercise)?""+recordSet:""+recordMin);
-        if (exercise)
-            findViewById(R.id.result_min_label).setVisibility(View.GONE);
-        else
-            findViewById(R.id.div_comma).setVisibility(View.GONE);
+        data = newData;
+        // Update short info
+        ((TextView) findViewById(R.id.allEntriesText)).setText(String.valueOf(data.size()));
+        ((TextView) findViewById(R.id.record1)).setText((isExercise)?""+(int)statsMax:""+statsMax);
+        ((TextView) findViewById(R.id.record2)).setText((isExercise)?""+oneSetMax:""+statsMin);
+        findViewById((isExercise)? R.id.recordMinLabel : R.id.comma).setVisibility(View.GONE);
         int mainColor = Help.getMainColor(this);
-        ((ImageView)findViewById(R.id.all_entries_label)).setColorFilter(mainColor);
-        ((ImageView)findViewById(R.id.result_max_label)).setColorFilter(mainColor);
-        ((ImageView)findViewById(R.id.result_min_label)).setColorFilter(mainColor);
+        ((ImageView)findViewById(R.id.allEntriesLabel)).setColorFilter(mainColor);
+        ((ImageView)findViewById(R.id.recordMaxLabel)).setColorFilter(mainColor);
+        ((ImageView)findViewById(R.id.recordMinLabel)).setColorFilter(mainColor);
         // Graph setup
-        if (dataSize > 1) {
+        graphViewLayout.removeAllViews();
+        GraphView graphView = new GraphView(this);
+        graphViewLayout.addView(graphView);
+        if (xyData.size() > 1) {
             Viewport graphViewPort = graphView.getViewport();
             graphViewPort.setXAxisBoundsManual(true);
             graphViewPort.setMinX(startDate.getTime());
             graphViewPort.setMaxX(endDate.getTime());
-        }
-        if (dataSize < 2)
-            graphLabelRenderer.setVerticalLabelsVisible(false);
-        graphLabelRenderer.setHorizontalLabelsVisible(false);
-        graphLabelRenderer.setNumHorizontalLabels(1);
-        graphLabelRenderer.setHighlightZeroLines(false);
-        // Check data within boundaries
-        if (dataSize > 0) {
-            if (dataSize > 1) {
-                // Update graph
-                DataPoint[] XYData = new DataPoint[dataSize];
-                int idx = 0;
-                for (MyObject item: data) {
-                    XYData[idx] = new DataPoint(new Date(item.date), (exercise)? Double.parseDouble(item.result_s): item.value);
-                    idx += 1;
+            graphViewPort.setYAxisBoundsManual(true);
+            graphViewPort.setMinY(statsMin);
+            graphViewPort.setMaxY(statsMax);
+            GridLabelRenderer graphLabelRenderer = graphView.getGridLabelRenderer();
+            graphLabelRenderer.setHumanRounding(false);
+            graphLabelRenderer.setHorizontalLabelsVisible(false);
+            graphLabelRenderer.setHighlightZeroLines(false);
+            graphLabelRenderer.setLabelFormatter(new LabelFormatter() {
+                @SuppressLint("DefaultLocale")
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    return (!isValueX)? String.format("%1.1f", value): null;
                 }
-                LineGraphSeries<DataPoint> series = new LineGraphSeries<>(XYData);
-                series.setThickness(7);
-                series.setColor(obj.color);
-                series.setOnDataPointTapListener((series1, dataPoint) -> {
-                    int pos = 0;
-                    for (MyObject item: data) {
-                        if (item.date == (long) dataPoint.getX() &&
-                                ((exercise)? Double.parseDouble(item.result_s): item.value) == dataPoint.getY())
-                            break;
-                        pos++;
-                    }
-                    RecyclerView.ViewHolder selectedItem = statsView.findViewHolderForAdapterPosition(pos);
-                    if (selectedItem != null) {
-                        highlightRVItem(selectedItem.itemView);
-                    } else {
-                        statsView.smoothScrollToPosition(pos);
-                        autoScrollPos = pos;
-                    }
-                });
-                graphView.addSeries(series);
-            }
-            // Update list
-            Collections.reverse(data);
-            statsView.setLayoutManager(new LinearLayoutManager(this));
-            statsView.setHasFixedSize(true);
-            statsView.setAdapter(new StatsAdapter(this, data, exercise, this));
+                @Override
+                public void setViewport(Viewport viewport) {}
+            });
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(xyData.toArray(new DataPoint[0]));
+            series.setThickness(7);
+            series.setColor(obj.color);
+            series.setOnDataPointTapListener((series1, dataPoint) -> {
+                int pos = 0;
+                for (MyObject item: data) {
+                    if (item.date == (long)dataPoint.getX() && item.mainValue == dataPoint.getY())
+                        break;
+                    pos++;
+                }
+                RecyclerView.ViewHolder selectedItem = statsView.findViewHolderForAdapterPosition(pos);
+                if (selectedItem != null) {
+                    highlightRVItem(selectedItem.itemView);
+                } else {
+                    statsView.smoothScrollToPosition(pos);
+                    autoScrollPos = pos;
+                }
+            });
+            graphView.addSeries(series);
+        } else {
+            GridLabelRenderer graphLabelRenderer = graphView.getGridLabelRenderer();
+            graphLabelRenderer.setVerticalLabelsVisible(false);
+            graphLabelRenderer.setHorizontalLabelsVisible(false);
+            graphLabelRenderer.setHighlightZeroLines(false);
         }
+        // Update rv list
+        Collections.reverse(data);
+        statsView.setLayoutManager(new LinearLayoutManager(this));
+        statsView.setHasFixedSize(true);
+        statsView.setAdapter(new StatsAdapter(this, data, this));
     }
 
     // DIALOGS
     private void statsDialog(MyObject passObj) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_add_stats);
-        Button pickDate = dialog.findViewById(R.id.button_pick_date_stats_dialog);
-        Button ok = dialog.findViewById(R.id.button_create_stats_dialog);
-        Button cancel = dialog.findViewById(R.id.button_cancel_stats_dialog);
-        EditText addStatsEditText = dialog.findViewById(R.id.add_stats_edit_text);
+        Button pickDate = dialog.findViewById(R.id.pickDateButton);
+        Button ok = dialog.findViewById(R.id.OkButton);
+        Button cancel = dialog.findViewById(R.id.cancelButton);
+        EditText addStatsEditText = dialog.findViewById(R.id.editNote);
         addStatsEditText.setVisibility(View.VISIBLE);
-        NumberPicker numberPicker0 = dialog.findViewById(R.id.number_picker_0);
-        NumberPicker numberPicker1 = dialog.findViewById(R.id.number_picker_1);
+        NumberPicker numberPicker0 = dialog.findViewById(R.id.numberPicker0);
+        NumberPicker numberPicker1 = dialog.findViewById(R.id.numberPicker1);
         numberPicker0.setMaxValue(99999);
         numberPicker0.setMinValue(1);
         numberPicker0.setWrapSelectorWheel(false);
@@ -272,8 +255,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         numberPicker1.setWrapSelectorWheel(false);
         if (passObj == null) {
             if (data.size() > 0) {
-                numberPicker0.setValue((int) data.get(0).value);
-                numberPicker1.setValue(Integer.parseInt(String.valueOf(data.get(0).value).split("\\.")[1]));
+                numberPicker0.setValue((int) data.get(0).mainValue);
+                numberPicker1.setValue(Integer.parseInt(String.valueOf(data.get(0).mainValue).split("\\.")[1]));
             } else {
                 numberPicker0.setValue(0);
                 numberPicker1.setValue(0);
@@ -282,11 +265,11 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             pickDate.setOnClickListener(view -> calendarDialog(targetDate, pickDate, null));
             Help.setButtonsTextColor(obj.color, new Button[] {pickDate, ok, cancel});
         } else {
-            numberPicker0.setValue((int) passObj.value);
-            numberPicker1.setValue(Integer.parseInt(String.valueOf(passObj.value).split("\\.")[1]));
+            numberPicker0.setValue((int) passObj.mainValue);
+            numberPicker1.setValue(Integer.parseInt(String.valueOf(passObj.mainValue).split("\\.")[1]));
             pickDate.setText(Help.dateFormat(this, new Date(passObj.date)));
             pickDate.setEnabled(false);
-            addStatsEditText.setText(passObj.notes);
+            addStatsEditText.setText(passObj.longerValue);
             Help.setButtonsTextColor(obj.color, new Button[] {ok, cancel});
         }
         if (numberPicker0.getValue() == numberPicker0.getMaxValue())
@@ -315,7 +298,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             Date newDate = c.getTime();
             ((TextView)dateButton).setText(Help.dateFormat(this, newDate));
             if (start != null) {
-                db.setDate(String.valueOf(newDate.getTime()), oneID, exercise, start);
+                db.setDate(String.valueOf(newDate.getTime()), oneID, isExercise, start);
                 updateAll(false);
             } else {
                 targetDate = newDate;
@@ -323,7 +306,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         if (start != null) {
             dpd.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.default_t), (dialog, which) -> {
-                db.setDate("", oneID, exercise, start);
+                db.setDate("", oneID, isExercise, start);
                 updateAll(false);
             });
         }
@@ -338,7 +321,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     // NAVIGATION
     @Override
     public void onClickItem(int pos, String option) {
-        statsDialog(data.get(pos));
+        if (!isExercise)
+            statsDialog(data.get(pos));
     }
 
     @Override
@@ -352,8 +336,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.stats, menu);
         upMenu = menu;
-        if (!exercise)
-            upMenu.findItem(R.id.action_add).setTitle(R.string.add_st);
+        if (!isExercise)
+            upMenu.findItem(R.id.actionAdd).setTitle(R.string.add_st);
         setUpActionBar();
         return true;
     }
@@ -364,8 +348,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             onBackPressed();
             return true;
 
-        } else if (item.getItemId() == R.id.action_add) {
-            if (exercise)
+        } else if (item.getItemId() == R.id.actionAdd) {
+            if (isExercise)
                 startActivity(new Intent(StatsActivity.this, TrainingActivity.class)
                         .putExtra("ex_id", oneID)
                         .putExtra("date", targetDate.getTime()
@@ -374,33 +358,33 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 statsDialog(null);
             return true;
 
-        } else if (item.getItemId() == R.id.action_settings) {
+        } else if (item.getItemId() == R.id.actionSettings) {
             // Settings dialog
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_settings);
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.findViewById(R.id.data_layout).setVisibility(View.GONE);
+            dialog.findViewById(R.id.mainSettingsLayout).setVisibility(View.GONE);
             // Exercise specifics
-            EditText textName = dialog.findViewById(R.id.text_name);
-            EditText textRest = dialog.findViewById(R.id.text_rest);
-            EditText textReps = dialog.findViewById(R.id.text_reps);
-            EditText textWeight = dialog.findViewById(R.id.text_weight);
-            EditText textSets = dialog.findViewById(R.id.text_sets);
+            EditText textName = dialog.findViewById(R.id.textName);
+            EditText textRest = dialog.findViewById(R.id.textRest);
+            EditText textReps = dialog.findViewById(R.id.textReps);
+            EditText textWeight = dialog.findViewById(R.id.textWeight);
+            EditText textSets = dialog.findViewById(R.id.textSets);
             textName.setText(obj.name);
-            if (exercise) {
+            if (isExercise) {
                 textRest.setText(String.valueOf(obj.rest));
                 textReps.setText(String.valueOf(obj.reps));
                 textSets.setText(String.valueOf(obj.sets));
                 textWeight.setText(String.valueOf(obj.weight));
-                TextView date = dialog.findViewById(R.id.tv_date_dialog);
+                TextView date = dialog.findViewById(R.id.textDate);
                 date.setText(Help.dateFormat(this, targetDate));
-                dialog.findViewById(R.id.click_date).setOnClickListener(v -> calendarDialog(targetDate, date, null));
+                dialog.findViewById(R.id.clickDate).setOnClickListener(v -> calendarDialog(targetDate, date, null));
             } else {
-                dialog.findViewById(R.id.date_layout).setVisibility(View.GONE);
-                dialog.findViewById(R.id.sec_layout).setVisibility(View.GONE);
-                dialog.findViewById(R.id.weight_layout).setVisibility(View.GONE);
-                dialog.findViewById(R.id.reps_layout).setVisibility(View.GONE);
-                dialog.findViewById(R.id.sets_layout).setVisibility(View.GONE);
+                dialog.findViewById(R.id.dateLayout).setVisibility(View.GONE);
+                dialog.findViewById(R.id.restLayout).setVisibility(View.GONE);
+                dialog.findViewById(R.id.weightLayout).setVisibility(View.GONE);
+                dialog.findViewById(R.id.repsLayout).setVisibility(View.GONE);
+                dialog.findViewById(R.id.setsLayout).setVisibility(View.GONE);
             }
             for (EditText e: new EditText[] {textName, textRest, textReps, textWeight, textSets}) {
                 e.addTextChangedListener(new TextWatcher() {
@@ -411,7 +395,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {}
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if ((e == textName && !s.toString().equals(obj.name)) || (exercise && (
+                        if ((e == textName && !s.toString().equals(obj.name)) || (isExercise && (
                                 e == textRest && !s.toString().equals(String.valueOf(obj.rest)) ||
                                 e == textReps && !s.toString().equals(String.valueOf(obj.reps)) ||
                                 e == textSets && !s.toString().equals(String.valueOf(obj.sets)) ||
@@ -425,16 +409,16 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             }
             // Colors
             final int[] c = {Color.red(obj.color), Color.green(obj.color), Color.blue(obj.color)};
-            SeekBar seekR = dialog.findViewById(R.id.seek_color_r);
-            SeekBar seekG = dialog.findViewById(R.id.seek_color_g);
-            SeekBar seekB = dialog.findViewById(R.id.seek_color_b);
+            SeekBar seekR = dialog.findViewById(R.id.seekColorR);
+            SeekBar seekG = dialog.findViewById(R.id.seekColorG);
+            SeekBar seekB = dialog.findViewById(R.id.seekColorB);
             seekR.setMax(255);
             seekG.setMax(255);
             seekB.setMax(255);
-            TextView colorView = dialog.findViewById(R.id.color_view);
+            TextView colorView = dialog.findViewById(R.id.textColor);
             setSeekBarsColor(seekR, seekG, seekB, colorView, c);
             // Set def color
-            ImageButton defaultColor = dialog.findViewById(R.id.button_default_color_dialog);
+            ImageButton defaultColor = dialog.findViewById(R.id.defaultColorButton);
             defaultColor.setOnClickListener(v -> {
                 c[0] = Color.red(obj.color);
                 c[1] = Color.green(obj.color);
@@ -470,7 +454,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 });
             }
             // Others
-            ImageButton delete = dialog.findViewById(R.id.button_delete_dialog);
+            ImageButton delete = dialog.findViewById(R.id.deleteButton);
             delete.setOnClickListener(v -> {
                 // Delete dialog
                 Object[] d = Help.editTextDialog(this, obj.color, R.string.delete, "", null, false);
@@ -478,18 +462,18 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                     ((Dialog)d[0]).cancel();
                     dialog.dismiss();
                     this.onBackPressed();
-                    db.deleteObj(oneID, exercise);
+                    db.deleteObj(oneID, isExercise);
                 });
                 ((Dialog)d[0]).show();
             });
-            ImageButton back = dialog.findViewById(R.id.button_back_settings_dialog);
+            ImageButton back = dialog.findViewById(R.id.backButton);
             back.setOnClickListener(v -> dialog.cancel());
             Help.setImageButtonsColor(obj.color, new ImageButton[] {back, delete, defaultColor});
             // Save settings
             dialog.setOnCancelListener(d1 -> {
                 String name = textName.getText().toString();
                 if (name.length() > 0) {
-                    if (exercise) {
+                    if (isExercise) {
                         int s = (int) tryParseIntDouble(textRest.getText().toString(), true);
                         int f = (int) tryParseIntDouble(textReps.getText().toString(), true);
                         int r = (int) tryParseIntDouble(textSets.getText().toString(), true);
@@ -511,7 +495,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     private void setUpActionBar() {
         actionBar.setTitle(obj.name);
         Help.setActionBackIconColor(this, obj.color, actionBar);
-        Help.setActionIconsColor(obj.color, upMenu, new int[] {R.id.action_add, R.id.action_settings});
+        Help.setActionIconsColor(obj.color, upMenu, new int[] {R.id.actionAdd, R.id.actionSettings});
     }
 
     private Object tryParseIntDouble(String text, boolean isInteger) {

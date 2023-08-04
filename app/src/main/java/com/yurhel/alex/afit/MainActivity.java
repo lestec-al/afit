@@ -64,44 +64,51 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         MenuCompat.setGroupDividerEnabled(menu, true);
-        Help.setActionIconsColor(
-                themeColor, menu, new int[] {R.id.action_add_ex, R.id.action_add_stats, R.id.action_settings, R.id.action_calendar, R.id.action_more}
-        );
+        Help.setActionIconsColor(themeColor, menu, new int[] {
+                R.id.actionAddEx, R.id.actionAddStats, R.id.actionSettings, R.id.actionCalendar, R.id.actionMore, R.id.actionGraph
+        });
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_add_ex) {
+        if (item.getItemId() == R.id.actionAddEx) {
             addDialog(R.string.add_ex);
             return true;
 
-        } else if (item.getItemId() == R.id.action_add_stats) {
+        } else if (item.getItemId() == R.id.actionAddStats) {
             addDialog(R.string.add_st);
             return true;
 
-        } else if (item.getItemId() == R.id.action_calendar) {
+        } else if (item.getItemId() == R.id.actionCalendar) {
             startActivity(new Intent(MainActivity.this, CalendarActivity.class));
             return true;
 
-        } else if (item.getItemId() == R.id.action_settings) {
+        } else if (item.getItemId() == R.id.actionGraph) {
+            startActivity(new Intent(MainActivity.this, ManyStatsActivity.class));
+            return true;
+
+        } else if (item.getItemId() == R.id.actionSettings) {
             // Settings dialog
             dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_settings);
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.findViewById(R.id.stats_layout).setVisibility(View.GONE);
-            dialog.findViewById(R.id.button_delete_dialog).setVisibility(View.GONE);
-            Button sendFeedback = dialog.findViewById(R.id.button_send_feedback_dialog);
-            sendFeedback.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW)
-                    .setData(Uri.parse(getString(R.string.app_link)))
-                    .setPackage("com.android.vending")
-            ));
+            dialog.findViewById(R.id.statsSettingsLayout).setVisibility(View.GONE);
+            dialog.findViewById(R.id.deleteButton).setVisibility(View.GONE);
+            Button sendFeedback = dialog.findViewById(R.id.feedbackButton);
+            sendFeedback.setOnClickListener(v -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW)
+                            .setData(Uri.parse(getString(R.string.app_link)))
+                            .setPackage("com.android.vending"));
+                } catch (Exception ignore) {}
+            });
             try {// Get version
                 PackageInfo pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
                 String version = getString(R.string.app_name)+" "+pInfo.versionName;
-                ((TextView)dialog.findViewById(R.id.title_settings)).setText(version);
+                ((TextView)dialog.findViewById(R.id.dialogTitle)).setText(version);
             } catch (Exception ignored) {}
-            Button exportDB = dialog.findViewById(R.id.button_export_dialog);
+            Button exportDB = dialog.findViewById(R.id.exportButton);
             exportDB.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -109,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 intent.putExtra(Intent.EXTRA_TITLE, "data.json");
                 resultExport.launch(intent);
             });
-            Button importDB = dialog.findViewById(R.id.button_import_dialog);
+            Button importDB = dialog.findViewById(R.id.importButton);
             importDB.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -117,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 resultImport.launch(intent);
             });
             Help.setButtonsTextColor(themeColor, new Button[] {exportDB, importDB, sendFeedback});
-            ImageButton back = dialog.findViewById(R.id.button_back_settings_dialog);
+            ImageButton back = dialog.findViewById(R.id.backButton);
             back.setOnClickListener(view -> dialog.cancel());
             back.setColorFilter(themeColor);
             dialog.show();
@@ -130,15 +137,14 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     private void updateAll() {
         data = db.getTableEntries(null, true);
         data.addAll(db.getTableEntries(null, false));
-        RecyclerView mainView = findViewById(R.id.main_view);
+        RecyclerView mainView = findViewById(R.id.mainRV);
         mainView.setLayoutManager(new LinearLayoutManager(this));
         mainView.setHasFixedSize(true);
-        mainView.setAdapter(new MainAdapter(this, data, this, themeColor));
+        mainView.setAdapter(new MainAdapter(this, data, this));
     }
 
     public void addDialog(int msg) {
         Object[] d = Help.editTextDialog(this, themeColor, msg, "", false, false);
-        Dialog dialog1 = (Dialog)d[0];
         ((Button)d[1]).setOnClickListener(v1 -> {
             String t = ((EditText)d[2]).getText().toString();
             if (!t.equals("")) {
@@ -146,15 +152,16 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                     db.addExercise(t);
                 else
                     db.addStats(t);
-                dialog1.cancel();
+                ((Dialog)d[0]).cancel();
                 updateAll();
             }
         });
-        dialog1.show();
+        ((Dialog)d[0]).show();
     }
 
     // EXPORT / IMPORT
-    private final ActivityResultLauncher<Intent> resultExport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> resultExport =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             try {
                 OutputStream os = getContentResolver().openOutputStream(result.getData().getData());
@@ -170,7 +177,8 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         }
     });
 
-    private final ActivityResultLauncher<Intent> resultImport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> resultImport =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             try {
                 InputStream is = getContentResolver().openInputStream(result.getData().getData());
@@ -185,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                     throw new Exception("Import error");
                 dialog.cancel();
                 updateAll();
+                Toast.makeText(this, getString(R.string.ok), Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 e.printStackTrace();
                 dialog.cancel();

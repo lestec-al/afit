@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_set_date"
+        android:id="@+id/actionSetDate"
         android:icon="@drawable/ic_up_calendar_edit"
         android:title="@string/set_date"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_date_now"
+        android:id="@+id/actionDateNow"
         android:icon="@drawable/ic_up_calendar_now"
         android:title="@string/set_date"
         app:showAsAction="ifRoom" />

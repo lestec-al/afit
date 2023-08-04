@@ -97,6 +97,101 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    // ALL DATA GRAPH
+    public void setAllDataGraphDates(String startDate, String endDate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS MANY_STATS ( "+
+                "ID INTEGER PRIMARY KEY, "+
+                "START_DATE TEXT, "+
+                "END_DATE TEXT)"
+        );
+        Cursor c = db.rawQuery("SELECT * FROM MANY_STATS", null);
+        ContentValues cv = new ContentValues();
+        cv.put("START_DATE", startDate);
+        cv.put("END_DATE", endDate);
+        if (c.moveToFirst())
+            db.update("MANY_STATS", cv, "ID = 1", null);
+        else
+            db.insert("MANY_STATS", null, cv);
+        c.close();
+        db.close();
+    }
+
+    /**
+     * Returns START & END dates for all data graph
+     * */
+    public String[] getAllDataGraphDates() {
+        String startDate = "";
+        String endDate = "";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c1 = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='MANY_STATS'", null);
+        if (c1.moveToFirst()) {
+            Cursor c = db.rawQuery("SELECT * FROM MANY_STATS", null);
+            if (c.moveToFirst()) {
+                startDate = c.getString(1);
+                endDate = c.getString(2);
+            }
+            c.close();
+        }
+        c1.close();
+        db.close();
+        return new String[] {startDate, endDate};
+    }
+
+    public void setOrDelAllDataSelected(int statsID, int isObjExercise, boolean isActionDelete) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS MANY_LIST_STATS ( "+
+                "ID INTEGER PRIMARY KEY, "+
+                "STATS_ID INT, "+
+                "IS_EXERCISE INT)"
+        );
+        if (isActionDelete) {
+            Cursor c = db.rawQuery(
+                    "SELECT * FROM MANY_LIST_STATS WHERE STATS_ID = "+statsID+" AND IS_EXERCISE = "+isObjExercise, null
+            );
+            if (c.moveToFirst())
+                db.execSQL("DELETE FROM MANY_LIST_STATS WHERE STATS_ID = "+statsID+" AND IS_EXERCISE = "+isObjExercise);
+            c.close();
+        } else {
+            ContentValues cv = new ContentValues();
+            cv.put("STATS_ID", statsID);
+            cv.put("IS_EXERCISE", isObjExercise);
+            db.insert("MANY_LIST_STATS", null, cv);
+        }
+        db.close();
+    }
+
+    /**
+     * Returns ObjID, isObjExercise
+     * */
+    public ArrayList<int[]> getAllDataSelected() {
+        ArrayList<int[]> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c1 = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='MANY_LIST_STATS'", null);
+        if (c1.moveToFirst()) {
+            Cursor c = db.rawQuery("SELECT * FROM MANY_LIST_STATS", null);
+            if (c.moveToFirst()) {
+                do {
+                    list.add(new int[] {c.getInt(1), c.getInt(2)});
+                } while (c.moveToNext());
+            }
+            c.close();
+        }
+        c1.close();
+        db.close();
+        return list;
+    }
+
+    public boolean isEntriesTableExist(Integer tableID, boolean isExercise) {
+        String tableName = (isExercise)? "STATS_EXERCISE_TABLE_"+tableID: "STATS_VALUES_TABLE_"+tableID;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='"+tableName+"'", null);
+        boolean result = c.moveToFirst();
+        c.close();
+        db.close();
+        return result;
+    }
+
     // GET STATS
     public LinkedHashMap<MyObject, MyObject> getAll() {
         LinkedHashMap<MyObject, MyObject> l = new LinkedHashMap<>();
@@ -110,7 +205,7 @@ public class DB extends SQLiteOpenHelper {
                         l.put(
                                 new MyObject(
                                         c1.getInt(0),
-                                        c1.getString(1),
+                                        c1.getInt(1),
                                         c1.getString(2),
                                         c1.getString(3),
                                         c1.getString(4),
@@ -163,25 +258,26 @@ public class DB extends SQLiteOpenHelper {
         return l;
     }
 
-    public ArrayList<MyObject> getTableEntries(Integer tableID, boolean exercise) {
+    public ArrayList<MyObject> getTableEntries(Integer tableID, boolean isExercise) {
         ArrayList<MyObject> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor;
+        String sqlStr;
         if (tableID == null)
-            if (exercise)
-                cursor = db.rawQuery("SELECT * FROM EXERCISES_TABLE", null);
+            if (isExercise)
+                sqlStr = "SELECT * FROM EXERCISES_TABLE";
             else
-                cursor = db.rawQuery("SELECT * FROM STATS_NAMES_TABLE", null);
+                sqlStr = "SELECT * FROM STATS_NAMES_TABLE";
         else
-            if (exercise)
-                cursor = db.rawQuery("SELECT * FROM STATS_EXERCISE_TABLE_"+tableID, null);
+            if (isExercise)
+                sqlStr = "SELECT * FROM STATS_EXERCISE_TABLE_"+tableID;
             else
-                cursor = db.rawQuery("SELECT * FROM STATS_VALUES_TABLE_"+tableID, null);
+                sqlStr = "SELECT * FROM STATS_VALUES_TABLE_"+tableID;
+        Cursor cursor = db.rawQuery(sqlStr, null);
         if (cursor.moveToFirst()) {
             MyObject obj;
             do {
                 if (tableID == null)
-                    if (exercise)
+                    if (isExercise)
                         obj = new MyObject(
                                 cursor.getInt(0),
                                 cursor.getString(1),
@@ -202,10 +298,10 @@ public class DB extends SQLiteOpenHelper {
                                 cursor.getInt(4)
                         );
                 else
-                    if (exercise)
+                    if (isExercise)
                         obj = new MyObject(
                                 cursor.getInt(0),
-                                cursor.getString(1),
+                                cursor.getInt(1),
                                 cursor.getString(2),
                                 cursor.getString(3),
                                 cursor.getString(4),
@@ -226,11 +322,11 @@ public class DB extends SQLiteOpenHelper {
         return list;
     }
 
-    public MyObject getOneMainObj(int id, boolean exercise) {
+    public MyObject getOneMainObj(int id, boolean isExercise) {
         SQLiteDatabase db = this.getReadableDatabase();
         MyObject obj;
         Cursor cursor;
-        if (exercise) {
+        if (isExercise) {
             cursor = db.rawQuery("SELECT * FROM EXERCISES_TABLE WHERE EXERCISE_ID = "+id, null);
             cursor.moveToFirst();
             obj = new MyObject(
@@ -326,9 +422,9 @@ public class DB extends SQLiteOpenHelper {
     }
 
     // DEL
-    public void deleteObj(int id, boolean exercise) {
+    public void deleteObj(int id, boolean isExercise) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if (exercise) {
+        if (isExercise) {
             db.execSQL("DELETE FROM EXERCISES_TABLE WHERE EXERCISE_ID = "+id);
             db.execSQL("DROP TABLE STATS_EXERCISE_TABLE_"+id);
         } else {
@@ -370,9 +466,9 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void setDate(String date, int id, boolean exercise, boolean start) {
+    public void setDate(String date, int id, boolean isExercise, boolean start) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if (exercise)
+        if (isExercise)
             if (start)
                 db.execSQL("UPDATE EXERCISES_TABLE SET EXERCISE_START = '"+date+"' WHERE EXERCISE_ID = "+id);
             else

@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <Button
-        android:id="@+id/button_pick_date_stats_dialog"
+        android:id="@+id/pickDateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -28,19 +28,19 @@
         android:orientation="horizontal">
 
         <NumberPicker
-            android:id="@+id/number_picker_0"
+            android:id="@+id/numberPicker0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <NumberPicker
-            android:id="@+id/number_picker_1"
+            android:id="@+id/numberPicker1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <EditText
         android:visibility="gone"
-        android:id="@+id/add_stats_edit_text"
+        android:id="@+id/editNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -65,7 +65,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button_cancel_stats_dialog"
+            android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel"
@@ -73,7 +73,7 @@
             tools:textColor="@color/green_main"/>
 
         <Button
-            android:id="@+id/button_create_stats_dialog"
+            android:id="@+id/OkButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ok"

@@ -7,14 +7,14 @@
     tools:context=".CalendarActivity">
 
     <LinearLayout
-        android:id="@+id/calendar_header_days"
+        android:id="@+id/calendarHeaderDays"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:gravity="center_vertical"
         android:orientation="horizontal" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/calendar_grid"
+        android:id="@+id/calendarRV"
         android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

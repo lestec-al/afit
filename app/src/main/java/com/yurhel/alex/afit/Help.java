@@ -60,29 +60,29 @@ public class Help {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_edit);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Button ok = dialog.findViewById(R.id.button_create_stats_dialog);
-        Button cancel = dialog.findViewById(R.id.button_cancel_stats_dialog);
+        Button ok = dialog.findViewById(R.id.OkButton);
+        Button cancel = dialog.findViewById(R.id.cancelButton);
         setButtonsTextColor(color, new Button[] {ok, cancel});
         if (!withCancel)
             cancel.setOnClickListener(view -> dialog.cancel());
         if (msg != null) {
-            TextView info = dialog.findViewById(R.id.text_view);
+            TextView info = dialog.findViewById(R.id.dialogLabel);
             info.setText(msg);
         } else {
-            dialog.findViewById(R.id.text_view).setVisibility(View.GONE);
+            dialog.findViewById(R.id.dialogLabel).setVisibility(View.GONE);
         }
         if (editNumber == null) {
-            dialog.findViewById(R.id.edit_text).setVisibility(View.GONE);
-            dialog.findViewById(R.id.edit_text_number).setVisibility(View.GONE);
+            dialog.findViewById(R.id.editText).setVisibility(View.GONE);
+            dialog.findViewById(R.id.editNumber).setVisibility(View.GONE);
             return (withCancel) ? new Object[] {dialog, ok, cancel}: new Object[] {dialog, ok};
         } else {
             EditText edit;
             if (editNumber) {
-                dialog.findViewById(R.id.edit_text).setVisibility(View.GONE);
-                edit = dialog.findViewById(R.id.edit_text_number);
+                dialog.findViewById(R.id.editText).setVisibility(View.GONE);
+                edit = dialog.findViewById(R.id.editNumber);
             } else {
-                dialog.findViewById(R.id.edit_text_number).setVisibility(View.GONE);
-                edit = dialog.findViewById(R.id.edit_text);
+                dialog.findViewById(R.id.editNumber).setVisibility(View.GONE);
+                edit = dialog.findViewById(R.id.editText);
             }
             edit.setText(text);
             edit.setHint(R.string.type_text);
