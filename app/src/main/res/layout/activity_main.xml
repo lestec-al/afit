@@ -12,4 +12,29 @@
         android:layout_height="wrap_content"
         android:scrollbarSize="4dp"
         android:scrollbars="vertical"/>
+
+    <LinearLayout
+        android:id="@+id/mainDownActions"
+        android:layout_margin="@dimen/margin"
+        android:layout_gravity="bottom|center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            tools:textColor="@color/dark"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/addExDown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_ex"/>
+
+        <Button
+            tools:textColor="@color/dark"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/addStDown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_st"/>
+    </LinearLayout>
 </FrameLayout>

@@ -115,9 +115,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     }
 
     private void updateAll(boolean onCreate) {
+        obj = db.getOneMainObj(oneID, isExercise);
         if (!onCreate)
             setUpActionBar();
-        obj = db.getOneMainObj(oneID, isExercise);
         graphVisB.setColorFilter(obj.color);
         data = db.getTableEntries(oneID, isExercise);
         int dataSize = data.size();

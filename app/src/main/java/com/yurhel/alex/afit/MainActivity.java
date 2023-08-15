@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.MenuCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements ClickInterface {
     DB db;
@@ -141,6 +145,26 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         mainView.setLayoutManager(new LinearLayoutManager(this));
         mainView.setHasFixedSize(true);
         mainView.setAdapter(new MainAdapter(this, data, this));
+        // Down buttons
+        if (data.size() == 0) {
+            ((LinearLayout) findViewById(R.id.mainDownActions)).setVisibility(View.VISIBLE);
+            // Add exercise
+            Drawable dEx = Objects.requireNonNull(AppCompatResources.getDrawable(this, R.drawable.ic_up_add));
+            dEx.setTint(themeColor);
+            Button addExDown = findViewById(R.id.addExDown);
+            addExDown.setOnClickListener(v -> addDialog(R.string.add_ex));
+            addExDown.setTextColor(themeColor);
+            addExDown.setCompoundDrawablesWithIntrinsicBounds(dEx, null, null, null);
+            // Add statistic
+            Drawable dSt = Objects.requireNonNull(AppCompatResources.getDrawable(this, R.drawable.ic_up_add_stats));
+            dSt.setTint(themeColor);
+            Button addStDown = findViewById(R.id.addStDown);
+            addStDown.setOnClickListener(v -> addDialog(R.string.add_st));
+            addStDown.setTextColor(themeColor);
+            addStDown.setCompoundDrawablesWithIntrinsicBounds(dSt, null, null, null);
+        } else {
+            ((LinearLayout) findViewById(R.id.mainDownActions)).setVisibility(View.GONE);
+        }
     }
 
     public void addDialog(int msg) {
