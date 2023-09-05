@@ -10,8 +10,8 @@ android {
         applicationId "com.yurhel.alex.afit"
         minSdk 28
         targetSdk 33
-        versionCode 18
-        versionName "1.71"
+        versionCode 19
+        versionName "1.72"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,6 +26,18 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    // for google/drive auth
+    packagingOptions {
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/LICENSE.txt")
+        exclude("META-INF/license.txt")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/NOTICE.txt")
+        exclude("META-INF/notice.txt")
+        exclude("META-INF/ASL2.0")
+        exclude("META-INF/*.kotlin_module")
+    }
 }
 
 dependencies {
@@ -35,6 +47,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
+    // graph
     implementation 'com.jjoe64:graphview:4.2.2'
+    // google/drive auth
+    implementation "com.google.apis:google-api-services-drive:v3-rev20230520-2.0.0"
+    implementation "com.google.android.gms:play-services-auth:20.6.0"
+    implementation "com.google.api-client:google-api-client-android:1.23.0"
 }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -233,58 +234,117 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     }
 
     // DIALOGS
-    private void statsDialog(MyObject passObj) {
+    private void entryDialog(MyObject passObj, String goal) {
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_stats);
-        Button pickDate = dialog.findViewById(R.id.pickDateButton);
-        Button ok = dialog.findViewById(R.id.OkButton);
-        Button cancel = dialog.findViewById(R.id.cancelButton);
-        EditText addStatsEditText = dialog.findViewById(R.id.editNote);
-        addStatsEditText.setVisibility(View.VISIBLE);
-        NumberPicker numberPicker0 = dialog.findViewById(R.id.numberPicker0);
-        NumberPicker numberPicker1 = dialog.findViewById(R.id.numberPicker1);
-        numberPicker0.setMaxValue(99999);
-        numberPicker0.setMinValue(1);
-        numberPicker0.setWrapSelectorWheel(false);
-        numberPicker0.setOnValueChangedListener((picker, oldVal, newVal) -> {
-            if (newVal == numberPicker0.getMaxValue())
-                numberPicker0.setMaxValue(newVal+100);
-        });
-        numberPicker1.setMaxValue(9);
-        numberPicker1.setMinValue(0);
-        numberPicker1.setWrapSelectorWheel(false);
-        if (passObj == null) {
-            if (data.size() > 0) {
-                numberPicker0.setValue((int) data.get(0).mainValue);
-                numberPicker1.setValue(Integer.parseInt(String.valueOf(data.get(0).mainValue).split("\\.")[1]));
+
+        if (goal.equals("st")) {
+            // Stats entry dialog
+            dialog.setContentView(R.layout.dialog_add_stats);
+            Button pickDate = dialog.findViewById(R.id.pickDateButton);
+            EditText addStatsEditText = dialog.findViewById(R.id.editNote);
+            addStatsEditText.setVisibility(View.VISIBLE);
+
+            NumberPicker numberPicker0 = dialog.findViewById(R.id.numberPicker0);
+            numberPicker0.setMaxValue(99999);
+            numberPicker0.setMinValue(1);
+            numberPicker0.setWrapSelectorWheel(false);
+            numberPicker0.setOnValueChangedListener((picker, oldVal, newVal) -> {
+                if (newVal == numberPicker0.getMaxValue())
+                    numberPicker0.setMaxValue(newVal+100);
+            });
+
+            NumberPicker numberPicker1 = dialog.findViewById(R.id.numberPicker1);
+            numberPicker1.setMaxValue(9);
+            numberPicker1.setMinValue(0);
+            numberPicker1.setWrapSelectorWheel(false);
+
+            if (passObj == null) {
+                // Create
+                pickDate.setText(Help.dateFormat(this, targetDate));
+                pickDate.setOnClickListener(view -> calendarDialog(targetDate, pickDate, null));
+                pickDate.setTextColor(obj.color);
+                if (data.size() > 0) {
+                    numberPicker0.setValue((int) data.get(0).mainValue);
+                    numberPicker1.setValue(Integer.parseInt(String.valueOf(data.get(0).mainValue).split("\\.")[1]));
+                } else {
+                    numberPicker0.setValue(0);
+                    numberPicker1.setValue(0);
+                }
             } else {
-                numberPicker0.setValue(0);
-                numberPicker1.setValue(0);
+                // Edit
+                pickDate.setText(Help.dateFormat(this, new Date(passObj.date)));
+                pickDate.setEnabled(false);
+                addStatsEditText.setText(passObj.longerValue);
+                numberPicker0.setValue((int) passObj.mainValue);
+                numberPicker1.setValue(Integer.parseInt(String.valueOf(passObj.mainValue).split("\\.")[1]));
             }
-            pickDate.setText(Help.dateFormat(this, targetDate));
-            pickDate.setOnClickListener(view -> calendarDialog(targetDate, pickDate, null));
-            Help.setButtonsTextColor(obj.color, new Button[] {pickDate, ok, cancel});
-        } else {
-            numberPicker0.setValue((int) passObj.mainValue);
-            numberPicker1.setValue(Integer.parseInt(String.valueOf(passObj.mainValue).split("\\.")[1]));
+
+            if (numberPicker0.getValue() == numberPicker0.getMaxValue())
+                numberPicker0.setMaxValue(numberPicker0.getValue()+100);
+
+            Button ok = dialog.findViewById(R.id.OkButton);
+            ok.setTextColor(obj.color);
+            ok.setOnClickListener(view -> {
+                Double s = Double.parseDouble(String.format("%1$s.%2$s", numberPicker0.getValue(), numberPicker1.getValue()));
+                if (passObj == null)
+                    db.addStatsEntry(oneID, s, String.valueOf(targetDate.getTime()), addStatsEditText.getText().toString());
+                else
+                    db.updateStatsEntry(passObj.id, oneID, s, addStatsEditText.getText().toString());
+                dialog.cancel();
+                updateAll(false);
+            });
+
+        } else if (goal.equals("ex") && passObj != null) {
+            // Exercise entry dialog
+            dialog.setContentView(R.layout.dialog_show_ex);
+            ColorStateList mainColorS = ColorStateList.valueOf(Help.getMainColor(this));
+
+            TextView timeTV = dialog.findViewById(R.id.time);
+            timeTV.setText(passObj.time);
+            TextViewCompat.setCompoundDrawableTintList(timeTV, mainColorS);
+
+            TextView mainValueTV = dialog.findViewById(R.id.mainValue);
+            mainValueTV.setText(String.valueOf((int) passObj.mainValue));
+            TextViewCompat.setCompoundDrawableTintList(mainValueTV, mainColorS);
+
+            TextView addValueTV = dialog.findViewById(R.id.addValue);
+            addValueTV.setText(passObj.longerValue);
+            TextViewCompat.setCompoundDrawableTintList(addValueTV, mainColorS);
+
+            if (!passObj.allWeights.equals("")) {
+                TextView addValue2TV = dialog.findViewById(R.id.addValue2);
+                addValue2TV.setVisibility(View.VISIBLE);
+                addValue2TV.setText(passObj.allWeights);
+                TextViewCompat.setCompoundDrawableTintList(addValue2TV, mainColorS);
+            }
+
+            Button pickDate = dialog.findViewById(R.id.pickDateButton);
             pickDate.setText(Help.dateFormat(this, new Date(passObj.date)));
             pickDate.setEnabled(false);
-            addStatsEditText.setText(passObj.longerValue);
-            Help.setButtonsTextColor(obj.color, new Button[] {ok, cancel});
         }
-        if (numberPicker0.getValue() == numberPicker0.getMaxValue())
-            numberPicker0.setMaxValue(numberPicker0.getValue()+100);
-        ok.setOnClickListener(view -> {
-            Double s = Double.parseDouble(String.format("%1$s.%2$s", numberPicker0.getValue(), numberPicker1.getValue()));
-            if (passObj == null)
-                db.addStatsEntry(oneID, s, String.valueOf(targetDate.getTime()), addStatsEditText.getText().toString());
-            else
-                db.updateStatsEntry(passObj.id, oneID, s, addStatsEditText.getText().toString());
-            dialog.cancel();
-            updateAll(false);
-        });
+
+        // Universal
+        Button cancel = dialog.findViewById(R.id.cancelButton);
+        cancel.setTextColor(obj.color);
         cancel.setOnClickListener(view -> dialog.cancel());
         dialog.show();
+
+        if (passObj != null) {
+            ImageButton delete = dialog.findViewById(R.id.deleteButton);
+            delete.setVisibility(View.VISIBLE);
+            delete.setColorFilter(obj.color);
+            delete.setOnClickListener(v -> {
+                Object[] askDeleteDialog = Help.editTextDialog(this, obj.color,
+                        R.string.delete_entry,"", null, false);
+                ((Button)askDeleteDialog[1]).setOnClickListener(v1 -> {
+                    ((Dialog)askDeleteDialog[0]).cancel();
+                    dialog.dismiss();
+                    db.deleteSmallObj(oneID, passObj.id, isExercise);
+                    updateAll(false);
+                });
+                ((Dialog)askDeleteDialog[0]).show();
+            });
+        }
     }
 
     private void calendarDialog(Date oldDate, Object dateButton, Boolean start) {
@@ -321,8 +381,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     // NAVIGATION
     @Override
     public void onClickItem(int pos, String option) {
-        if (!isExercise)
-            statsDialog(data.get(pos));
+        entryDialog(data.get(pos), (isExercise) ? "ex": "st");
     }
 
     @Override
@@ -355,7 +414,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                         .putExtra("date", targetDate.getTime()
                         ));
             else
-                statsDialog(null);
+                entryDialog(null, "st");
             return true;
 
         } else if (item.getItemId() == R.id.actionSettings) {
@@ -456,15 +515,15 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             // Others
             ImageButton delete = dialog.findViewById(R.id.deleteButton);
             delete.setOnClickListener(v -> {
-                // Delete dialog
-                Object[] d = Help.editTextDialog(this, obj.color, R.string.delete, "", null, false);
-                ((Button)d[1]).setOnClickListener(v1 -> {
-                    ((Dialog)d[0]).cancel();
+                Object[] askDeleteDialog = Help.editTextDialog(this, obj.color,
+                        R.string.delete, "", null, false);
+                ((Button)askDeleteDialog[1]).setOnClickListener(v1 -> {
+                    ((Dialog)askDeleteDialog[0]).cancel();
                     dialog.dismiss();
                     this.onBackPressed();
                     db.deleteObj(oneID, isExercise);
                 });
-                ((Dialog)d[0]).show();
+                ((Dialog)askDeleteDialog[0]).show();
             });
             ImageButton back = dialog.findViewById(R.id.backButton);
             back.setOnClickListener(v -> dialog.cancel());

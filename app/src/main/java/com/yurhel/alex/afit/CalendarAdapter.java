@@ -3,6 +3,7 @@ package com.yurhel.alex.afit;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         this.calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
         this.whiteColor = context.getColor(R.color.white);
         this.blackColor = context.getColor(R.color.dark);
-        this.isNight = Help.isNightMode(context);
+        this.isNight = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
     }
 
     @NonNull
@@ -81,10 +82,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             if (c.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) && c.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) && c.get(Calendar.DAY_OF_MONTH) == day) {
                 holder.day.setBackground(AppCompatResources.getDrawable(context, R.drawable.rectangle_calendar));
                 holder.day.setBackgroundTintList(ColorStateList.valueOf(themeColor));
-                if (isNight)
-                    holder.day.setTextColor(blackColor);
-                else
-                    holder.day.setTextColor(whiteColor);
+                holder.day.setTextColor((isNight)? blackColor: whiteColor);
             }
             // Set short data for day
             LinkedHashMap<MyObject, String> dataR = new LinkedHashMap<>();

@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class TrainingActivity extends AppCompatActivity {
     TextView infoButton;
     Button buttonSets;
     Button buttonTime;
-    TextView editWeight;
+    Button editWeight;
     ProgressBar progressResult;
     ProgressBar progressResultW;
     ProgressBar progressTime;
@@ -103,6 +105,7 @@ public class TrainingActivity extends AppCompatActivity {
         if (obj.weight > 0) {
             findViewById(R.id.upLayout).setVisibility(View.VISIBLE);
             repsResultLayoutW = findViewById(R.id.repsResultLayoutW);
+            repsResultLayoutW.setVisibility(View.VISIBLE);
 
             progressResultW = findViewById(R.id.progressResultW);
             progressResultW.setMax(obj.sets);
@@ -111,6 +114,7 @@ public class TrainingActivity extends AppCompatActivity {
             setProgressColor(obj.color, new ProgressBar[] {progressResultW});
 
             editWeight = findViewById(R.id.textWeightTraining);
+            editWeight.setBackgroundColor(obj.color);
             editWeight.setText(String.valueOf(obj.weight));
             editWeight.setOnClickListener(v -> {
                 // Edit weight dialog
@@ -134,7 +138,7 @@ public class TrainingActivity extends AppCompatActivity {
             buttonMinusW.setOnClickListener(view -> {
                 double i = Double.parseDouble(editWeight.getText().toString());
                 if (i > 0)
-                    editWeight.setText(String.valueOf(i - 1));
+                    editWeight.setText((i < 1)? Double.toString(0.0): new BigDecimal(i - 1).setScale(1, RoundingMode.HALF_UP).toString());
             });
             Help.setImageButtonsColor(obj.color, new ImageButton[] {buttonMinusW, buttonPlusW});
         }
@@ -143,9 +147,8 @@ public class TrainingActivity extends AppCompatActivity {
         buttonMinus.setOnClickListener(view -> {
             if (thread == null) {
                 int i = Integer.parseInt(buttonSets.getText().toString());
-                if (i > 0) {
+                if (i > 0)
                     buttonSets.setText(String.valueOf(i - 1));
-                }
             } else {
                 if (seconds - 30 <= 0) {
                     seconds = 0;

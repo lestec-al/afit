@@ -8,7 +8,8 @@
     <string name="sets">Сети</string>
     <string name="name">Назва</string>
     <string name="weight">Вага</string>
-    <string name="delete">Видалити?</string>
+    <string name="delete">Ця статистика, з усіма даними в ній, буде видалена</string>
+    <string name="delete_entry">Цей запис буде видалено</string>
     <string name="save_results">Зберегти результат?</string>
     <string name="no">Ні</string>
     <string name="cancel">Відміна</string>
@@ -28,4 +29,10 @@
     <string name="more">Більше</string>
     <string name="note">Замітка</string>
     <string name="all_data">Всі дані</string>
+    <string name="exportDriveDB">Експорт даних у хмару</string>
+    <string name="importDriveDB">Імпорт даних із хмари</string>
+    <string name="auth_info">Якщо вам потрібна хмарна синхронізація, підключіть обліковий запис Google</string>
+    <string name="no_data">Немає даних</string>
+    <string name="data_replace">Усі існуючі дані будуть замінені</string>
+    <string name="connect_cloud">Підключити хмару</string>
 </resources>

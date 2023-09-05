@@ -434,6 +434,15 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteSmallObj(int tableID, int entryID, boolean isExercise) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if (isExercise)
+            db.execSQL("DELETE FROM STATS_EXERCISE_TABLE_"+tableID+" WHERE STATS_EXERCISE_ID = "+entryID);
+        else
+            db.execSQL("DELETE FROM STATS_VALUES_TABLE_"+tableID+" WHERE STATS_VALUES_ID = "+entryID);
+        db.close();
+    }
+
     // UPDATE
     public void updateStats(String name, int id, int color) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -482,7 +491,7 @@ public class DB extends SQLiteOpenHelper {
     }
 
     // EXPORT / IMPORT
-    public String exportDatabase() {
+    public JSONArray exportDB() {
         try {
             JSONArray jArray = new JSONArray();
             SQLiteDatabase dbImport = getWritableDatabase();
@@ -548,15 +557,15 @@ public class DB extends SQLiteOpenHelper {
                 c.close();
             }
             dbImport.close();
-            return jArray.toString();
+            return jArray;
         }  catch (Exception e) {
             e.printStackTrace();
-            return context.getString(R.string.error);
+            return new JSONArray();
         }
     }
 
-    public boolean importDatabase(String data) {
-        String oldData = exportDatabase();
+    public boolean importDB(String data) {
+        JSONArray oldData = exportDB();
         try {
             cleanDatabase();
             // Loop data
@@ -628,7 +637,7 @@ public class DB extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
             cleanDatabase();
-            importDatabase(oldData);
+            importDB(oldData.toString());
             return false;
         }
     }

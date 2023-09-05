@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/pickDateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/green_main"
+            tools:text="1993.12.12"/>
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_up_delete"
+            style="@style/Widget.AppCompat.Light.ActionButton"
+            android:contentDescription="Delete"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/basic_text_size"
+            app:drawableStartCompat="@drawable/ic_timer"
+            android:paddingVertical="5dp"
+            android:drawablePadding="5dp"
+            tools:text="14:00"/>
+
+        <TextView
+            android:id="@+id/mainValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/basic_text_size"
+            app:drawableStartCompat="@drawable/ic_st_up"
+            android:paddingVertical="5dp"
+            android:drawablePadding="5dp"
+            tools:text="50"/>
+
+        <TextView
+            android:id="@+id/addValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/basic_text_size"
+            app:drawableStartCompat="@drawable/ic_st_entries"
+            android:paddingVertical="5dp"
+            android:drawablePadding="5dp"
+            tools:text="10 + 10 + 10 + 10 + 10"/>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/addValue2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/basic_text_size"
+            app:drawableStartCompat="@drawable/ic_st_entries"
+            android:paddingVertical="5dp"
+            android:drawablePadding="5dp"
+            tools:text="0.0 + 0.0 + 8.0 + 8.0 + 0.0"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
+        android:text="@string/cancel"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        tools:textColor="@color/green_main"/>
+</LinearLayout>

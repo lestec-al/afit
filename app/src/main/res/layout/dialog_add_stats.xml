@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/pickDateButton"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        tools:textColor="@color/green_main"
-        tools:text="1993.12.12"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/pickDateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/green_main"
+            tools:text="1993.12.12"/>
+
+        <ImageButton
+            android:visibility="gone"
+            android:id="@+id/deleteButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_up_delete"
+            style="@style/Widget.AppCompat.Light.ActionButton"
+            android:contentDescription="Delete"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

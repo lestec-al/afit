@@ -23,9 +23,9 @@ import java.util.Date;
 
 public class Help {
 
-    // COLORS
     public static int getMainColor(Context context) {
-        return (isNightMode(context)) ? context.getColor(R.color.white): context.getColor(R.color.dark);
+        boolean isNight = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        return (isNight) ? context.getColor(R.color.white): context.getColor(R.color.dark);
     }
 
     public static void setImageButtonsColor(int color, ImageButton[] buttons) {
@@ -55,49 +55,49 @@ public class Help {
             b.setTextColor(color);
     }
 
-    // DIALOGS
-    public static Object[] editTextDialog(Context context, int color, Integer msg, String text, Boolean editNumber, boolean withCancel) {
+    public static Object[] editTextDialog(
+            Context context,
+            int color,
+            Integer infoMsg,
+            String editMsg,
+            Boolean isEditNumber,
+            boolean isReturnWithCancel
+    ) {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_edit);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         Button ok = dialog.findViewById(R.id.OkButton);
         Button cancel = dialog.findViewById(R.id.cancelButton);
         setButtonsTextColor(color, new Button[] {ok, cancel});
-        if (!withCancel)
+        if (!isReturnWithCancel)
             cancel.setOnClickListener(view -> dialog.cancel());
-        if (msg != null) {
+        if (infoMsg != null) {
             TextView info = dialog.findViewById(R.id.dialogLabel);
-            info.setText(msg);
+            info.setText(infoMsg);
         } else {
             dialog.findViewById(R.id.dialogLabel).setVisibility(View.GONE);
         }
-        if (editNumber == null) {
+        if (isEditNumber == null) {
             dialog.findViewById(R.id.editText).setVisibility(View.GONE);
             dialog.findViewById(R.id.editNumber).setVisibility(View.GONE);
-            return (withCancel) ? new Object[] {dialog, ok, cancel}: new Object[] {dialog, ok};
+            return (isReturnWithCancel) ? new Object[] {dialog, ok, cancel}: new Object[] {dialog, ok};
         } else {
             EditText edit;
-            if (editNumber) {
+            if (isEditNumber) {
                 dialog.findViewById(R.id.editText).setVisibility(View.GONE);
                 edit = dialog.findViewById(R.id.editNumber);
             } else {
                 dialog.findViewById(R.id.editNumber).setVisibility(View.GONE);
                 edit = dialog.findViewById(R.id.editText);
             }
-            edit.setText(text);
+            edit.setText(editMsg);
             edit.setHint(R.string.type_text);
             edit.setBackgroundTintList(ColorStateList.valueOf(color));
-            return (withCancel) ? new Object[] {dialog, ok, edit, cancel}: new Object[] {dialog, ok, edit};
+            return (isReturnWithCancel) ? new Object[] {dialog, ok, edit, cancel}: new Object[] {dialog, ok, edit};
         }
     }
 
-    // OTHERS
     public static CharSequence dateFormat(Context context, Date date) {
         return DateFormat.getMediumDateFormat(context).format(date);
-    }
-
-    public static boolean isNightMode(Context context) {
-        int nightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        return nightMode == Configuration.UI_MODE_NIGHT_YES;
     }
 }

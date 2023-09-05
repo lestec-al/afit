@@ -10,7 +10,8 @@
     <string name="sets">Sets</string>
     <string name="name">Name</string>
     <string name="weight">Weight</string>
-    <string name="delete">Delete?</string>
+    <string name="delete">This statistic, with all the data it contains, will be deleted</string>
+    <string name="delete_entry">This entry will be deleted</string>
     <string name="save_results">Save results?</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
@@ -30,4 +31,10 @@
     <string name="more">More</string>
     <string name="note">Note</string>
     <string name="all_data">All data</string>
+    <string name="exportDriveDB">Export data to the cloud</string>
+    <string name="importDriveDB">Import data from the cloud</string>
+    <string name="auth_info">If you need cloud sync, please connect Google account</string>
+    <string name="no_data">No data available</string>
+    <string name="data_replace">All existing data will be replaced</string>
+    <string name="connect_cloud">Connect the cloud</string>
 </resources>

@@ -23,6 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/repsResultLayoutW"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -53,7 +54,7 @@
             app:srcCompat="@drawable/ic_t_minus"
             tools:ignore="HardcodedText" />
 
-        <TextView
+        <Button
             android:id="@+id/textWeightTraining"
             android:layout_width="0dp"
             android:layout_height="match_parent"

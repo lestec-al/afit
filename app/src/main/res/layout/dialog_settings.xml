@@ -33,13 +33,21 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/progressSync"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/dark"/>
+
         <ImageButton
             android:id="@+id/deleteButton"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             app:srcCompat="@drawable/ic_up_delete"
             style="@style/Widget.AppCompat.Light.ActionButton"
-            android:contentDescription="@string/delete" />
+            android:contentDescription="delete"/>
     </LinearLayout>
 
     <LinearLayout
@@ -55,27 +63,61 @@
         <Button
             android:id="@+id/feedbackButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/feedback"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_feedback"
             style="@style/Widget.AppCompat.Button.Borderless"
             tools:textColor="@color/dark" />
 
         <Button
             android:id="@+id/importButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/import_db"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_file_download"
             style="@style/Widget.AppCompat.Button.Borderless"
             tools:textColor="@color/dark"/>
 
         <Button
             android:id="@+id/exportButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/export_db"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_file_upload"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark"/>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/buttonCloudConnect"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/connect_cloud"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_cloud"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark"/>
+
+        <Button
+            android:id="@+id/importDriveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/importDriveDB"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_cloud_download"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark"/>
+
+        <Button
+            android:id="@+id/exportDriveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/exportDriveDB"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_cloud_upload"
             style="@style/Widget.AppCompat.Button.Borderless"
             tools:textColor="@color/dark"/>
     </LinearLayout>
