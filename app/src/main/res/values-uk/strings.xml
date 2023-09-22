@@ -35,4 +35,5 @@
     <string name="no_data">Немає даних</string>
     <string name="data_replace">Усі існуючі дані будуть замінені</string>
     <string name="connect_cloud">Підключити хмару</string>
+    <string name="app_ver">Версія програми</string>
 </resources>

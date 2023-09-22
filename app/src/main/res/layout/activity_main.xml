@@ -10,6 +10,7 @@
         android:id="@+id/mainRV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:overScrollMode="never"
         android:scrollbarSize="4dp"
         android:scrollbars="vertical"/>
 

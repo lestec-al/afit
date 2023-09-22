@@ -35,4 +35,5 @@
     <string name="no_data">Данные отсутствуют</string>
     <string name="data_replace">Все существующие данные будут заменены</string>
     <string name="connect_cloud">Подключить облако</string>
+    <string name="app_ver">Версия приложения</string>
 </resources>

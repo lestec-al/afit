@@ -37,4 +37,5 @@
     <string name="no_data">No data available</string>
     <string name="data_replace">All existing data will be replaced</string>
     <string name="connect_cloud">Connect the cloud</string>
+    <string name="app_ver">App version</string>
 </resources>

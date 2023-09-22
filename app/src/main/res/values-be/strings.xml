@@ -35,4 +35,5 @@
     <string name="no_data">Дадзеных няма</string>
     <string name="data_replace">Усе існуючыя даныя будуць заменены</string>
     <string name="connect_cloud">Падключыць воблака</string>
+    <string name="app_ver">Версія праграмы</string>
 </resources>

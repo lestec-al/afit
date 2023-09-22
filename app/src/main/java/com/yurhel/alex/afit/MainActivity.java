@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         setContentView(R.layout.activity_main);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setTitle("");
+            actionBar.setTitle(R.string.app_name);
         themeColor = Help.getMainColor(this);
         db = new DB(this);
         updateAll();
@@ -133,8 +133,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         // Try set app name and version
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            String version = getString(R.string.app_name)+" "+pInfo.versionName;
-            ((TextView)dialog.findViewById(R.id.dialogTitle)).setText(version);
+            ((TextView)dialog.findViewById(R.id.versionTV)).setText(String.format("%s %s", getString(R.string.app_ver), pInfo.versionName));
         } catch (Exception ignored) {}
 
         ProgressBar progress = dialog.findViewById(R.id.progressSync);

@@ -21,7 +21,6 @@
             android:contentDescription="@string/cancel" />
 
         <TextView
-            android:id="@+id/dialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -120,6 +119,14 @@
             android:drawableLeft="@drawable/ic_cloud_upload"
             style="@style/Widget.AppCompat.Button.Borderless"
             tools:textColor="@color/dark"/>
+
+        <TextView
+            android:id="@+id/versionTV"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_horizontal|bottom"
+            android:textColor="@color/material_on_background_disabled"
+            tools:text="App version 1.72"/>
     </LinearLayout>
 
     <LinearLayout
