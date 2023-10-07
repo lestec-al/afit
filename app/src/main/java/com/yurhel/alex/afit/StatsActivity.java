@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -176,6 +177,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         ((ImageView)findViewById(R.id.allEntriesLabel)).setColorFilter(mainColor);
         ((ImageView)findViewById(R.id.recordMaxLabel)).setColorFilter(mainColor);
         ((ImageView)findViewById(R.id.recordMinLabel)).setColorFilter(mainColor);
+        if (isExercise && oneSetMax > 0) db.updateExercise(obj.name, oneID, obj.rest, oneSetMax+1, obj.sets, obj.weight, obj.color);
         // Graph setup
         graphViewLayout.removeAllViews();
         GraphView graphView = new GraphView(this);
@@ -421,18 +423,18 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             // Settings dialog
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_settings);
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            Window window = dialog.getWindow();
+            if (window != null)
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             dialog.findViewById(R.id.mainSettingsLayout).setVisibility(View.GONE);
             // Exercise specifics
             EditText textName = dialog.findViewById(R.id.textName);
             EditText textRest = dialog.findViewById(R.id.textRest);
-            EditText textReps = dialog.findViewById(R.id.textReps);
             EditText textWeight = dialog.findViewById(R.id.textWeight);
             EditText textSets = dialog.findViewById(R.id.textSets);
             textName.setText(obj.name);
             if (isExercise) {
                 textRest.setText(String.valueOf(obj.rest));
-                textReps.setText(String.valueOf(obj.reps));
                 textSets.setText(String.valueOf(obj.sets));
                 textWeight.setText(String.valueOf(obj.weight));
                 TextView date = dialog.findViewById(R.id.textDate);
@@ -442,10 +444,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 dialog.findViewById(R.id.dateLayout).setVisibility(View.GONE);
                 dialog.findViewById(R.id.restLayout).setVisibility(View.GONE);
                 dialog.findViewById(R.id.weightLayout).setVisibility(View.GONE);
-                dialog.findViewById(R.id.repsLayout).setVisibility(View.GONE);
                 dialog.findViewById(R.id.setsLayout).setVisibility(View.GONE);
             }
-            for (EditText e: new EditText[] {textName, textRest, textReps, textWeight, textSets}) {
+            for (EditText e: new EditText[] {textName, textRest, textWeight, textSets}) {
                 e.addTextChangedListener(new TextWatcher() {
                     final ColorStateList defColor = e.getTextColors();
                     @Override
@@ -456,7 +457,6 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                     public void afterTextChanged(Editable s) {
                         if ((e == textName && !s.toString().equals(obj.name)) || (isExercise && (
                                 e == textRest && !s.toString().equals(String.valueOf(obj.rest)) ||
-                                e == textReps && !s.toString().equals(String.valueOf(obj.reps)) ||
                                 e == textSets && !s.toString().equals(String.valueOf(obj.sets)) ||
                                 e == textWeight && !s.toString().equals(String.valueOf(obj.weight))
                         )))
@@ -534,10 +534,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 if (name.length() > 0) {
                     if (isExercise) {
                         int s = (int) tryParseIntDouble(textRest.getText().toString(), true);
-                        int f = (int) tryParseIntDouble(textReps.getText().toString(), true);
-                        int r = (int) tryParseIntDouble(textSets.getText().toString(), true);
+                        int st = (int) tryParseIntDouble(textSets.getText().toString(), true);
                         double w = (double) tryParseIntDouble(textWeight.getText().toString(), false);
-                        db.updateExercise(name, oneID, (s==0)?1:s, (f==0)?1:f, (r==0)?1:r, w, Color.rgb(c[0], c[1], c[2]));
+                        db.updateExercise(name, oneID, (s==0)?1:s, obj.reps, (st==0)?1:st, w, Color.rgb(c[0], c[1], c[2]));
                     } else {
                         db.updateStats(name, oneID, Color.rgb(c[0], c[1], c[2]));
                     }

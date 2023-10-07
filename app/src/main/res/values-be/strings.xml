@@ -4,7 +4,6 @@
     <string name="do_exercise">Рабі</string>
     <string name="stop">СПЫНІЦЬ</string>
     <string name="rest">Адпачынак</string>
-    <string name="reps">Паўторы</string>
     <string name="sets">Сэты</string>
     <string name="name">Назва</string>
     <string name="weight">Вага</string>
@@ -36,4 +35,5 @@
     <string name="data_replace">Усе існуючыя даныя будуць заменены</string>
     <string name="connect_cloud">Падключыць воблака</string>
     <string name="app_ver">Версія праграмы</string>
+    <string name="empty_text">Тут яшчэ пуста</string>
 </resources>

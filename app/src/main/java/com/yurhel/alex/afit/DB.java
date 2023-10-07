@@ -44,58 +44,25 @@ public class DB extends SQLiteOpenHelper {
         );
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldDB, int newDB) {
-        if (oldDB == 1 && newDB == 2) {
-            // Get colors
-            ArrayList<String> cParents = new ArrayList<>();
-            ArrayList<Integer> cIDs = new ArrayList<>();
-            ArrayList<Integer> cColors = new ArrayList<>();
-            Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-            if (c.moveToFirst())
-                do {
-                    if (c.getString(0).equals("COLORS_O")) {
-                        Cursor c1 = db.rawQuery("SELECT * FROM COLORS_O", null);
-                        if (c1.moveToFirst()) {
-                            do {
-                                String colorID = c1.getString(0); // objID_ex / objID_st / 1_st
-                                cParents.add(colorID);
-                                cIDs.add(Integer.parseInt(colorID.substring(0, colorID.length()-3)));
-                                cColors.add(c1.getInt(1));
-                            } while (c1.moveToNext());
-                        }
-                        c1.close();
-                    }
-                } while (c.moveToNext());
-            c.close();
-            // Update DB
-            Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-            if (cursor.moveToFirst())
-                do {
-                    String tableName = cursor.getString(0);
-                    if (tableName.contains("STATS_VALUES_TABLE_")) {
-                        db.execSQL("ALTER TABLE "+tableName+" ADD COLUMN STATS_VALUES_NOTES TEXT");
-                        db.execSQL("UPDATE "+tableName+" SET STATS_VALUES_NOTES = ''");
-
-                    } else if (tableName.equals("EXERCISES_TABLE")) {
-                        db.execSQL("ALTER TABLE EXERCISES_TABLE ADD COLUMN EXERCISE_COLOR INT");
-                        db.execSQL("UPDATE EXERCISES_TABLE SET EXERCISE_COLOR = "+context.getColor(R.color.green_main));
-                        for (int i = 0; i < cIDs.size(); i++) {
-                            if (cParents.get(i).contains("_ex") && cColors.get(i) != 0)
-                                db.execSQL("UPDATE EXERCISES_TABLE SET EXERCISE_COLOR = "+cColors.get(i)+" WHERE EXERCISE_ID = "+cIDs.get(i));
-                        }
-                    } else if (tableName.equals("STATS_NAMES_TABLE")) {
-                        db.execSQL("ALTER TABLE STATS_NAMES_TABLE ADD COLUMN STATS_NAMES_COLOR INT");
-                        db.execSQL("UPDATE STATS_NAMES_TABLE SET STATS_NAMES_COLOR = "+context.getColor(R.color.green_main));
-                        for (int i = 0; i < cIDs.size(); i++) {
-                            if (cParents.get(i).contains("_st") && cColors.get(i) != 0)
-                                db.execSQL("UPDATE STATS_NAMES_TABLE SET STATS_NAMES_COLOR = "+cColors.get(i)+" WHERE STATS_NAMES_ID = "+cIDs.get(i));
-                        }
-                    }
-                } while (cursor.moveToNext());
-            cursor.close();
-        }
+    private String strCreateExEntryTable(int id) {
+        return "CREATE TABLE STATS_EXERCISE_TABLE_"+id+" ("+
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT, "+
+                "STATS_EXERCISE_RESULT_S INT, "+
+                "STATS_EXERCISE_RESULT_L TEXT, "+
+                "STATS_EXERCISE_TIME TEXT, "+
+                "STATS_EXERCISE_DATE TEXT, "+
+                "STATS_EXERCISE_WEIGHTS TEXT)";
     }
+    private String strCreateStEntryTable(int id) {
+        return "CREATE TABLE STATS_VALUES_TABLE_"+id+" ("+
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT, "+
+                "STATS_VALUES_VALUE REAL, "+
+                "STATS_VALUES_DATE TEXT, "+
+                "STATS_VALUES_NOTES TEXT)";
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldDB, int newDB) {}
 
     // ALL DATA GRAPH
     public void setAllDataGraphDates(String startDate, String endDate) {
@@ -117,9 +84,6 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
-     * Returns START & END dates for all data graph
-     * */
     public String[] getAllDataGraphDates() {
         String startDate = "";
         String endDate = "";
@@ -161,9 +125,6 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
-     * Returns ObjID, isObjExercise
-     * */
     public ArrayList<int[]> getAllDataSelected() {
         ArrayList<int[]> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -372,7 +333,7 @@ public class DB extends SQLiteOpenHelper {
             id = cursor.getInt(0);
         cursor.close();
         // Create table with user custom statistic
-        db.execSQL(getStrCreateStatsValuesTable(id));
+        db.execSQL(strCreateStEntryTable(id));
         db.close();
     }
 
@@ -391,7 +352,7 @@ public class DB extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("EXERCISE_NAME", name);
         cv.put("EXERCISE_SECONDS", 120);
-        cv.put("EXERCISE_FIRST", 10);
+        cv.put("EXERCISE_FIRST", 5);
         cv.put("EXERCISE_REPS", 5);
         cv.put("EXERCISE_WEIGHT", 0.0);
         cv.put("EXERCISE_START", "");
@@ -405,7 +366,7 @@ public class DB extends SQLiteOpenHelper {
             id = cursor.getInt(0);
         cursor.close();
         // Create table with exercise statistics
-        db.execSQL(getStrCreateStatsExerciseTable(id));
+        db.execSQL(strCreateExEntryTable(id));
         db.close();
     }
 
@@ -462,13 +423,13 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateExercise(String name, int id, int seconds, int first, int reps, double weight, int color) {
+    public void updateExercise(String name, int id, int seconds, int first, int sets, double weight, int color) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("EXERCISE_NAME", name);
         cv.put("EXERCISE_SECONDS", seconds);
         cv.put("EXERCISE_FIRST", first);
-        cv.put("EXERCISE_REPS", reps);
+        cv.put("EXERCISE_REPS", sets);
         cv.put("EXERCISE_WEIGHT", weight);
         cv.put("EXERCISE_COLOR", color);
         db.update("EXERCISES_TABLE", cv, "EXERCISE_ID = "+id, null);
@@ -594,7 +555,7 @@ public class DB extends SQLiteOpenHelper {
                             cvDB.put("EXERCISE_COLOR", context.getColor(R.color.green_main));
                         }
                         db.insert("EXERCISES_TABLE", null, cvDB);
-                        db.execSQL(getStrCreateStatsExerciseTable(id));
+                        db.execSQL(strCreateExEntryTable(id));
                         break;
                     case "st":
                         id = obj.getInt("st_n_id");
@@ -608,7 +569,7 @@ public class DB extends SQLiteOpenHelper {
                             cvDB.put("STATS_NAMES_COLOR", context.getColor(R.color.green_main));
                         }
                         db.insert("STATS_NAMES_TABLE", null, cvDB);
-                        db.execSQL(getStrCreateStatsValuesTable(id));
+                        db.execSQL(strCreateStEntryTable(id));
                         break;
                     case "ex_e":
                         cvDB.put("STATS_EXERCISE_ID", obj.getInt("st_e_id"));
@@ -657,23 +618,5 @@ public class DB extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         cursor.close();
         db.close();
-    }
-
-    // HELPS
-    private String getStrCreateStatsExerciseTable(int id) {
-        return "CREATE TABLE STATS_EXERCISE_TABLE_"+id+" ("+
-                "STATS_EXERCISE_ID INTEGER PRIMARY KEY AUTOINCREMENT, "+
-                "STATS_EXERCISE_RESULT_S INT, "+
-                "STATS_EXERCISE_RESULT_L TEXT, "+
-                "STATS_EXERCISE_TIME TEXT, "+
-                "STATS_EXERCISE_DATE TEXT, "+
-                "STATS_EXERCISE_WEIGHTS TEXT)";
-    }
-    private String getStrCreateStatsValuesTable(int id) {
-        return "CREATE TABLE STATS_VALUES_TABLE_"+id+" ("+
-                "STATS_VALUES_ID INTEGER PRIMARY KEY AUTOINCREMENT, "+
-                "STATS_VALUES_VALUE REAL, "+
-                "STATS_VALUES_DATE TEXT, "+
-                "STATS_VALUES_NOTES TEXT)";
     }
 }

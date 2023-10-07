@@ -84,7 +84,9 @@ public class TrainingActivity extends AppCompatActivity {
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AFit::WakelockKeepTag");
-        wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        wakeLock.acquire(3600000L /*1 hour*/);
+
+        sound = MediaPlayer.create(this, Settings.System.DEFAULT_NOTIFICATION_URI);
 
         actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -197,7 +199,6 @@ public class TrainingActivity extends AppCompatActivity {
                 progressResult.incrementProgressBy(1);
                 if (obj.weight > 0)
                     progressResultW.incrementProgressBy(1);
-                sound = MediaPlayer.create(this, Settings.System.DEFAULT_NOTIFICATION_URI);
                 actionBar.setTitle(restInfo);
                 infoButton.setText(R.string.stop);
                 infoButton.setTextColor(obj.color);
@@ -232,7 +233,6 @@ public class TrainingActivity extends AppCompatActivity {
 
     public void stopThread(boolean closeActivity) {
         if (thread != null) {
-            sound.release();
             stop = true;
             try {
                 thread.join();
@@ -253,6 +253,7 @@ public class TrainingActivity extends AppCompatActivity {
                 wakeLock.release();
             stopService(notificationIntent);
             progressResult.setProgress(0);
+            sound.release();
             if (obj.weight > 0)
                 progressResultW.setProgress(0);
         } else {

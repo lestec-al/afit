@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -121,7 +122,10 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     private void settingsDialog() {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_settings);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        Window window = dialog.getWindow();
+        if (window != null)
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         dialog.findViewById(R.id.statsSettingsLayout).setVisibility(View.GONE);
         dialog.findViewById(R.id.deleteButton).setVisibility(View.GONE);
@@ -229,9 +233,10 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         mainView.setLayoutManager(new LinearLayoutManager(this));
         mainView.setHasFixedSize(true);
         mainView.setAdapter(new MainAdapter(this, data, this));
-        // Down buttons
+        // Down buttons and empty text
         if (data.size() == 0) {
             findViewById(R.id.mainDownActions).setVisibility(View.VISIBLE);
+            findViewById(R.id.emptyTV).setVisibility(View.VISIBLE);
             // Add exercise
             Drawable dEx = Objects.requireNonNull(AppCompatResources.getDrawable(this, R.drawable.ic_up_add));
             dEx.setTint(themeColor);
@@ -248,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
             addStDown.setCompoundDrawablesWithIntrinsicBounds(dSt, null, null, null);
         } else {
             findViewById(R.id.mainDownActions).setVisibility(View.GONE);
+            findViewById(R.id.emptyTV).setVisibility(View.GONE);
         }
     }
 
@@ -271,8 +277,9 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     private final ActivityResultLauncher<Intent> resultExport = registerForActivityResult(new StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             try {
-                OutputStream os = getContentResolver().openOutputStream(result.getData().getData());
+                OutputStream os = getContentResolver().openOutputStream(Objects.requireNonNull(result.getData().getData()));
                 byte[] input = db.exportDB().toString().getBytes(StandardCharsets.UTF_8);
+                assert os != null;
                 os.write(input, 0, input.length);
                 os.close();
                 Toast.makeText(this, R.string.ok, Toast.LENGTH_LONG).show();
@@ -285,13 +292,14 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     private final ActivityResultLauncher<Intent> resultImport = registerForActivityResult(new StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             try {
-                InputStream is = getContentResolver().openInputStream(result.getData().getData());
+                InputStream is = getContentResolver().openInputStream(Objects.requireNonNull(result.getData().getData()));
                 BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String inputLine;
                 StringBuilder response = new StringBuilder();
                 while ((inputLine = in.readLine()) != null)
                     response.append(inputLine);
                 in.close();
+                assert is != null;
                 is.close();
                 if (!db.importDB(response.toString()))
                     throw new Exception("Import error");

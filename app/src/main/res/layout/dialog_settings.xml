@@ -235,36 +235,6 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/repsLayout"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/divider">
-
-            <EditText
-                android:theme="@style/TextTheme"
-                android:importantForAutofill="no"
-                android:id="@+id/textReps"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:ems="10"
-                android:maxLength="3"
-                android:inputType="number"
-                android:textSize="@dimen/basic_text_size"
-                android:background="@null"
-                tools:text="16"
-                tools:ignore="LabelFor" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="@string/reps"
-                android:textSize="@dimen/basic_text_size" />
-        </RelativeLayout>
-
-        <RelativeLayout
             android:id="@+id/setsLayout"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"

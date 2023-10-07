@@ -4,7 +4,6 @@
     <string name="do_exercise">Делай</string>
     <string name="stop">СТОП</string>
     <string name="rest">Отдых</string>
-    <string name="reps">Повторы</string>
     <string name="sets">Сеты</string>
     <string name="name">Название</string>
     <string name="weight">Вес</string>
@@ -36,4 +35,5 @@
     <string name="data_replace">Все существующие данные будут заменены</string>
     <string name="connect_cloud">Подключить облако</string>
     <string name="app_ver">Версия приложения</string>
+    <string name="empty_text">Здесь пока пусто</string>
 </resources>
