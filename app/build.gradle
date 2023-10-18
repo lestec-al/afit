@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'com.yurhel.alex.afit'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.yurhel.alex.afit"
         minSdk 28
-        targetSdk 33
-        versionCode 21
-        versionName "1.74"
+        targetSdk 34
+        versionCode 22
+        versionName "1.75"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
