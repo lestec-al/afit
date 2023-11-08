@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,9 +38,11 @@ public class Help {
         for (int item: itemsIds) {
             MenuItem action = menu.findItem(item);
             Drawable drawable1 = action.getIcon();
-            Drawable drawable2 = DrawableCompat.wrap(drawable1);
-            drawable2.setTint(color);
-            action.setIcon(drawable2);
+            if (drawable1 != null) {
+                Drawable drawable2 = DrawableCompat.wrap(drawable1);
+                drawable2.setTint(color);
+                action.setIcon(drawable2);
+            }
         }
     }
 
@@ -65,7 +68,8 @@ public class Help {
     ) {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_edit);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Window window = dialog.getWindow();
+        if (window != null) window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         Button ok = dialog.findViewById(R.id.OkButton);
         Button cancel = dialog.findViewById(R.id.cancelButton);
         setButtonsTextColor(color, new Button[] {ok, cancel});

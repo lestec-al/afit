@@ -388,8 +388,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(StatsActivity.this, MainActivity.class));
+        finish();
     }
 
     // TOOLBAR
@@ -397,8 +397,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.stats, menu);
         upMenu = menu;
-        if (!isExercise)
-            upMenu.findItem(R.id.actionAdd).setTitle(R.string.add_st);
+        if (!isExercise) upMenu.findItem(R.id.actionAdd).setTitle(R.string.add_st);
         setUpActionBar();
         return true;
     }
@@ -407,16 +406,17 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-            return true;
 
         } else if (item.getItemId() == R.id.actionAdd) {
-            if (isExercise)
+            if (isExercise) {
                 startActivity(new Intent(StatsActivity.this, TrainingActivity.class)
                         .putExtra("ex_id", oneID)
-                        .putExtra("date", targetDate.getTime()
-                        ));
-            else
+                        .putExtra("date", targetDate.getTime())
+                );
+                finish();
+            } else {
                 entryDialog(null, "st");
+            }
             return true;
 
         } else if (item.getItemId() == R.id.actionSettings) {

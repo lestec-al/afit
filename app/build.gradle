@@ -10,8 +10,8 @@ android {
         applicationId "com.yurhel.alex.afit"
         minSdk 28
         targetSdk 34
-        versionCode 22
-        versionName "1.75"
+        versionCode 23
+        versionName "1.76"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     @Override
     public void onClickItem(int pos, String option) {
         startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra(option, data.get(pos).id));
+        finish();
     }
 
     // TOOLBAR
@@ -105,11 +106,11 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
 
         } else if (item.getItemId() == R.id.actionCalendar) {
             startActivity(new Intent(MainActivity.this, CalendarActivity.class));
-            return true;
+            finish();
 
         } else if (item.getItemId() == R.id.actionGraph) {
             startActivity(new Intent(MainActivity.this, ManyStatsActivity.class));
-            return true;
+            finish();
 
         } else if (item.getItemId() == R.id.actionSettings) {
             googleSighIn(true);
@@ -152,6 +153,15 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 startActivity(new Intent(Intent.ACTION_VIEW)
                         .setData(Uri.parse(getString(R.string.app_link)))
                         .setPackage("com.android.vending"));
+            } catch (Exception ignore) {}
+        });
+
+        Button privacyPolicy = dialog.findViewById(R.id.privacyButton);
+        privacyPolicy.setTextColor(themeColor);
+        TextViewCompat.setCompoundDrawableTintList(privacyPolicy, ColorStateList.valueOf(themeColor));
+        privacyPolicy.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.privacy_link))));
             } catch (Exception ignore) {}
         });
 

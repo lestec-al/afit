@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -131,7 +132,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     // Calendar stats dialog
                     Dialog dialog = new Dialog(context);
                     dialog.setContentView(R.layout.dialog_calendar_stats);
-                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    Window window = dialog.getWindow();
+                    if (window != null) window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     ImageButton back = dialog.findViewById(R.id.buttonBack);
                     back.setOnClickListener(view -> dialog.cancel());
                     back.setColorFilter(themeColor);

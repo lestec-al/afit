@@ -60,16 +60,6 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/feedbackButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/feedback"
-            android:gravity="start|center_vertical"
-            android:drawableLeft="@drawable/ic_feedback"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            tools:textColor="@color/dark" />
-
-        <Button
             android:id="@+id/importButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -119,6 +109,26 @@
             android:drawableLeft="@drawable/ic_cloud_upload"
             style="@style/Widget.AppCompat.Button.Borderless"
             tools:textColor="@color/dark"/>
+
+        <Button
+            android:id="@+id/feedbackButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/feedback"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_feedback"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark" />
+
+        <Button
+            android:id="@+id/privacyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_policy"
+            android:gravity="start|center_vertical"
+            android:drawableLeft="@drawable/ic_privacy"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark" />
 
         <TextView
             android:id="@+id/versionTV"

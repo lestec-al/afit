@@ -225,16 +225,13 @@ public class ManyStatsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         startActivity(new Intent(ManyStatsActivity.this, MainActivity.class));
+        finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
+        if (item.getItemId() == android.R.id.home) onBackPressed();
         return super.onOptionsItemSelected(item);
     }
 }

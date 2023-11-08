@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Gravity;
@@ -144,11 +145,15 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        startActivity(new Intent(CalendarActivity.this, MainActivity.class));
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
             onBackPressed();
-            return true;
 
         } else if (item.getItemId() == R.id.actionDateNow) {
             calendar.setTimeInMillis(System.currentTimeMillis());

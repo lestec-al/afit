@@ -191,7 +191,7 @@ public class TrainingActivity extends AppCompatActivity {
             if (obj.weight > 0)
                 textToProgress(repsWeights, editWeight.getText().toString(), repsResultLayoutW);
             if (repsResults.size() >= obj.sets) {
-                exitSaveResults();
+                exit(true);
             } else {
                 buttonSets.setVisibility(View.GONE);
                 buttonTime.setVisibility(View.VISIBLE);
@@ -262,30 +262,28 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     // NAV
-    public void exitSaveResults() {
+    public void exit(Boolean isSaveResults) {
         stopThread(true);
-        int resultShort = 0;
-        for (String i: repsResults)
-            resultShort += Integer.parseInt(i);
-        String resultFull = String.join(" + ", repsResults);
-        String resultWeights = String.join(" + ", repsWeights);
-        String trainingTime;
-        int timeSec = (int) Duration.between(startTime, LocalTime.now()).getSeconds();
-        if (timeSec >= 60) {
-            int min = timeSec / 60;
-            int sec = timeSec % 60;
-            trainingTime = min+":"+((sec < 10)? "0"+sec: ""+sec);
-        } else {
-            trainingTime = "0:"+((timeSec < 10)? "0"+timeSec: ""+timeSec);
+        if (isSaveResults) {
+            int resultShort = 0;
+            for (String i: repsResults) {
+                resultShort += Integer.parseInt(i);
+            }
+            String resultFull = String.join(" + ", repsResults);
+            String resultWeights = String.join(" + ", repsWeights);
+            String trainingTime;
+            int timeSec = (int) Duration.between(startTime, LocalTime.now()).getSeconds();
+            if (timeSec >= 60) {
+                int min = timeSec / 60;
+                int sec = timeSec % 60;
+                trainingTime = min+":"+((sec < 10)? "0"+sec: ""+sec);
+            } else {
+                trainingTime = "0:"+((timeSec < 10)? "0"+timeSec: ""+timeSec);
+            }
+            String date = String.valueOf(getIntent().getLongExtra("date", 0));
+            db.addExerciseEntry(exerciseID, resultShort, resultFull, trainingTime, date, resultWeights);
         }
-        String date = String.valueOf(getIntent().getLongExtra("date", 0));
-        db.addExerciseEntry(exerciseID, resultShort, resultFull, trainingTime, date, resultWeights);
-        finish();
         startActivity(new Intent(TrainingActivity.this, StatsActivity.class).putExtra("ex_id", exerciseID));
-    }
-
-    public void exitWithoutSave() {
-        stopThread(true);
         finish();
     }
 
@@ -302,17 +300,16 @@ public class TrainingActivity extends AppCompatActivity {
             Object[] d = Help.editTextDialog(this, obj.color, R.string.save_results, "", null, true);
             ((Button)d[1]).setOnClickListener(v1 -> {
                 ((Dialog)d[0]).cancel();
-                exitSaveResults();
+                exit(true);
             });
             ((Button)d[2]).setText(R.string.no);
             ((Button)d[2]).setOnClickListener(v1 -> {
                 ((Dialog)d[0]).cancel();
-                exitWithoutSave();
+                exit(false);
             });
             ((Dialog)d[0]).show();
         } else {
-            exitWithoutSave();
-            super.onBackPressed();
+            exit(false);
         }
     }
 
@@ -326,15 +323,8 @@ public class TrainingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            exitWithoutSave();
-            return true;
-
-        } else if (item.getItemId() == R.id.actionSaveTraining) {
-            if (repsResults.size() > 0)
-                exitSaveResults();
-            return true;
-        }
+        if (item.getItemId() == android.R.id.home) exit(false);
+        else if (item.getItemId() == R.id.actionSaveTraining && repsResults.size() > 0) exit(true);
         return super.onOptionsItemSelected(item);
     }
 
@@ -349,8 +339,7 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     public void textToProgress(ArrayList<String> results, String text, LinearLayout layout) {
-        if (text.equals(""))
-            text = "0.0";
+        if (text.equals("")) text = "0.0";
         results.add(text);
         TextView tv = new TextView(this);
         tv.setText(text);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Фітнес дзённік</string>
     <string name="do_exercise">Рабі</string>
     <string name="stop">СПЫНІЦЬ</string>
     <string name="rest">Адпачынак</string>
@@ -36,4 +35,5 @@
     <string name="connect_cloud">Падключыць воблака</string>
     <string name="app_ver">Версія праграмы</string>
     <string name="empty_text">Тут яшчэ пуста</string>
+    <string name="privacy_policy">Палітыка прыватнасці</string>
 </resources>

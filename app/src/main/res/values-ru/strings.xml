@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Фитнес-дневник</string>
     <string name="do_exercise">Делай</string>
     <string name="stop">СТОП</string>
     <string name="rest">Отдых</string>
@@ -36,4 +35,5 @@
     <string name="connect_cloud">Подключить облако</string>
     <string name="app_ver">Версия приложения</string>
     <string name="empty_text">Здесь пока пусто</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
 </resources>
