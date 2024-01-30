@@ -1,5 +1,6 @@
 package com.yurhel.alex.afit;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Gravity;
@@ -23,7 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Objects;
@@ -33,32 +37,56 @@ public class CalendarActivity extends AppCompatActivity {
     Calendar calendar;
     Calendar today;
     RecyclerView calendarView;
-    LinkedHashMap<MyObject, MyObject> data;
+    ArrayList<MyObject> data;
     int stepWidth;
     int stepHeight;
     int calendarViewWidth;
     androidx.appcompat.app.ActionBar actionBar;
+    boolean isNight;
+    int whiteColor, blackColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
-        themeColor = Help.getMainColor(this);
+
+        // On back pressed
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                startActivity(new Intent(CalendarActivity.this, MainActivity.class));
+                finish();
+            }
+        });
+
         DB db = new DB(this);
+        // Get & sort data
         data = db.getAll();
+        LinkedHashMap<String, Integer> positions = db.getPositions();
         db.close();
-        today = Calendar.getInstance();
-        calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendarView = findViewById(R.id.calendarRV);
-        // Styling
+        try {
+            data.sort(Comparator.comparing(obj1 -> positions.get(obj1.id + "_" + ((obj1.sets != 0/*Is exercise*/) ? "ex" : "st"))));
+        } catch (Exception ignored) {}
+
+        themeColor = Help.getMainColor(this);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
             actionBar.setDisplayHomeAsUpEnabled(true);
             Help.setActionBackIconColor(this, themeColor, actionBar);
         }
-        // Create days of week, update calendar
+        isNight = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        whiteColor = getColor(R.color.white);
+        blackColor = getColor(R.color.dark);
+
+
+        // Calendar
+        today = Calendar.getInstance();
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendarView = findViewById(R.id.calendarRV);
+
+        // Create upper header (days of week)
         LinearLayout headerDays = findViewById(R.id.calendarHeaderDays);
         headerDays.post(() -> {
             Calendar c = Calendar.getInstance();
@@ -76,9 +104,11 @@ public class CalendarActivity extends AppCompatActivity {
                 c.set(Calendar.DAY_OF_WEEK, d);
                 headerDays.addView(tv);
             }
+
             updateCalendar();
         });
-        // Scroll settings
+
+        // Scroll calendar settings
         calendarView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             int pos = 1;
             @Override
@@ -145,15 +175,9 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        startActivity(new Intent(CalendarActivity.this, MainActivity.class));
-        finish();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
 
         } else if (item.getItemId() == R.id.actionDateNow) {
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -165,12 +189,8 @@ public class CalendarActivity extends AppCompatActivity {
             // Custom date picker dialog
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_add_stats);
-            Button ok = dialog.findViewById(R.id.OkButton);
-            Button cancel = dialog.findViewById(R.id.cancelButton);
-            Help.setButtonsTextColor(themeColor, new Button[] {ok, cancel});
             dialog.findViewById(R.id.pickDateButton).setVisibility(View.GONE);
-            NumberPicker pickerMonth = dialog.findViewById(R.id.numberPicker0);
-            NumberPicker pickerYear = dialog.findViewById(R.id.numberPicker1);
+
             // Get all months
             Calendar c = Calendar.getInstance();
             c.set(Calendar.DAY_OF_MONTH, 1);
@@ -180,12 +200,16 @@ public class CalendarActivity extends AppCompatActivity {
                 c.set(Calendar.MONTH, i);
                 months[i] = String.valueOf(DateFormat.format("LLL", c));
             }
+
+            NumberPicker pickerMonth = dialog.findViewById(R.id.numberPicker0);
             pickerMonth.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
             pickerMonth.setMaxValue(max);
             pickerMonth.setMinValue(0);
             pickerMonth.setDisplayedValues(months);
             pickerMonth.setWrapSelectorWheel(false);
             pickerMonth.setValue(calendar.get(Calendar.MONTH));
+
+            NumberPicker pickerYear = dialog.findViewById(R.id.numberPicker1);
             pickerYear.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
             pickerYear.setMaxValue(calendar.get(Calendar.YEAR)+10);
             pickerYear.setMinValue(calendar.get(Calendar.YEAR)-10);
@@ -197,13 +221,20 @@ public class CalendarActivity extends AppCompatActivity {
                 else if (newVal == pickerYear.getMinValue())
                     pickerYear.setMinValue(newVal-5);
             });
+
+            Button ok = dialog.findViewById(R.id.OkButton);
+            ok.setTextColor(themeColor);
             ok.setOnClickListener(view -> {
                 calendar.set(Calendar.MONTH, pickerMonth.getValue());
                 calendar.set(Calendar.YEAR, pickerYear.getValue());
                 dialog.cancel();
                 updateCalendar();
             });
+
+            Button cancel = dialog.findViewById(R.id.cancelButton);
+            cancel.setTextColor(themeColor);
             cancel.setOnClickListener(view -> dialog.cancel());
+
             dialog.show();
             return true;
         }
@@ -232,15 +263,22 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int pos) {
             Calendar c;
-            if (pos == 0)
-                c = calBefore;
-            else if (pos == 2)
-                c = calAfter;
-            else
-                c = calendar;
+            if (pos == 0) c = calBefore;
+            else if (pos == 2) c = calAfter;
+            else c = calendar;
             holder.rv.setLayoutManager(new GridLayoutManager(CalendarActivity.this, 7));
             holder.rv.setHasFixedSize(true);
-            holder.rv.setAdapter(new CalendarAdapter(CalendarActivity.this, data, c, themeColor, stepWidth, stepHeight));
+            holder.rv.setAdapter(new CalendarAdapter(
+                    CalendarActivity.this,
+                    data,
+                    c,
+                    themeColor,
+                    stepWidth,
+                    stepHeight,
+                    isNight,
+                    whiteColor,
+                    blackColor
+            ));
         }
         @Override
         public int getItemCount() {

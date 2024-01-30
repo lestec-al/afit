@@ -68,10 +68,10 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.MyViewHolder
             tvResult = view.findViewById(R.id.addValue);
             tvTime = view.findViewById(R.id.time);
             tvWeights = view.findViewById(R.id.addValue2);
+
             view.setOnLongClickListener(v1 -> {
                 int pos = getAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION)
-                    clickInterface.onClickItem(pos, "");
+                if (pos != RecyclerView.NO_POSITION) clickInterface.onClickItem(pos, "");
                 return true;
             });
         }

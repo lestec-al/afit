@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class DB extends SQLiteOpenHelper {
     Context context;
@@ -42,6 +43,69 @@ public class DB extends SQLiteOpenHelper {
                 "ended TEXT, "+
                 "color INT)"
         );
+
+        String lang = Locale.getDefault().getLanguage();
+        // Add initial exercises
+        for (int i = 1; i < 3; i++) {
+            String name;
+            int color;
+            if (i == 1) {
+                switch (lang) {
+                    case "ru": name = "Подтягивания"; break;
+                    case "be": name = "Падцягвання"; break;
+                    case "uk": name = "Підтягування"; break;
+                    default: name = "Pull-Ups";
+                }
+                color = context.getColor(R.color.red);
+            } else { // if (i == 2)
+                switch (lang) {
+                    case "ru": name = "Отжимания"; break;
+                    case "be": name = "Адцісканні"; break;
+                    case "uk": name = "Віджимання"; break;
+                    default: name = "Push-Ups";
+                }
+                color = context.getColor(R.color.orange);
+            }
+            ContentValues cv = new ContentValues();
+            cv.put("name", name);
+            cv.put("rest", 120);
+            cv.put("reps", 5);
+            cv.put("sets", 5);
+            cv.put("weight", 0.0);
+            cv.put("start", "");
+            cv.put("ended", "");
+            cv.put("color", color);
+            db.insert("exercises", null, cv);
+            // Take ID from new created row
+            int id = 0;
+            Cursor cursor = db.rawQuery("SELECT * FROM exercises", null);
+            if (cursor.moveToLast()) id = cursor.getInt(0);
+            cursor.close();
+            // Create table with exercise statistics
+            db.execSQL(strCreateExEntryTable(id));
+        }
+
+        // Add initial stats
+        String name;
+        switch (lang) {
+            case "ru": name = "Вес"; break;
+            case "be":
+            case "uk": name = "Вага"; break;
+            default: name = "Weight";
+        }
+        ContentValues cv = new ContentValues();
+        cv.put("name", name);
+        cv.put("start", "");
+        cv.put("ended", "");
+        cv.put("color", context.getColor(R.color.green_main));
+        db.insert("stats", null, cv);
+        // Take ID from new created row
+        int id = 0;
+        Cursor cursor = db.rawQuery("SELECT * FROM stats", null);
+        if (cursor.moveToLast()) id = cursor.getInt(0);
+        cursor.close();
+        // Create table with user custom statistic
+        db.execSQL(strCreateStEntryTable(id));
     }
 
     private String strCreateExEntryTable(int id) {
@@ -64,7 +128,41 @@ public class DB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldDB, int newDB) {}
 
-    // ALL DATA GRAPH
+
+    // POSITIONS
+    public void setPositions(LinkedHashMap<String, Integer> pos) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS positions ( id TEXT, pos INT)");
+        db.execSQL("DELETE FROM positions");
+        for (String id : pos.keySet()) {
+            ContentValues cv = new ContentValues();
+            cv.put("id", id);
+            cv.put("pos", pos.get(id));
+            db.insert("positions", null, cv);
+        }
+        db.close();
+    }
+
+    public LinkedHashMap<String, Integer> getPositions() {
+        LinkedHashMap<String, Integer> l = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c1 = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='positions'", null);
+        if (c1.moveToFirst()) {
+            Cursor c = db.rawQuery("SELECT * FROM positions", null);
+            if (c.moveToFirst()) {
+                do {
+                    l.put(c.getString(0), c.getInt(1));
+                } while (c.moveToNext());
+            }
+            c.close();
+        }
+        c1.close();
+        db.close();
+        return l;
+    }
+
+
+    // ALL STATS
     public void setAllDataGraphDates(String startDate, String endDate) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("CREATE TABLE IF NOT EXISTS allStats ( "+
@@ -148,9 +246,10 @@ public class DB extends SQLiteOpenHelper {
         return result;
     }
 
-    // GET STATS
-    public LinkedHashMap<MyObject, MyObject> getAll() {
-        LinkedHashMap<MyObject, MyObject> l = new LinkedHashMap<>();
+
+    // GET
+    public ArrayList<MyObject> getAll() {
+        ArrayList<MyObject> l = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM exercises", null);
         if (c.moveToFirst())
@@ -158,27 +257,17 @@ public class DB extends SQLiteOpenHelper {
                 Cursor c1 = db.rawQuery("SELECT * FROM exercise_"+c.getInt(0), null);
                 if (c1.moveToFirst()) {
                     do {
-                        l.put(
-                                new MyObject(
-                                        c1.getInt(0),
-                                        c1.getInt(1),
-                                        c1.getString(2),
-                                        c1.getString(3),
-                                        c1.getString(4),
-                                        c1.getString(5)
-                                ),
-                                new MyObject(
-                                        c.getInt(0),
-                                        c.getString(1),
-                                        c.getInt(2),
-                                        c.getInt(3),
-                                        c.getInt(4),
-                                        c.getString(5),
-                                        c.getString(6),
-                                        c.getDouble(7),
-                                        c.getInt(8)
-                                )
+                        MyObject o = new MyObject(
+                                c1.getInt(0),
+                                c1.getInt(1),
+                                c1.getString(2),
+                                c1.getString(3),
+                                c1.getString(4),
+                                c1.getString(5)
                         );
+                        o.name = c.getString(1);
+                        o.color = c.getInt(8);
+                        l.add(o);
                     } while (c1.moveToNext());
                 }
                 c1.close();
@@ -190,21 +279,15 @@ public class DB extends SQLiteOpenHelper {
                 Cursor c1 = db.rawQuery("SELECT * FROM stats_"+c.getInt(0), null);
                 if (c1.moveToFirst()) {
                     do {
-                        l.put(
-                                new MyObject(
-                                        c1.getInt(0),
-                                        c1.getDouble(1),
-                                        c1.getString(2),
-                                        c1.getString(3)
-                                ),
-                                new MyObject(
-                                        c.getInt(0),
-                                        c.getString(1),
-                                        c.getString(2),
-                                        c.getString(3),
-                                        c.getInt(4)
-                                )
+                        MyObject o = new MyObject(
+                                c1.getInt(0),
+                                c1.getDouble(1),
+                                c1.getString(2),
+                                c1.getString(3)
                         );
+                        o.name = c.getString(1);
+                        o.color = c.getInt(4);
+                        l.add(o);
                     } while (c1.moveToNext());
                 }
                 c1.close();
@@ -306,7 +389,8 @@ public class DB extends SQLiteOpenHelper {
         return obj;
     }
 
-    // ADD STATS
+
+    // ADD
     public void addStats(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -371,6 +455,7 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
+
     // DEL
     public void deleteObj(int id, boolean isExercise) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -389,6 +474,7 @@ public class DB extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM "+((isExercise) ? "exercise_": "stats_")+tableId+" WHERE id = "+entryId);
         db.close();
     }
+
 
     // UPDATE
     public void updateStats(String name, int id, int color) {
@@ -429,6 +515,7 @@ public class DB extends SQLiteOpenHelper {
         );
         db.close();
     }
+
 
     // EXPORT / IMPORT
     public JSONArray exportDB() {
@@ -587,14 +674,18 @@ public class DB extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM exercises");
         db.execSQL("DELETE FROM stats");
         Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-        if (cursor.moveToFirst())
+        if (cursor.moveToFirst()) {
             do {
                 String tableName = cursor.getString(0);
-                for (String name: new String[] {"stats_", "exercise_"}) {
+                // Clear positions
+                if (tableName.equals("positions")) db.execSQL("DELETE FROM positions");
+                // Clear entries tables
+                for (String name : new String[]{"stats_", "exercise_"}) {
                     if (tableName.contains(name))
-                        db.execSQL("DROP TABLE "+tableName);
+                        db.execSQL("DROP TABLE " + tableName);
                 }
             } while (cursor.moveToNext());
+        }
         cursor.close();
         db.close();
     }

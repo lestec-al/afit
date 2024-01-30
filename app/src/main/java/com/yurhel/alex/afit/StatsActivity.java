@@ -1,13 +1,5 @@
 package com.yurhel.alex.afit;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -33,6 +25,15 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LabelFormatter;
@@ -45,6 +46,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class StatsActivity extends AppCompatActivity implements ClickInterface {
@@ -68,6 +70,15 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
+        // On back pressed
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                startActivity(new Intent(StatsActivity.this, MainActivity.class));
+                finish();
+            }
+        });
+
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -170,8 +181,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         data = newData;
         // Update short info
         ((TextView) findViewById(R.id.allEntriesText)).setText(String.valueOf(data.size()));
-        ((TextView) findViewById(R.id.record1)).setText((isExercise)?""+(int)statsMax:""+statsMax);
-        ((TextView) findViewById(R.id.record2)).setText((isExercise)?""+oneSetMax:""+statsMin);
+        ((TextView) findViewById(R.id.record1)).setText((isExercise)? String.valueOf((int) statsMax) : String.valueOf(statsMax));
+        ((TextView) findViewById(R.id.record2)).setText((isExercise)? String.valueOf(oneSetMax) : String.valueOf(statsMin));
         findViewById((isExercise)? R.id.recordMinLabel : R.id.comma).setVisibility(View.GONE);
         int mainColor = Help.getMainColor(this);
         ((ImageView)findViewById(R.id.allEntriesLabel)).setColorFilter(mainColor);
@@ -233,6 +244,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         statsView.setLayoutManager(new LinearLayoutManager(this));
         statsView.setHasFixedSize(true);
         statsView.setAdapter(new StatsAdapter(this, data, this));
+        // Empty text
+        if (data.size() == 0) findViewById(R.id.emptyTV).setVisibility(View.VISIBLE);
+        else findViewById(R.id.emptyTV).setVisibility(View.GONE);
     }
 
     // DIALOGS
@@ -296,6 +310,10 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 updateAll(false);
             });
 
+            Button cancel = dialog.findViewById(R.id.cancelButton);
+            cancel.setTextColor(obj.color);
+            cancel.setOnClickListener(view -> dialog.cancel());
+
         } else if (goal.equals("ex") && passObj != null) {
             // Exercise entry dialog
             dialog.setContentView(R.layout.dialog_show_ex);
@@ -325,12 +343,6 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             pickDate.setEnabled(false);
         }
 
-        // Universal
-        Button cancel = dialog.findViewById(R.id.cancelButton);
-        cancel.setTextColor(obj.color);
-        cancel.setOnClickListener(view -> dialog.cancel());
-        dialog.show();
-
         if (passObj != null) {
             ImageButton delete = dialog.findViewById(R.id.deleteButton);
             delete.setVisibility(View.VISIBLE);
@@ -347,6 +359,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 ((Dialog)askDeleteDialog[0]).show();
             });
         }
+
+        dialog.show();
     }
 
     private void calendarDialog(Date oldDate, Object dateButton, Boolean start) {
@@ -358,7 +372,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             c.set(Calendar.MONTH, monthOfYear);
             c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             Date newDate = c.getTime();
-            ((TextView)dateButton).setText(Help.dateFormat(this, newDate));
+            ((Button)dateButton).setText(Help.dateFormat(this, newDate));
             if (start != null) {
                 db.setDate(String.valueOf(newDate.getTime()), oneID, isExercise, start);
                 updateAll(false);
@@ -386,18 +400,12 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         entryDialog(data.get(pos), (isExercise) ? "ex": "st");
     }
 
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(StatsActivity.this, MainActivity.class));
-        finish();
-    }
-
     // TOOLBAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.stats, menu);
+        if (isExercise) getMenuInflater().inflate(R.menu.stats_workout, menu);
+        else getMenuInflater().inflate(R.menu.stats, menu);
         upMenu = menu;
-        if (!isExercise) upMenu.findItem(R.id.actionAdd).setTitle(R.string.add_st);
         setUpActionBar();
         return true;
     }
@@ -405,7 +413,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
+            return true;
 
         } else if (item.getItemId() == R.id.actionAdd) {
             if (isExercise) {
@@ -422,50 +431,80 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         } else if (item.getItemId() == R.id.actionSettings) {
             // Settings dialog
             Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.dialog_settings);
+            dialog.setContentView(R.layout.dialog_settings_stats);
             Window window = dialog.getWindow();
-            if (window != null)
-                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.findViewById(R.id.mainSettingsLayout).setVisibility(View.GONE);
-            // Exercise specifics
-            EditText textName = dialog.findViewById(R.id.textName);
+            if (window != null) window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
             EditText textRest = dialog.findViewById(R.id.textRest);
             EditText textWeight = dialog.findViewById(R.id.textWeight);
             EditText textSets = dialog.findViewById(R.id.textSets);
+
+            EditText textName = dialog.findViewById(R.id.textName);
             textName.setText(obj.name);
+
+            Button date = dialog.findViewById(R.id.clickDate);
             if (isExercise) {
                 textRest.setText(String.valueOf(obj.rest));
                 textSets.setText(String.valueOf(obj.sets));
                 textWeight.setText(String.valueOf(obj.weight));
-                TextView date = dialog.findViewById(R.id.textDate);
+
                 date.setText(Help.dateFormat(this, targetDate));
-                dialog.findViewById(R.id.clickDate).setOnClickListener(v -> calendarDialog(targetDate, date, null));
+                date.setOnClickListener(v -> calendarDialog(targetDate, date, null));
             } else {
-                dialog.findViewById(R.id.dateLayout).setVisibility(View.GONE);
+                date.setVisibility(View.GONE);
                 dialog.findViewById(R.id.restLayout).setVisibility(View.GONE);
                 dialog.findViewById(R.id.weightLayout).setVisibility(View.GONE);
                 dialog.findViewById(R.id.setsLayout).setVisibility(View.GONE);
+                textRest.setVisibility(View.GONE);
+                textWeight.setVisibility(View.GONE);
+                textSets.setVisibility(View.GONE);
             }
+
+            // Text listeners
             for (EditText e: new EditText[] {textName, textRest, textWeight, textSets}) {
-                e.addTextChangedListener(new TextWatcher() {
-                    final ColorStateList defColor = e.getTextColors();
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        if ((e == textName && !s.toString().equals(obj.name)) || (isExercise && (
-                                e == textRest && !s.toString().equals(String.valueOf(obj.rest)) ||
-                                e == textSets && !s.toString().equals(String.valueOf(obj.sets)) ||
-                                e == textWeight && !s.toString().equals(String.valueOf(obj.weight))
-                        )))
-                            e.setTextColor(obj.color);
-                        else
-                            e.setTextColor(defColor);
-                    }
-                });
+                if (e.getVisibility() == View.VISIBLE) {
+                    e.addTextChangedListener(new TextWatcher() {
+                        final ColorStateList defColor = e.getTextColors();
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if ((e == textName && !s.toString().equals(obj.name)) || (isExercise && (
+                                    e == textRest && !s.toString().equals(String.valueOf(obj.rest)) ||
+                                            e == textSets && !s.toString().equals(String.valueOf(obj.sets)) ||
+                                            e == textWeight && !s.toString().equals(String.valueOf(obj.weight))
+                            ))) e.setTextColor(obj.color);
+                            else e.setTextColor(defColor);
+                        }
+                    });
+                }
             }
+
+            // Init for seek bars changes color ???
+            ImageButton randomColor = dialog.findViewById(R.id.randomColor);
+            ImageButton defaultColor = dialog.findViewById(R.id.defaultColorButton);
+
+            Button delete = dialog.findViewById(R.id.deleteButton);
+            delete.setOnClickListener(v -> {
+                Object[] askDeleteDialog = Help.editTextDialog(
+                        this,
+                        obj.color,
+                        R.string.delete,
+                        "",
+                        null,
+                        false
+                );
+                ((Button)askDeleteDialog[1]).setOnClickListener(v1 -> {
+                    ((Dialog)askDeleteDialog[0]).cancel();
+                    dialog.dismiss();
+                    db.deleteObj(oneID, isExercise);
+                    getOnBackPressedDispatcher().onBackPressed();
+                });
+                ((Dialog)askDeleteDialog[0]).show();
+            });
+
             // Colors
             final int[] c = {Color.red(obj.color), Color.green(obj.color), Color.blue(obj.color)};
             SeekBar seekR = dialog.findViewById(R.id.seekColorR);
@@ -474,16 +513,25 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             seekR.setMax(255);
             seekG.setMax(255);
             seekB.setMax(255);
-            TextView colorView = dialog.findViewById(R.id.textColor);
-            setSeekBarsColor(seekR, seekG, seekB, colorView, c);
-            // Set def color
-            ImageButton defaultColor = dialog.findViewById(R.id.defaultColorButton);
+            setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
+
+            // Random color
+            randomColor.setOnClickListener(v -> {
+                Random r = new Random();
+                c[0] = Color.red(Color.rgb(r.nextInt(256), 0, 0));
+                c[1] = Color.green(Color.rgb(0, r.nextInt(256), 0));
+                c[2] = Color.blue(Color.rgb(0, 0, r.nextInt(256)));
+                setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
+            });
+
+            // Def color
             defaultColor.setOnClickListener(v -> {
                 c[0] = Color.red(obj.color);
                 c[1] = Color.green(obj.color);
                 c[2] = Color.blue(obj.color);
-                setSeekBarsColor(seekR, seekG, seekB, colorView, c);
+                setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
             });
+
             // On color change
             for (SeekBar bar: new SeekBar[] {seekR, seekG, seekB}) {
                 bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -500,11 +548,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                             c[2] = progress;
                             sl = ColorStateList.valueOf(Color.rgb(0, 0, c[2]));
                         }
-                        int fullColor = Color.rgb(c[0], c[1], c[2]);
-                        colorView.setTextColor(fullColor);
-                        defaultColor.setColorFilter(fullColor);
                         seekBar.setProgressTintList(sl);
                         seekBar.setThumbTintList(sl);
+                        setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
                     }
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -512,22 +558,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                     public void onStopTrackingTouch(SeekBar seekBar) {}
                 });
             }
-            // Others
-            ImageButton delete = dialog.findViewById(R.id.deleteButton);
-            delete.setOnClickListener(v -> {
-                Object[] askDeleteDialog = Help.editTextDialog(this, obj.color,
-                        R.string.delete, "", null, false);
-                ((Button)askDeleteDialog[1]).setOnClickListener(v1 -> {
-                    ((Dialog)askDeleteDialog[0]).cancel();
-                    dialog.dismiss();
-                    this.onBackPressed();
-                    db.deleteObj(oneID, isExercise);
-                });
-                ((Dialog)askDeleteDialog[0]).show();
-            });
-            ImageButton back = dialog.findViewById(R.id.backButton);
-            back.setOnClickListener(v -> dialog.cancel());
-            Help.setImageButtonsColor(obj.color, new ImageButton[] {back, delete, defaultColor});
+
             // Save settings
             dialog.setOnCancelListener(d1 -> {
                 String name = textName.getText().toString();
@@ -543,6 +574,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 }
                 updateAll(false);
             });
+
             dialog.show();
             return true;
         }
@@ -570,7 +602,17 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         }
     }
 
-    private void setSeekBarsColor(SeekBar seekR, SeekBar seekG, SeekBar seekB, TextView colorView, int[] c) {
+    private void setSeekBarsColor(
+            SeekBar seekR,
+            SeekBar seekG,
+            SeekBar seekB,
+            int[] c,
+            ImageButton randomColor,
+            ImageButton defaultColor,
+            Button delete,
+            Button date
+    ) {
+        // Get color from bars
         seekR.setProgress(c[0]);
         seekG.setProgress(c[1]);
         seekB.setProgress(c[2]);
@@ -580,7 +622,13 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         seekR.setThumbTintList(ColorStateList.valueOf(Color.rgb(c[0], 0, 0)));
         seekG.setThumbTintList(ColorStateList.valueOf(Color.rgb(0, c[1], 0)));
         seekB.setThumbTintList(ColorStateList.valueOf(Color.rgb(0, 0, c[2])));
-        colorView.setTextColor(Color.rgb(c[0], c[1], c[2]));
+        int color = Color.rgb(c[0], c[1], c[2]);
+
+        // Set color
+        Help.setImageButtonsColor(color, new ImageButton[] {defaultColor, randomColor});
+        Help.setButtonsTextColor(color, new Button[] {delete, date});
+        TextViewCompat.setCompoundDrawableTintList(delete, ColorStateList.valueOf(color));
+        TextViewCompat.setCompoundDrawableTintList(date, ColorStateList.valueOf(color));
     }
 
     private void highlightRVItem(View view) {

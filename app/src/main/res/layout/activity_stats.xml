@@ -89,6 +89,7 @@
             android:id="@+id/graphViewLayout"
             android:layout_width="match_parent"
             android:layout_height="230dp"/>
+
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -130,12 +131,21 @@
             tools:text="2023.02.06"
             style="@style/Widget.AppCompat.Button.Borderless"
             tools:textColor="@color/green_main"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/statsRV"
-        android:scrollbarSize="4dp"
+        android:scrollbarSize="@dimen/scrollbarSize"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/emptyTV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/empty_text"/>
+
 </LinearLayout>

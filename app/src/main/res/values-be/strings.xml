@@ -36,4 +36,7 @@
     <string name="app_ver">Версія праграмы</string>
     <string name="empty_text">Тут яшчэ пуста</string>
     <string name="privacy_policy">Палітыка прыватнасці</string>
+    <string name="start_workout">Пачаць трэніроўку</string>
+    <string name="delete_statistic">Выдаліць статыстыку</string>
+    <string name="training_min">хв актыўнасці</string>
 </resources>

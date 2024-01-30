@@ -1,5 +1,6 @@
 package com.yurhel.alex.afit;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 
@@ -65,6 +66,29 @@ public class TrainingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training);
+
+        // On back pressed
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (repsResults.size() > 0) {
+                    // Save/not dialog
+                    Object[] d = Help.editTextDialog(TrainingActivity.this, obj.color, R.string.save_results, "", null, true);
+                    ((Button)d[1]).setOnClickListener(v1 -> {
+                        ((Dialog)d[0]).cancel();
+                        exit(true);
+                    });
+                    ((Button)d[2]).setText(R.string.no);
+                    ((Button)d[2]).setOnClickListener(v1 -> {
+                        ((Dialog)d[0]).cancel();
+                        exit(false);
+                    });
+                    ((Dialog)d[0]).show();
+                } else {
+                    exit(false);
+                }
+            }
+        });
 
         db = new DB(TrainingActivity.this);
         exerciseID = getIntent().getIntExtra("ex_id", 0);
@@ -276,9 +300,9 @@ public class TrainingActivity extends AppCompatActivity {
             if (timeSec >= 60) {
                 int min = timeSec / 60;
                 int sec = timeSec % 60;
-                trainingTime = min+":"+((sec < 10)? "0"+sec: ""+sec);
+                trainingTime = min+":"+((sec < 10)? "0"+sec: String.valueOf(sec));
             } else {
-                trainingTime = "0:"+((timeSec < 10)? "0"+timeSec: ""+timeSec);
+                trainingTime = "0:"+((timeSec < 10)? "0"+timeSec: String.valueOf(timeSec));
             }
             String date = String.valueOf(getIntent().getLongExtra("date", 0));
             db.addExerciseEntry(exerciseID, resultShort, resultFull, trainingTime, date, resultWeights);
@@ -291,26 +315,6 @@ public class TrainingActivity extends AppCompatActivity {
     protected void onDestroy() {
         stopThread(true);
         super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (repsResults.size() > 0) {
-            // Save/not dialog
-            Object[] d = Help.editTextDialog(this, obj.color, R.string.save_results, "", null, true);
-            ((Button)d[1]).setOnClickListener(v1 -> {
-                ((Dialog)d[0]).cancel();
-                exit(true);
-            });
-            ((Button)d[2]).setText(R.string.no);
-            ((Button)d[2]).setOnClickListener(v1 -> {
-                ((Dialog)d[0]).cancel();
-                exit(false);
-            });
-            ((Dialog)d[0]).show();
-        } else {
-            exit(false);
-        }
     }
 
     // TOOLBAR

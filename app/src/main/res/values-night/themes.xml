@@ -14,7 +14,7 @@
 
     <style name="ActionBar" parent="Theme.Material3.DayNight">
         <item name="android:homeAsUpIndicator">@drawable/ic_up_back</item>
-        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="colorSurfaceContainer">@android:color/transparent</item>
         <item name="android:textColorPrimary">@color/white</item>
     </style>
 

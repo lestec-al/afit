@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginVertical="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <RelativeLayout
+            android:id="@+id/restLayout"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="5dp"
+            android:padding="5dp"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/rectangle">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textColor="@color/grey"
+                android:text="@string/rest"
+                android:textSize="@dimen/small_text_size" />
+
+            <EditText
+                android:id="@+id/textRest"
+                tools:text="120"
+                android:theme="@style/TextTheme"
+                android:importantForAutofill="no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:maxLength="4"
+                android:inputType="number"
+                android:textSize="@dimen/basic_text_size"
+                android:background="@null"
+                android:gravity="bottom"
+                tools:ignore="LabelFor" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/setsLayout"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="5dp"
+            android:padding="5dp"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/rectangle">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textColor="@color/grey"
+                android:text="@string/sets"
+                android:textSize="@dimen/small_text_size" />
+
+            <EditText
+                android:id="@+id/textSets"
+                tools:text="5"
+                android:theme="@style/TextTheme"
+                android:importantForAutofill="no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:maxLength="2"
+                android:inputType="number"
+                android:textSize="@dimen/basic_text_size"
+                android:background="@null"
+                android:gravity="bottom"
+                tools:ignore="LabelFor" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/weightLayout"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="5dp"
+            android:padding="5dp"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/rectangle">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textColor="@color/grey"
+                android:text="@string/weight"
+                android:textSize="@dimen/small_text_size" />
+
+            <EditText
+                android:id="@+id/textWeight"
+                tools:text="60.0"
+                android:theme="@style/TextTheme"
+                android:importantForAutofill="no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:maxLength="7"
+                android:inputType="numberDecimal"
+                android:textSize="@dimen/basic_text_size"
+                android:background="@null"
+                android:gravity="bottom"
+                tools:ignore="LabelFor" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/rectangle">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top"
+            android:textColor="@color/grey"
+            android:text="@string/name"
+            android:textSize="@dimen/small_text_size" />
+
+        <EditText
+            android:id="@+id/textName"
+            tools:text="Pull-Ups"
+            android:theme="@style/TextTheme"
+            android:importantForAutofill="no"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:maxLength="30"
+            android:inputType="text"
+            android:textSize="@dimen/basic_text_size"
+            android:background="@null"
+            android:gravity="bottom"
+            tools:ignore="LabelFor" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rectangle">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textColor="@color/grey"
+                android:text="@string/color"
+                android:textSize="@dimen/small_text_size" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/randomColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_question"
+                    style="@style/Widget.AppCompat.Light.ActionButton"
+                    android:contentDescription="Random color" />
+
+                <ImageButton
+                    android:id="@+id/defaultColorButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/ic_auto"
+                    style="@style/Widget.AppCompat.Light.ActionButton"
+                    android:contentDescription="@string/default_t" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <SeekBar
+            android:theme="@style/TextTheme"
+            android:id="@+id/seekColorR"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <SeekBar
+            android:theme="@style/TextTheme"
+            android:id="@+id/seekColorG"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <SeekBar
+            android:theme="@style/TextTheme"
+            android:id="@+id/seekColorB"
+
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp"
+        android:orientation="vertical"
+        android:background="@drawable/rectangle">
+
+        <Button
+            android:id="@+id/clickDate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/date"
+            android:gravity="start|center_vertical"
+            app:drawableLeftCompat="@drawable/ic_up_calendar_now"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/delete_statistic"
+            android:gravity="start|center_vertical"
+            app:drawableLeftCompat="@drawable/ic_up_delete"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="@color/dark"/>
+
+    </LinearLayout>
+
+</LinearLayout>

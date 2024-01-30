@@ -3,6 +3,8 @@
     <dimen name="margin">32dp</dimen>
     <dimen name="rv_icon_size">20dp</dimen>
     <dimen name="up_icon_size">24dp</dimen>
+    <dimen name="small_text_size">15sp</dimen>
     <dimen name="basic_text_size">20sp</dimen>
     <dimen name="height_progress_result">30dp</dimen>
+    <dimen name="scrollbarSize">4dp</dimen>
 </resources>

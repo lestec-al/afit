@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,19 +14,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import java.util.Objects;
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> implements MainItemMoveCallback.ItemTouchHelperContract {
     private final ClickInterface clickInterface;
+    MainCallback callBack;
     Context context;
     List<MyObject> data;
     int blackColor;
     int whiteColor;
 
-    public MainAdapter(Context context, List<MyObject> data, ClickInterface clickInterface) {
+    public MainAdapter(Context context, List<MyObject> data, ClickInterface clickInterface, MainCallback callBack) {
         this.context = context;
         this.data = data;
         this.clickInterface = clickInterface;
         this.blackColor = context.getColor(R.color.dark);
         this.whiteColor = context.getColor(R.color.white);
+        this.callBack = callBack;
     }
 
     @NonNull
@@ -56,6 +59,23 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     public int getItemCount() {
         return data.size();
     }
+
+
+    // Drag & drop change position
+    @Override
+    public void onRowMoved(int fromPosition, int toPosition) {
+        if (fromPosition != toPosition) {
+            data.add(toPosition, data.remove(fromPosition));
+            callBack.onItemMoved();
+        }
+    }
+
+    @Override
+    public void onRowSelected(MyViewHolder holder) {}
+
+    @Override
+    public void onRowClear(MyViewHolder holder) {}
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         Button name_icon;

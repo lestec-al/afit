@@ -1,23 +1,11 @@
 package com.yurhel.alex.afit;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.view.MenuCompat;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,10 +13,20 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuCompat;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -52,10 +50,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements ClickInterface {
+public class MainActivity extends AppCompatActivity implements ClickInterface, MainCallback {
     DB db;
     List<MyObject> data;
     int themeColor;
@@ -64,17 +64,20 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // On back pressed
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                MainActivity.this.finishAffinity();
+            }
+        });
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setTitle(R.string.app_name);
         themeColor = Help.getMainColor(this);
         db = new DB(this);
         updateAll();
-    }
-
-    @Override
-    public void onBackPressed() {
-        this.finishAffinity();
     }
 
     @Override
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
             finish();
 
         } else if (item.getItemId() == R.id.actionGraph) {
-            startActivity(new Intent(MainActivity.this, ManyStatsActivity.class));
+            startActivity(new Intent(MainActivity.this, AllStatsActivity.class));
             finish();
 
         } else if (item.getItemId() == R.id.actionSettings) {
@@ -122,28 +125,16 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
     // HELPS
     private void settingsDialog() {
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_settings);
+        dialog.setContentView(R.layout.dialog_settings_main);
 
         Window window = dialog.getWindow();
-        if (window != null)
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        dialog.findViewById(R.id.statsSettingsLayout).setVisibility(View.GONE);
-        dialog.findViewById(R.id.deleteButton).setVisibility(View.GONE);
-
-        ImageButton back = dialog.findViewById(R.id.backButton);
-        back.setOnClickListener(view -> dialog.cancel());
-        back.setColorFilter(themeColor);
+        if (window != null) window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         // Try set app name and version
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
             ((TextView)dialog.findViewById(R.id.versionTV)).setText(String.format("%s %s", getString(R.string.app_ver), pInfo.versionName));
         } catch (Exception ignored) {}
-
-        ProgressBar progress = dialog.findViewById(R.id.progressSync);
-        progress.setProgressTintList(ColorStateList.valueOf(themeColor));
-        progress.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
 
         Button sendFeedback = dialog.findViewById(R.id.feedbackButton);
         sendFeedback.setTextColor(themeColor);
@@ -195,12 +186,20 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
 
         // If user authenticated or not
         if (GoogleSignIn.getLastSignedInAccount(this) != null) {
+            ProgressBar progressExport = dialog.findViewById(R.id.progressExport);
+            progressExport.setProgressTintList(ColorStateList.valueOf(themeColor));
+            progressExport.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
             Button exportDriveDB = dialog.findViewById(R.id.exportDriveButton);
             exportDriveDB.setTextColor(themeColor);
             TextViewCompat.setCompoundDrawableTintList(exportDriveDB, ColorStateList.valueOf(themeColor));
             exportDriveDB.setOnClickListener(v ->
-                    driveSync(false, () -> progress.setVisibility(View.VISIBLE), () -> progress.setVisibility(View.GONE))
+                    driveSync(false, () -> progressExport.setVisibility(View.VISIBLE), () -> progressExport.setVisibility(View.GONE))
             );
+
+            ProgressBar progressImport = dialog.findViewById(R.id.progressImport);
+            progressImport.setProgressTintList(ColorStateList.valueOf(themeColor));
+            progressImport.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
 
             Button importDriveDB = dialog.findViewById(R.id.importDriveButton);
             importDriveDB.setTextColor(themeColor);
@@ -210,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                         R.string.data_replace, "", null, false);
                 ((Button)d[1]).setOnClickListener(v1 -> {
                     ((Dialog)d[0]).cancel();
-                    driveSync(true, () -> progress.setVisibility(View.VISIBLE), () -> progress.setVisibility(View.GONE));
+                    driveSync(true, () -> progressImport.setVisibility(View.VISIBLE), () -> progressImport.setVisibility(View.GONE));
                 });
                 ((Dialog)d[0]).show();
             });
@@ -236,35 +235,41 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
         dialog.show();
     }
 
+    @Override
+    public void onItemMoved() {
+        // When item in mainRV changes position
+        LinkedHashMap<String, Integer> pos = new LinkedHashMap<>();
+        int idx = 0;
+        for (MyObject i: data) {
+            // id="1_st", pos=4
+            pos.put(i.id + "_" + ((i.sets != 0/*Is exercise*/) ? "ex" : "st"), idx);
+            idx++;
+        }
+        db.setPositions(pos);
+        recreate();
+    }
+
     private void updateAll() {
         data = db.getTableEntries(null, true);
         data.addAll(db.getTableEntries(null, false));
+
+        // Sort data
+        LinkedHashMap<String, Integer> pos = db.getPositions();
+        try {
+            data.sort(Comparator.comparing(obj1 -> pos.get(obj1.id + "_" + ((obj1.sets != 0/*Is exercise*/) ? "ex" : "st"))));
+        } catch (Exception ignored) {}
+
         RecyclerView mainView = findViewById(R.id.mainRV);
         mainView.setLayoutManager(new LinearLayoutManager(this));
         mainView.setHasFixedSize(true);
-        mainView.setAdapter(new MainAdapter(this, data, this));
-        // Down buttons and empty text
-        if (data.size() == 0) {
-            findViewById(R.id.mainDownActions).setVisibility(View.VISIBLE);
-            findViewById(R.id.emptyTV).setVisibility(View.VISIBLE);
-            // Add exercise
-            Drawable dEx = Objects.requireNonNull(AppCompatResources.getDrawable(this, R.drawable.ic_up_add));
-            dEx.setTint(themeColor);
-            Button addExDown = findViewById(R.id.addExDown);
-            addExDown.setOnClickListener(v -> addDialog(R.string.add_ex));
-            addExDown.setTextColor(themeColor);
-            addExDown.setCompoundDrawablesWithIntrinsicBounds(dEx, null, null, null);
-            // Add statistic
-            Drawable dSt = Objects.requireNonNull(AppCompatResources.getDrawable(this, R.drawable.ic_up_add_stats));
-            dSt.setTint(themeColor);
-            Button addStDown = findViewById(R.id.addStDown);
-            addStDown.setOnClickListener(v -> addDialog(R.string.add_st));
-            addStDown.setTextColor(themeColor);
-            addStDown.setCompoundDrawablesWithIntrinsicBounds(dSt, null, null, null);
-        } else {
-            findViewById(R.id.mainDownActions).setVisibility(View.GONE);
-            findViewById(R.id.emptyTV).setVisibility(View.GONE);
-        }
+        MainAdapter adapter = new MainAdapter(this, data, this, this);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new MainItemMoveCallback(adapter));
+        touchHelper.attachToRecyclerView(mainView);
+        mainView.setAdapter(adapter);
+
+        // Empty text
+        if (data.size() == 0) findViewById(R.id.emptyTV).setVisibility(View.VISIBLE);
+        else findViewById(R.id.emptyTV).setVisibility(View.GONE);
     }
 
     public void addDialog(int msg) {
@@ -329,21 +334,17 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .build();
         GoogleSignInClient signInClient = GoogleSignIn.getClient(this, signInOption);
-        if (isOpenSettings)
-            signInClient.silentSignIn().addOnCompleteListener(task -> settingsDialog());
-        else
-            resultAuth.launch(signInClient.getSignInIntent());
+        if (isOpenSettings) signInClient.silentSignIn().addOnCompleteListener(task -> settingsDialog());
+        else resultAuth.launch(signInClient.getSignInIntent());
     }
     private final ActivityResultLauncher<Intent> resultAuth = registerForActivityResult(new StartActivityForResult(), result -> {
         Intent intent = result.getData();
-        if (intent != null)
-            GoogleSignIn.getSignedInAccountFromIntent(intent);
+        if (intent != null) GoogleSignIn.getSignedInAccountFromIntent(intent);
     });
 
     private void driveSync(boolean isImport, Runnable actionBefore, Runnable actionAfter) {
         new Thread(() -> {
-            if (actionBefore != null)
-                runOnUiThread(actionBefore);
+            if (actionBefore != null) runOnUiThread(actionBefore);
             try {
                 GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
                 if (account != null) {
@@ -393,8 +394,7 @@ public class MainActivity extends AppCompatActivity implements ClickInterface {
                 e.printStackTrace();
                 runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.error, Toast.LENGTH_LONG).show());
             }
-            if (actionAfter != null)
-                runOnUiThread(actionAfter);
+            if (actionAfter != null) runOnUiThread(actionAfter);
         }).start();
     }
 }

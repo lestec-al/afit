@@ -18,10 +18,22 @@ public class MyObject {
     String time;
     String allWeights;
 
+    int entriesQuantity = -1;
+
     /**
      * Exercise main object
      */
-    public MyObject(int id, String name, int rest, int reps, int sets, String start, String end, Double weight, int color) {
+    public MyObject(
+            int id,
+            String name,
+            int rest,
+            int reps,
+            int sets,
+            String start,
+            String end,
+            Double weight,
+            int color
+    ) {
         this.id = id;
         this.name = name;
         this.start = start;
@@ -37,7 +49,13 @@ public class MyObject {
     /**
      * Stats main object
      */
-    public MyObject(int id, String name, String start, String end, int color) {
+    public MyObject(
+            int id,
+            String name,
+            String start,
+            String end,
+            int color
+    ) {
         this.id = id;
         this.name = name;
         this.start = start;
@@ -48,7 +66,14 @@ public class MyObject {
     /**
      * Exercise entry object
      */
-    public MyObject(int id, double mainValue, String longerValue, String time, String date, String allWeights) {
+    public MyObject(
+            int id,
+            double mainValue,
+            String longerValue,
+            String time,
+            String date,
+            String allWeights
+    ) {
         this.id = id;
         this.date = Long.parseLong(date);
         this.mainValue = mainValue;
@@ -61,7 +86,12 @@ public class MyObject {
     /**
      * Stats entry object
      */
-    public MyObject(int id, double mainValue, String date, String longerValue) {
+    public MyObject(
+            int id,
+            double mainValue,
+            String date,
+            String longerValue
+    ) {
         this.id = id;
         this.date = Long.parseLong(date);
         this.mainValue = mainValue;
