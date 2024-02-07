@@ -265,6 +265,7 @@ public class DB extends SQLiteOpenHelper {
                                 c1.getString(4),
                                 c1.getString(5)
                         );
+                        o.parentId = c.getInt(0);
                         o.name = c.getString(1);
                         o.color = c.getInt(8);
                         l.add(o);
@@ -285,6 +286,7 @@ public class DB extends SQLiteOpenHelper {
                                 c1.getString(2),
                                 c1.getString(3)
                         );
+                        o.parentId = c.getInt(0);
                         o.name = c.getString(1);
                         o.color = c.getInt(4);
                         l.add(o);

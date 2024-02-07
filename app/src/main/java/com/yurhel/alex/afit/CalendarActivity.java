@@ -65,7 +65,7 @@ public class CalendarActivity extends AppCompatActivity {
         LinkedHashMap<String, Integer> positions = db.getPositions();
         db.close();
         try {
-            data.sort(Comparator.comparing(obj1 -> positions.get(obj1.id + "_" + ((obj1.sets != 0/*Is exercise*/) ? "ex" : "st"))));
+            data.sort(Comparator.comparing(obj1 -> positions.get(obj1.parentId + "_" + ((obj1.time != null/*Is exercise*/) ? "ex" : "st"))));
         } catch (Exception ignored) {}
 
         themeColor = Help.getMainColor(this);

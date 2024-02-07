@@ -19,6 +19,7 @@ public class MyObject {
     String allWeights;
 
     int entriesQuantity = -1;
+    int parentId = -1;
 
     /**
      * Exercise main object
