@@ -7,9 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +32,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LabelFormatter;
@@ -403,9 +408,37 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     // TOOLBAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (isExercise) getMenuInflater().inflate(R.menu.stats_workout, menu);
-        else getMenuInflater().inflate(R.menu.stats, menu);
+        getMenuInflater().inflate(R.menu.stats, menu);
         upMenu = menu;
+
+        // Feature highlight
+        @SuppressLint("InflateParams") ImageButton b = (ImageButton) LayoutInflater.from(this).inflate(
+                (isExercise) ? R.layout.view_workout_button : R.layout.view_add_button,
+                null
+        );
+        b.setTooltipText(getString((isExercise) ? R.string.start_workout : R.string.add_st));
+        b.setOnClickListener(v -> clickOnAddActionButton());
+        if (db.getTableEntries(oneID, isExercise).isEmpty()) {
+            TapTargetView.showFor(
+                    this,
+                    TapTarget.forView(b, getString((isExercise) ? R.string.start_workout : R.string.add_st), "")
+                            .outerCircleColorInt(obj.color)
+                            .textColor(R.color.white)
+                            .drawShadow(true)
+                            .cancelable(true)
+                            .tintTarget(true)
+                            .targetRadius(30),
+                    new TapTargetView.Listener() {
+                        @Override
+                        public void onTargetClick(TapTargetView view) {
+                            super.onTargetClick(view);
+                            clickOnAddActionButton();
+                        }
+                    }
+            );
+        }
+        upMenu.findItem(R.id.actionAdd).setActionView(b);
+
         setUpActionBar();
         return true;
     }
@@ -414,18 +447,6 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             getOnBackPressedDispatcher().onBackPressed();
-            return true;
-
-        } else if (item.getItemId() == R.id.actionAdd) {
-            if (isExercise) {
-                startActivity(new Intent(StatsActivity.this, TrainingActivity.class)
-                        .putExtra("ex_id", oneID)
-                        .putExtra("date", targetDate.getTime())
-                );
-                finish();
-            } else {
-                entryDialog(null, "st");
-            }
             return true;
 
         } else if (item.getItemId() == R.id.actionSettings) {
@@ -582,10 +603,33 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     }
 
     // HELPS
+    private void clickOnAddActionButton() {
+        if (isExercise) {
+            startActivity(new Intent(StatsActivity.this, TrainingActivity.class)
+                    .putExtra("ex_id", oneID)
+                    .putExtra("date", targetDate.getTime())
+            );
+            finish();
+        } else {
+            entryDialog(null, "st");
+        }
+    }
+
     private void setUpActionBar() {
         actionBar.setTitle(obj.name);
         Help.setActionBackIconColor(this, obj.color, actionBar);
-        Help.setActionIconsColor(obj.color, upMenu, new int[] {R.id.actionAdd, R.id.actionSettings});
+
+        // Set color to action settings
+        MenuItem action = upMenu.findItem(R.id.actionSettings);
+        Drawable drawable1 = action.getIcon();
+        if (drawable1 != null) {
+            Drawable drawable2 = DrawableCompat.wrap(drawable1);
+            drawable2.setTint(obj.color);
+            action.setIcon(drawable2);
+        }
+        // Set color to action add
+        ImageButton b = (ImageButton) upMenu.findItem(R.id.actionAdd).getActionView();
+        if (b != null) b.setColorFilter(obj.color);
     }
 
     private Object tryParseIntDouble(String text, boolean isInteger) {

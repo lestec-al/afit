@@ -39,4 +39,5 @@
     <string name="start_workout">Почати тренування</string>
     <string name="delete_statistic">Видалити статистику</string>
     <string name="training_min">хв активності</string>
+    <string name="show_hide_graph">Показати або приховати графік</string>
 </resources>
