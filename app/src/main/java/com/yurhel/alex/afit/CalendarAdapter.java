@@ -156,12 +156,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     int allTimeMin = 0;
                     int allTimeSec = 0;
 
+                    int colorShadow = (isNight) ? whiteColor : blackColor;
                     // Set all stats for day to dialog
                     LayoutInflater inflater = LayoutInflater.from(context);
                     for (MyObject i: dataThisDay) {
                         View v = inflater.inflate(R.layout.row_stats, ll, false);
                         TextView tvMain = v.findViewById(R.id.mainValue);
+                        tvMain.setTextColor(i.color);
+                        tvMain.setShadowLayer(1,1,1, colorShadow);
                         TextView tvResultL = v.findViewById(R.id.addValue);
+                        tvResultL.setTextColor(i.color);
+                        tvResultL.setShadowLayer(1,1,1, colorShadow);
                         if (i.time != null/*Is exercise*/) {
                             // Get training times
                             String[] t = i.time.split(":");
@@ -173,18 +178,24 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                             if (!i.allWeights.equals("")) {
                                 tvWeights.setVisibility(View.VISIBLE);
                                 tvWeights.setText(i.allWeights);
+                                tvWeights.setTextColor(i.color);
+                                tvWeights.setShadowLayer(1,1,1, colorShadow);
                             } else {
                                 tvWeights.setVisibility(View.GONE);
                             }
                             tvMain.setText(String.valueOf((int) i.mainValue));
                             tvResultL.setText(i.longerValue);
                             tvTime.setText(i.time);
+                            tvTime.setTextColor(i.color);
+                            tvTime.setShadowLayer(1,1,1, colorShadow);
                         } else {
                             tvResultL.setText(i.longerValue);
                             tvMain.setText(String.valueOf(i.mainValue));
                         }
                         TextView tvName = v.findViewById(R.id.rightValue);
                         tvName.setText(i.name);
+                        tvName.setTextColor(i.color);
+                        tvName.setShadowLayer(1,1,1, colorShadow);
                         ll.addView(v);
                     }
 
@@ -200,7 +211,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                         String allTimeText = allTimeMin + " " + context.getText(R.string.training_min);
                         allTime.setText(allTimeText);
                     } else {
-                        allTime.setText("");
+                        allTime.setVisibility(View.GONE);
                     }
 
                     dialog.show();

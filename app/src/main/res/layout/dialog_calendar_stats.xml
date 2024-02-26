@@ -14,33 +14,27 @@
         android:textSize="@dimen/basic_text_size"
         tools:text="12.12.1993" />
 
+    <TextView
+        android:id="@+id/allTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/basic_text_size"
+        tools:text="40 min of activity" />
+
     <androidx.core.widget.NestedScrollView
         android:contentDescription="@string/all_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/itemsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/itemsLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:background="@drawable/rectangle"
-                android:orientation="vertical"/>
-
-            <TextView
-                android:id="@+id/allTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="@dimen/basic_text_size"
-                tools:text="40 min of activity" />
-
-        </LinearLayout>
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/rectangle"
+            android:orientation="vertical"/>
 
     </androidx.core.widget.NestedScrollView>
 

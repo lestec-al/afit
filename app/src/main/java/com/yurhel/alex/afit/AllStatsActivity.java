@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -205,7 +206,12 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         Collections.reverse(allData);
         statsView.setLayoutManager(new LinearLayoutManager(this));
         statsView.setHasFixedSize(true);
-        statsView.setAdapter(new AllStatsAdapter(this, allData, this));
+        statsView.setAdapter(new AllStatsAdapter(
+                this,
+                this,
+                allData,
+                ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) ? getColor(R.color.white) : getColor(R.color.dark)
+        ));
 
         if (allDataSize == 0) {
             // Empty text

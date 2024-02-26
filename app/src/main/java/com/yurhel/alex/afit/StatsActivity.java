@@ -32,6 +32,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -70,6 +71,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
     FrameLayout graphViewLayout;
     RecyclerView statsView;
     Integer autoScrollPos = null;
+    Boolean withWeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,10 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         targetDate = new Date();
         graphViewLayout = findViewById(R.id.graphViewLayout);
         statsView = findViewById(R.id.statsRV);
+
+        // Is weights shown
+        withWeight = db.getIsWeightShowForMainStat(oneID + "_" + ((isExercise) ? "ex" : "st"));
+
         // Date buttons
         startDateB = findViewById(R.id.buttonDateStart);
         startDateB.setOnClickListener(v -> calendarDialog(startDate, startDateB, true));
@@ -507,6 +513,9 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             ImageButton randomColor = dialog.findViewById(R.id.randomColor);
             ImageButton defaultColor = dialog.findViewById(R.id.defaultColorButton);
 
+            SwitchCompat switchWeight = dialog.findViewById(R.id.showWeight);
+            switchWeight.setChecked(withWeight);
+
             Button delete = dialog.findViewById(R.id.deleteButton);
             delete.setOnClickListener(v -> {
                 Object[] askDeleteDialog = Help.editTextDialog(
@@ -534,7 +543,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             seekR.setMax(255);
             seekG.setMax(255);
             seekB.setMax(255);
-            setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
+            setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date, switchWeight);
 
             // Random color
             randomColor.setOnClickListener(v -> {
@@ -542,7 +551,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 c[0] = Color.red(Color.rgb(r.nextInt(256), 0, 0));
                 c[1] = Color.green(Color.rgb(0, r.nextInt(256), 0));
                 c[2] = Color.blue(Color.rgb(0, 0, r.nextInt(256)));
-                setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
+                setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date, switchWeight);
             });
 
             // Def color
@@ -550,7 +559,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                 c[0] = Color.red(obj.color);
                 c[1] = Color.green(obj.color);
                 c[2] = Color.blue(obj.color);
-                setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
+                setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date, switchWeight);
             });
 
             // On color change
@@ -571,13 +580,25 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
                         }
                         seekBar.setProgressTintList(sl);
                         seekBar.setThumbTintList(sl);
-                        setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date);
+                        setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date, switchWeight);
                     }
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {}
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {}
                 });
+            }
+
+            // Weight switch
+            if (isExercise) {
+                switchWeight.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    withWeight = isChecked;
+                    switchWeight.setChecked(isChecked);
+                    db.setWeights(oneID + "_" + ((isExercise) ? "ex" : "st"), isChecked);
+                    setSeekBarsColor(seekR, seekG, seekB, c, randomColor, defaultColor, delete, date, switchWeight);
+                });
+            } else {
+                switchWeight.setVisibility(View.GONE);
             }
 
             // Save settings
@@ -608,6 +629,7 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             startActivity(new Intent(StatsActivity.this, TrainingActivity.class)
                     .putExtra("ex_id", oneID)
                     .putExtra("date", targetDate.getTime())
+                    .putExtra("withWeight", withWeight)
             );
             finish();
         } else {
@@ -654,7 +676,8 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
             ImageButton randomColor,
             ImageButton defaultColor,
             Button delete,
-            Button date
+            Button date,
+            SwitchCompat switchWeight
     ) {
         // Get color from bars
         seekR.setProgress(c[0]);
@@ -673,6 +696,13 @@ public class StatsActivity extends AppCompatActivity implements ClickInterface {
         Help.setButtonsTextColor(color, new Button[] {delete, date});
         TextViewCompat.setCompoundDrawableTintList(delete, ColorStateList.valueOf(color));
         TextViewCompat.setCompoundDrawableTintList(date, ColorStateList.valueOf(color));
+
+        if (isExercise) {
+            switchWeight.setTextColor(color);
+            switchWeight.setThumbTintList(ColorStateList.valueOf(color));
+            if (switchWeight.isChecked()) switchWeight.setTrackTintList(ColorStateList.valueOf(color).withAlpha(120));
+            else switchWeight.setTrackTintList(ColorStateList.valueOf(getColor(R.color.grey)));
+        }
     }
 
     private void highlightRVItem(View view) {

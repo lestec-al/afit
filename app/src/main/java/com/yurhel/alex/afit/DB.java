@@ -129,6 +129,40 @@ public class DB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldDB, int newDB) {}
 
 
+    // IS WEIGHT SHOW IN MAIN CARDS
+    public void setWeights(String id, Boolean isWeightShow) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS weights ( id TEXT, isWeightShow INT)");
+
+        ContentValues cv = new ContentValues();
+        cv.put("id", id);
+        cv.put("isWeightShow", (isWeightShow) ? 1 : 0);
+
+        Cursor c = db.rawQuery("SELECT * FROM weights WHERE id = '"+id+"'", null);
+        if (c.moveToFirst()) {
+            db.update("weights", cv, "id = '"+id+"'", null);
+        } else {
+            db.insert("weights", null, cv);
+        }
+        c.close();
+        db.close();
+    }
+
+    public boolean getIsWeightShowForMainStat(String id) {
+        boolean l = false;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c1 = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='weights'", null);
+        if (c1.moveToFirst()) {
+            Cursor c = db.rawQuery("SELECT * FROM weights WHERE id = '"+id+"'", null);
+            if (c.moveToFirst()) l = c.getInt(1) == 1;
+            c.close();
+        }
+        c1.close();
+        db.close();
+        return l;
+    }
+
+
     // POSITIONS
     public void setPositions(LinkedHashMap<String, Integer> pos) {
         SQLiteDatabase db = this.getWritableDatabase();

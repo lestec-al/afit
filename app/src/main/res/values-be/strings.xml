@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="do_exercise">Рабі</string>
-    <string name="stop">СПЫНІЦЬ</string>
-    <string name="rest">Адпачынак</string>
+    <string name="stop">СТОП</string>
+    <string name="rest">Час адпачынку</string>
     <string name="sets">Сэты</string>
     <string name="name">Назва</string>
     <string name="weight">Вага</string>
@@ -12,7 +12,7 @@
     <string name="no">Не</string>
     <string name="cancel">Скасаваць</string>
     <string name="add_st">Дадаць статыстыку</string>
-    <string name="add_ex">Дадаць практыкаванне</string>
+    <string name="add_ex">Дадаць практыкаваньне</string>
     <string name="type_text">Увядзіце тэкст</string>
     <string name="settings">Налады</string>
     <string name="color">Колер</string>
@@ -29,15 +29,17 @@
     <string name="all_data">Усе дадзеныя</string>
     <string name="exportDriveDB">Экспарт даных у воблака</string>
     <string name="importDriveDB">Імпарт даных з воблака</string>
-    <string name="auth_info">Калі вам патрэбна воблачная сінхранізацыя, падключыце ўліковы запіс Google</string>
+    <string name="auth_info">Калі вам патрэбна воблачная сынхранізацыя, падключыце ўліковы запіс Google</string>
     <string name="no_data">Дадзеных няма</string>
     <string name="data_replace">Усе існуючыя даныя будуць заменены</string>
     <string name="connect_cloud">Падключыць воблака</string>
-    <string name="app_ver">Версія праграмы</string>
+    <string name="app_ver">Вэрсыя праграмы</string>
     <string name="empty_text">Тут яшчэ пуста</string>
-    <string name="privacy_policy">Палітыка прыватнасці</string>
-    <string name="start_workout">Пачаць трэніроўку</string>
+    <string name="privacy_policy">Палітыка прыватнасьці</string>
+    <string name="start_workout">Пачаць трэнаваньне</string>
     <string name="delete_statistic">Выдаліць статыстыку</string>
-    <string name="training_min">хв актыўнасці</string>
-    <string name="show_hide_graph">Паказаць або схаваць графік</string>
+    <string name="training_min">хв актыўнасьці</string>
+    <string name="show_hide_graph">Паказаць альбо схаваць графік</string>
+    <string name="done">Гатова</string>
+    <string name="show_weight">Трэнаваньне з вагамі</string>
 </resources>

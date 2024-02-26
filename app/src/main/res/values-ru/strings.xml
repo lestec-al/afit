@@ -2,10 +2,10 @@
 <resources>
     <string name="do_exercise">Делай</string>
     <string name="stop">СТОП</string>
-    <string name="rest">Отдых</string>
+    <string name="rest">Время отдыха</string>
     <string name="sets">Сеты</string>
     <string name="name">Название</string>
-    <string name="weight">Вес</string>
+    <string name="weight">Отягощения</string>
     <string name="delete">Эта статистика, со всеми данными в ней, будет удалена</string>
     <string name="delete_entry">Эта запись будет удалена</string>
     <string name="save_results">Сохранить результат?</string>
@@ -40,4 +40,6 @@
     <string name="delete_statistic">Удалить статистику</string>
     <string name="training_min">мин активности</string>
     <string name="show_hide_graph">Показать или скрыть график</string>
+    <string name="done">Готово</string>
+    <string name="show_weight">Тренировка с отягощениями</string>
 </resources>

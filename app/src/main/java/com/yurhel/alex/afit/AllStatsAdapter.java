@@ -17,11 +17,18 @@ public class AllStatsAdapter extends RecyclerView.Adapter<AllStatsAdapter.MyView
     private final ClickInterface clickInterface;
     Context context;
     ArrayList<MyObject> data;
+    int colorShadow;
 
-    public AllStatsAdapter(Context context, ArrayList<MyObject> data, ClickInterface clickInterface) {
+    public AllStatsAdapter(
+            Context context,
+            ClickInterface clickInterface,
+            ArrayList<MyObject> data,
+            int colorShadow
+    ) {
         this.context = context;
         this.data = data;
         this.clickInterface = clickInterface;
+        this.colorShadow = colorShadow;
     }
 
     @NonNull
@@ -38,11 +45,13 @@ public class AllStatsAdapter extends RecyclerView.Adapter<AllStatsAdapter.MyView
                 holder.tvWeights.setVisibility(View.VISIBLE);
                 holder.tvWeights.setText(obj.allWeights);
                 holder.tvWeights.setTextColor(obj.color);
+                holder.tvWeights.setShadowLayer(1,1,1, colorShadow);
             } else {
                 holder.tvWeights.setVisibility(View.GONE);
             }
             holder.tvTime.setText(obj.time);
             holder.tvTime.setTextColor(obj.color);
+            holder.tvTime.setShadowLayer(1,1,1, colorShadow);
             holder.tvTime.setVisibility(View.VISIBLE);
             holder.tvMain.setText(String.valueOf((int)obj.mainValue));
         } else {
@@ -54,9 +63,12 @@ public class AllStatsAdapter extends RecyclerView.Adapter<AllStatsAdapter.MyView
         String date = DateFormat.format("EEE", c) + ", " + Help.dateFormat(context, c.getTime());
         holder.tvDate.setText(date);
         holder.tvDate.setTextColor(obj.color);
+        holder.tvDate.setShadowLayer(1,1,1, colorShadow);
         holder.tvResult.setText(obj.longerValue);
         holder.tvResult.setTextColor(obj.color);
+        holder.tvResult.setShadowLayer(1,1,1, colorShadow);
         holder.tvMain.setTextColor(obj.color);
+        holder.tvMain.setShadowLayer(1,1,1, colorShadow);
 
         holder.itemView.setOnLongClickListener(v1 -> {
             if (pos != RecyclerView.NO_POSITION) clickInterface.onClickItem(pos, (obj.time != null/*Is exercise*/) ? "ex" : "st");

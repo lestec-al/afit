@@ -60,6 +60,7 @@ public class TrainingActivity extends AppCompatActivity {
     int colorWhite;
     Intent notificationIntent;
     PowerManager.WakeLock wakeLock;
+    Boolean withWeight;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -96,7 +97,7 @@ public class TrainingActivity extends AppCompatActivity {
 
         repsResultLayout = findViewById(R.id.repsResultLayout);
         infoButton = findViewById(R.id.infoOnButton);
-        infoButton.setShadowLayer(14,1,1,getColor(R.color.dark));
+        infoButton.setShadowLayer(1,1,1,getColor(R.color.dark));
         progressHeight = getResources().getDimensionPixelSize(R.dimen.height_progress_result);
         colorWhite = getColor(R.color.white);
         doInfo = getText(R.string.do_exercise)+" "+obj.name;
@@ -128,7 +129,8 @@ public class TrainingActivity extends AppCompatActivity {
         setProgressColor(obj.color, new ProgressBar[] {progressTime, progressResult});
 
         // Up row with weight
-        if (obj.weight > 0) {
+        withWeight = getIntent().getBooleanExtra("withWeight", false);
+        if (withWeight) {
             findViewById(R.id.upLayout).setVisibility(View.VISIBLE);
             repsResultLayoutW = findViewById(R.id.repsResultLayoutW);
             repsResultLayoutW.setVisibility(View.VISIBLE);
@@ -212,7 +214,7 @@ public class TrainingActivity extends AppCompatActivity {
         buttonSets.setOnTouchListener(this::checkTouchCorners);
         buttonSets.setOnClickListener(view -> {
             textToProgress(repsResults, buttonSets.getText().toString(), repsResultLayout);
-            if (obj.weight > 0)
+            if (withWeight)
                 textToProgress(repsWeights, editWeight.getText().toString(), repsResultLayoutW);
             if (repsResults.size() >= obj.sets) {
                 exit(true);
@@ -221,7 +223,7 @@ public class TrainingActivity extends AppCompatActivity {
                 buttonTime.setVisibility(View.VISIBLE);
                 seconds = progressTime.getMax();
                 progressResult.incrementProgressBy(1);
-                if (obj.weight > 0)
+                if (withWeight)
                     progressResultW.incrementProgressBy(1);
                 actionBar.setTitle(restInfo);
                 infoButton.setText(R.string.stop);
@@ -229,7 +231,7 @@ public class TrainingActivity extends AppCompatActivity {
                 thread = new Thread(() -> {
                     while (seconds > 0 && !stop) {
                         runOnUiThread(() -> {
-                            updateNotification(restInfo +" "+seconds);
+                            updateNotification(restInfo +": "+seconds);
                             buttonTime.setText(String.valueOf(seconds));
                             progressTime.incrementProgressBy(1);
                             if (seconds == 1)
@@ -267,7 +269,7 @@ public class TrainingActivity extends AppCompatActivity {
             buttonSets.setVisibility(View.VISIBLE);
             buttonTime.setVisibility(View.GONE);
             actionBar.setTitle(doInfo);
-            infoButton.setText(R.string.ok);
+            infoButton.setText(R.string.done);
             infoButton.setTextColor(colorWhite);
             thread = null;
             stop = false;
@@ -278,7 +280,7 @@ public class TrainingActivity extends AppCompatActivity {
             stopService(notificationIntent);
             progressResult.setProgress(0);
             sound.release();
-            if (obj.weight > 0)
+            if (withWeight)
                 progressResultW.setProgress(0);
         } else {
             updateNotification(doInfo);
