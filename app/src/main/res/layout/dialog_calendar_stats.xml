@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
     android:orientation="vertical">
 
     <TextView
@@ -23,7 +24,7 @@
         tools:text="40 min of activity" />
 
     <androidx.core.widget.NestedScrollView
-        android:contentDescription="@string/all_data"
+        android:contentDescription="@string/chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -34,7 +35,19 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rectangle"
-            android:orientation="vertical"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/emptyText"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:textSize="@dimen/basic_text_size"
+                android:textColor="@color/grey"
+                android:text="@string/empty_text"/>
+
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

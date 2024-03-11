@@ -3,39 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/actionCalendar"
-        android:icon="@drawable/ic_up_calendar"
-        android:title="@string/calendar"
+        android:id="@+id/actionAddCard"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_card"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/actionMore"
-        android:icon="@drawable/ic_up_menu"
-        android:title="@string/more"
-        app:showAsAction="ifRoom">
-        <menu>
-            <group android:id="@+id/group1">
-                <item
-                    android:id="@+id/actionAddEx"
-                    android:icon="@drawable/ic_up_add"
-                    android:title="@string/add_ex" />
+        android:id="@+id/actionSettings"
+        android:icon="@drawable/ic_setting"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom" />
 
-                <item
-                    android:id="@+id/actionAddStats"
-                    android:icon="@drawable/ic_up_add_stats"
-                    android:title="@string/add_st" />
-            </group>
-
-            <group android:id="@+id/group2">
-                <item
-                    android:id="@+id/actionGraph"
-                    android:icon="@drawable/ic_up_graph"
-                    android:title="@string/all_data"/>
-                <item
-                    android:id="@+id/actionSettings"
-                    android:icon="@drawable/ic_up_setting"
-                    android:title="@string/settings" />
-            </group>
-        </menu>
-    </item>
 </menu>

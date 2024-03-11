@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="bottom_nav_height">60dp</dimen>
     <dimen name="margin">32dp</dimen>
     <dimen name="rv_icon_size">20dp</dimen>
     <dimen name="up_icon_size">24dp</dimen>

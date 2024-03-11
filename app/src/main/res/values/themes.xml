@@ -7,28 +7,37 @@
         <item name="colorSecondaryVariant">@color/green_light</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
         <item name="actionBarTheme">@style/ActionBar</item>
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Universal for light and dark -->
+    <style name="DateDialog" parent="Theme.AppCompat.DayNight.Dialog">
+        <item name="dialogCornerRadius">20dp</item>
+        <item name="colorPrimary">@color/grey</item>
+        <item name="colorPrimaryVariant">@color/grey</item>
+        <item name="colorControlActivated">@color/grey_progress</item>
+        <item name="colorControlHighlight">@color/grey_progress</item>
+        <item name="android:background">@color/background</item>
+        <item name="colorAccent">@color/background</item>
+        <item name="android:textColorPrimaryInverse">@color/on_background</item>
+        <item name="android:textColorSecondaryInverse">@color/on_background</item>
     </style>
 
     <style name="ActionBar" parent="Theme.Material3.DayNight">
-        <item name="android:homeAsUpIndicator">@drawable/ic_up_back</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_back</item>
         <item name="colorSurfaceContainer">@android:color/transparent</item>
-        <item name="android:textColorPrimary">@color/dark</item>
+        <item name="android:textColorPrimary">@color/on_background</item>
     </style>
 
-    <style name="DateDialog" parent="ThemeOverlay.Material3.Dialog">
-        <item name="colorPrimary">@color/grey</item>
-        <item name="colorPrimaryVariant">@color/grey</item>
-        <item name="colorAccent">@color/white</item>
-        <item name="colorControlActivated">@color/grey_progress</item>
-        <item name="colorControlHighlight">@color/grey_progress</item>
-        <item name="android:textColorPrimaryInverse">@color/dark</item>
-        <item name="android:textColorSecondaryInverse">@color/dark</item>
-    </style>
-
-    <style name="TextTheme" parent="Theme.Material3.DayNight">
+    <style name="Texts" parent="Theme.Material3.DayNight">
         <item name="colorAccent">@color/grey</item>
+        <item name="android:textColorHighlight">@color/grey</item>
+    </style>
+
+    <style name="BottomNav">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/on_background</item>
     </style>
 </resources>

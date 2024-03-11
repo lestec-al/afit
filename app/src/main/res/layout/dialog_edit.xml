@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        tools:text="Add exercise" />
+        tools:text="Info" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
 
         <EditText
             android:id="@+id/editText"
-            android:theme="@style/TextTheme"
+            android:theme="@style/Texts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:importantForAutofill="no"
@@ -35,12 +36,11 @@
             android:inputType="textPersonName"
             android:textSize="20sp"
             android:hint="@string/type_text"
-            android:gravity="center_vertical"
-            tools:text="Pull-Ups" />
+            android:gravity="center_vertical" />
 
         <EditText
             android:id="@+id/editNumber"
-            android:theme="@style/TextTheme"
+            android:theme="@style/Texts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:importantForAutofill="no"
@@ -51,28 +51,33 @@
             android:textSize="@dimen/basic_text_size"
             android:hint="@string/type_text"
             tools:text="60.0" />
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/cancel"
+            android:src="@drawable/ic_no"
+            android:contentDescription="@string/cancel"
             style="@style/Widget.AppCompat.Button.Borderless"
-            tools:textColor="@color/green_main"/>
+            tools:tint="@color/green_main" />
 
-        <Button
-            android:id="@+id/OkButton"
+        <ImageButton
+            android:id="@+id/okButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/ok"
+            android:src="@drawable/ic_ok"
+            android:contentDescription="@string/ok"
             style="@style/Widget.AppCompat.Button.Borderless"
-            tools:textColor="@color/green_main"/>
+            tools:tint="@color/green_main"/>
+
     </LinearLayout>
+
 </LinearLayout>

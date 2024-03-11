@@ -4,6 +4,6 @@
     android:viewportWidth="24"
     android:width="@dimen/up_icon_size">
     <path
-        android:fillColor="@color/dark"
+        android:fillColor="@color/on_background"
         android:pathData="M9,16h6v-6h4l-7,-7 -7,7h4zM5,18h14v2L5,20z"/>
 </vector>

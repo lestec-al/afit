@@ -1,69 +1,42 @@
 package com.yurhel.alex.afit;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.res.ColorStateList;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuCompat;
-import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.Scope;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.AbstractInputStreamContent;
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
+import com.yurhel.alex.afit.core.Click;
+import com.yurhel.alex.afit.core.DB;
+import com.yurhel.alex.afit.core.Help;
+import com.yurhel.alex.afit.core.Obj;
+import com.yurhel.alex.afit.databinding.ActivityMainBinding;
+import com.yurhel.alex.afit.edit.EditActivity;
+import com.yurhel.alex.afit.settings.SettingsActivity;
+import com.yurhel.alex.afit.stats.StatsActivity;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements ClickInterface, MainCallback {
+public class MainActivity extends AppCompatActivity implements Click, MainCallback {
     DB db;
-    List<MyObject> data;
+    List<Obj> data;
     int themeColor;
+    ActivityMainBinding views;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        views = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(views.getRoot());
+
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -73,183 +46,14 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, M
         });
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setTitle(R.string.app_name);
-        themeColor = Help.getMainColor(this);
+        if (actionBar != null) actionBar.setTitle(R.string.app_name);
+        themeColor = getColor(R.color.on_background);
         db = new DB(this);
-        updateAll();
-    }
 
-    @Override
-    public void onClickItem(int pos, String option) {
-        startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra(option, data.get(pos).id));
-        finish();
-    }
+        // Bottom navigation
+        Help.setupBottomNavigation(MainActivity.this, R.id.actionHome, views.navigation, this::finish);
 
-    // TOOLBAR
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuCompat.setGroupDividerEnabled(menu, true);
-        Help.setActionIconsColor(themeColor, menu, new int[] {
-                R.id.actionAddEx, R.id.actionAddStats, R.id.actionSettings, R.id.actionCalendar, R.id.actionMore, R.id.actionGraph
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.actionAddEx) {
-            addDialog(R.string.add_ex);
-            return true;
-
-        } else if (item.getItemId() == R.id.actionAddStats) {
-            addDialog(R.string.add_st);
-            return true;
-
-        } else if (item.getItemId() == R.id.actionCalendar) {
-            startActivity(new Intent(MainActivity.this, CalendarActivity.class));
-            finish();
-
-        } else if (item.getItemId() == R.id.actionGraph) {
-            startActivity(new Intent(MainActivity.this, AllStatsActivity.class));
-            finish();
-
-        } else if (item.getItemId() == R.id.actionSettings) {
-            googleSighIn(true);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    // HELPS
-    private void settingsDialog() {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_settings_main);
-
-        Window window = dialog.getWindow();
-        if (window != null) window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Try set app name and version
-        try {
-            PackageInfo pInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            ((TextView)dialog.findViewById(R.id.versionTV)).setText(String.format("%s %s", getString(R.string.app_ver), pInfo.versionName));
-        } catch (Exception ignored) {}
-
-        Button sendFeedback = dialog.findViewById(R.id.feedbackButton);
-        sendFeedback.setTextColor(themeColor);
-        TextViewCompat.setCompoundDrawableTintList(sendFeedback, ColorStateList.valueOf(themeColor));
-        sendFeedback.setOnClickListener(v -> {
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW)
-                        .setData(Uri.parse(getString(R.string.app_link)))
-                        .setPackage("com.android.vending"));
-            } catch (Exception ignore) {}
-        });
-
-        Button privacyPolicy = dialog.findViewById(R.id.privacyButton);
-        privacyPolicy.setTextColor(themeColor);
-        TextViewCompat.setCompoundDrawableTintList(privacyPolicy, ColorStateList.valueOf(themeColor));
-        privacyPolicy.setOnClickListener(v -> {
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.privacy_link))));
-            } catch (Exception ignore) {}
-        });
-
-        Button exportDB = dialog.findViewById(R.id.exportButton);
-        exportDB.setTextColor(themeColor);
-        TextViewCompat.setCompoundDrawableTintList(exportDB, ColorStateList.valueOf(themeColor));
-        exportDB.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("application/json");
-            intent.putExtra(Intent.EXTRA_TITLE, "data.json");
-            resultExport.launch(intent);
-        });
-
-        Button importDB = dialog.findViewById(R.id.importButton);
-        importDB.setTextColor(themeColor);
-        TextViewCompat.setCompoundDrawableTintList(importDB, ColorStateList.valueOf(themeColor));
-        importDB.setOnClickListener(v -> {
-            Object[] d = Help.editTextDialog(this, themeColor,
-                    R.string.data_replace, "", null, false);
-            ((Button)d[1]).setOnClickListener(v1 -> {
-                ((Dialog)d[0]).cancel();
-
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("application/json");
-                resultImport.launch(intent);
-            });
-            ((Dialog)d[0]).show();
-        });
-
-        // If user authenticated or not
-        if (GoogleSignIn.getLastSignedInAccount(this) != null) {
-            ProgressBar progressExport = dialog.findViewById(R.id.progressExport);
-            progressExport.setProgressTintList(ColorStateList.valueOf(themeColor));
-            progressExport.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
-
-            Button exportDriveDB = dialog.findViewById(R.id.exportDriveButton);
-            exportDriveDB.setTextColor(themeColor);
-            TextViewCompat.setCompoundDrawableTintList(exportDriveDB, ColorStateList.valueOf(themeColor));
-            exportDriveDB.setOnClickListener(v ->
-                    driveSync(false, () -> progressExport.setVisibility(View.VISIBLE), () -> progressExport.setVisibility(View.GONE))
-            );
-
-            ProgressBar progressImport = dialog.findViewById(R.id.progressImport);
-            progressImport.setProgressTintList(ColorStateList.valueOf(themeColor));
-            progressImport.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
-
-            Button importDriveDB = dialog.findViewById(R.id.importDriveButton);
-            importDriveDB.setTextColor(themeColor);
-            TextViewCompat.setCompoundDrawableTintList(importDriveDB, ColorStateList.valueOf(themeColor));
-            importDriveDB.setOnClickListener(v -> {
-                Object[] d = Help.editTextDialog(this, themeColor,
-                        R.string.data_replace, "", null, false);
-                ((Button)d[1]).setOnClickListener(v1 -> {
-                    ((Dialog)d[0]).cancel();
-                    driveSync(true, () -> progressImport.setVisibility(View.VISIBLE), () -> progressImport.setVisibility(View.GONE));
-                });
-                ((Dialog)d[0]).show();
-            });
-        } else {
-            dialog.findViewById(R.id.exportDriveButton).setVisibility(View.GONE);
-            dialog.findViewById(R.id.importDriveButton).setVisibility(View.GONE);
-
-            Button cloudConnect = dialog.findViewById(R.id.buttonCloudConnect);
-            cloudConnect.setVisibility(View.VISIBLE);
-            cloudConnect.setTextColor(themeColor);
-            TextViewCompat.setCompoundDrawableTintList(cloudConnect, ColorStateList.valueOf(themeColor));
-            cloudConnect.setOnClickListener(v -> {
-                Object[] d = Help.editTextDialog(this, themeColor,
-                        R.string.auth_info, "", null, false);
-                ((Button)d[1]).setOnClickListener(v1 -> {
-                    ((Dialog)d[0]).cancel();
-                    dialog.cancel();
-                    googleSighIn(false);
-                });
-                ((Dialog)d[0]).show();
-            });
-        }
-        dialog.show();
-    }
-
-    @Override
-    public void onItemMoved() {
-        // When item in mainRV changes position
-        LinkedHashMap<String, Integer> pos = new LinkedHashMap<>();
-        int idx = 0;
-        for (MyObject i: data) {
-            // id="1_st", pos=4
-            pos.put(i.id + "_" + ((i.sets != 0/*Is exercise*/) ? "ex" : "st"), idx);
-            idx++;
-        }
-        db.setPositions(pos);
-        recreate();
-    }
-
-    private void updateAll() {
+        // Get data
         data = db.getTableEntries(null, true);
         data.addAll(db.getTableEntries(null, false));
 
@@ -259,142 +63,57 @@ public class MainActivity extends AppCompatActivity implements ClickInterface, M
             data.sort(Comparator.comparing(obj1 -> pos.get(obj1.id + "_" + ((obj1.sets != 0/*Is exercise*/) ? "ex" : "st"))));
         } catch (Exception ignored) {}
 
-        RecyclerView mainView = findViewById(R.id.mainRV);
-        mainView.setLayoutManager(new LinearLayoutManager(this));
-        mainView.setHasFixedSize(true);
+        // Setup RV
+        views.mainRV.setLayoutManager(new LinearLayoutManager(this));
+        views.mainRV.setHasFixedSize(true);
         MainAdapter adapter = new MainAdapter(this, data, this, this);
         ItemTouchHelper touchHelper = new ItemTouchHelper(new MainItemMoveCallback(adapter));
-        touchHelper.attachToRecyclerView(mainView);
-        mainView.setAdapter(adapter);
+        touchHelper.attachToRecyclerView(views.mainRV);
+        views.mainRV.setAdapter(adapter);
 
         // Empty text
-        if (data.size() == 0) findViewById(R.id.emptyTV).setVisibility(View.VISIBLE);
-        else findViewById(R.id.emptyTV).setVisibility(View.GONE);
+        views.emptyTV.setVisibility((data.size() == 0) ? View.VISIBLE : View.GONE);
     }
 
-    public void addDialog(int msg) {
-        Object[] d = Help.editTextDialog(this, themeColor, msg, "", false, false);
-        ((Button)d[1]).setOnClickListener(v1 -> {
-            String t = ((EditText)d[2]).getText().toString();
-            if (!t.equals("")) {
-                if (msg == R.string.add_ex)
-                    db.addExercise(t);
-                else
-                    db.addStats(t);
-                ((Dialog)d[0]).cancel();
-                updateAll();
-            }
-        });
-        ((Dialog)d[0]).show();
+    @Override
+    public void onClickItem(int pos, String option) {
+        startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra(option, data.get(pos).id));
+        finish();
     }
 
-    // EXPORT & IMPORT TO DEVICE
-    private final ActivityResultLauncher<Intent> resultExport = registerForActivityResult(new StartActivityForResult(), result -> {
-        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-            try {
-                OutputStream os = getContentResolver().openOutputStream(Objects.requireNonNull(result.getData().getData()));
-                byte[] input = db.exportDB().toString().getBytes(StandardCharsets.UTF_8);
-                assert os != null;
-                os.write(input, 0, input.length);
-                os.close();
-                Toast.makeText(this, R.string.ok, Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
-            }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        Help.setActionIconsColor(themeColor, menu, new int[] {R.id.actionAddCard, R.id.actionSettings});
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.actionAddCard) {
+            startActivity(new Intent(MainActivity.this, EditActivity.class));
+            finish();
+            return true;
+
+        } else if (item.getItemId() == R.id.actionSettings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            finish();
+            return true;
         }
-    });
-    private final ActivityResultLauncher<Intent> resultImport = registerForActivityResult(new StartActivityForResult(), result -> {
-        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-            try {
-                InputStream is = getContentResolver().openInputStream(Objects.requireNonNull(result.getData().getData()));
-                BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-                while ((inputLine = in.readLine()) != null)
-                    response.append(inputLine);
-                in.close();
-                assert is != null;
-                is.close();
-                if (!db.importDB(response.toString()))
-                    throw new Exception("Import error");
-                updateAll();
-                Toast.makeText(this, R.string.ok, Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
-            }
-        }
-    });
-
-    // GOOGLE SERVICES
-    private void googleSighIn(boolean isOpenSettings) {
-        GoogleSignInOptions signInOption = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-                .build();
-        GoogleSignInClient signInClient = GoogleSignIn.getClient(this, signInOption);
-        if (isOpenSettings) signInClient.silentSignIn().addOnCompleteListener(task -> settingsDialog());
-        else resultAuth.launch(signInClient.getSignInIntent());
+        return false;
     }
-    private final ActivityResultLauncher<Intent> resultAuth = registerForActivityResult(new StartActivityForResult(), result -> {
-        Intent intent = result.getData();
-        if (intent != null) GoogleSignIn.getSignedInAccountFromIntent(intent);
-    });
 
-    private void driveSync(boolean isImport, Runnable actionBefore, Runnable actionAfter) {
-        new Thread(() -> {
-            if (actionBefore != null) runOnUiThread(actionBefore);
-            try {
-                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-                if (account != null) {
-                    // Setup drive service
-                    GoogleAccountCredential credentials = GoogleAccountCredential.usingOAuth2(this, List.of(Scopes.DRIVE_APPFOLDER));
-                    credentials.setSelectedAccount(account.getAccount());
-                    Drive service = new Drive.Builder(AndroidHttp.newCompatibleTransport(), GsonFactory.getDefaultInstance(), credentials)
-                            .setApplicationName("com.yurhel.alex.afit")
-                            .build();
-                    FileList files = service.files().list()
-                            .setSpaces("appDataFolder")
-                            .setFields("nextPageToken, files(id, name)")
-                            .setPageSize(10)
-                            .execute();
-                    // Search config file
-                    String configID = "";
-                    for (File file: files.getFiles()) {
-                        if (file.getName().equals("config.json"))
-                            configID = file.getId();
-                    }
-                    if (isImport) {
-                        // Try get data
-                        if (configID.equals("")) {
-                            runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.no_data, Toast.LENGTH_LONG).show());
-                        } else {
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            service.files().get(configID).executeMediaAndDownloadTo(outputStream);
-                            db.importDB(outputStream.toString());
-                        }
-                        runOnUiThread(this::updateAll);
-                    } else {
-                        // Send data
-                        AbstractInputStreamContent mediaContent =
-                                ByteArrayContent.fromString("application/json", db.exportDB().toString());
-                        if (configID.equals("")) {
-                            File fileMetadata = new File();
-                            fileMetadata.setName("config.json");
-                            fileMetadata.setParents(Collections.singletonList("appDataFolder"));
-                            service.files().create(fileMetadata, mediaContent).setFields("id").execute();
-                        } else {
-                            service.files().update(configID, null, mediaContent).setFields("id").execute();
-                        }
-                    }
-                    runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.ok, Toast.LENGTH_LONG).show());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.error, Toast.LENGTH_LONG).show());
-            }
-            if (actionAfter != null) runOnUiThread(actionAfter);
-        }).start();
+    @Override
+    public void onItemMoved() {
+        // When item in mainRV changes position
+        LinkedHashMap<String, Integer> pos = new LinkedHashMap<>();
+        int idx = 0;
+        for (Obj i: data) {
+            // id="1_st", pos=4
+            pos.put(i.id + "_" + ((i.sets != 0/*Is exercise*/) ? "ex" : "st"), idx);
+            idx++;
+        }
+        db.setPositions(pos);
+        recreate();
     }
 }

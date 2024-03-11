@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/actionHome"
+        android:icon="@drawable/bottom_nav_home"
+        android:title="@string/home" />
+
+    <item
+        android:id="@+id/actionCalendar"
+        android:icon="@drawable/bottom_nav_calendar"
+        android:title="@string/calendar" />
+
+    <item
+        android:id="@+id/actionGraph"
+        android:icon="@drawable/bottom_nav_pie"
+        android:title="@string/chart" />
+
+</menu>

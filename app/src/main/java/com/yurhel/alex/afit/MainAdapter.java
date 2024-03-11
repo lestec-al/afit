@@ -3,7 +3,6 @@ package com.yurhel.alex.afit;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
@@ -11,21 +10,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.yurhel.alex.afit.core.Click;
+import com.yurhel.alex.afit.core.Obj;
+import com.yurhel.alex.afit.databinding.RowMainBinding;
+
 import java.util.List;
 import java.util.Objects;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> implements MainItemMoveCallback.ItemTouchHelperContract {
-    private final ClickInterface clickInterface;
+    private final Click click;
     MainCallback callBack;
     Context context;
-    List<MyObject> data;
+    List<Obj> data;
     int blackColor;
     int whiteColor;
 
-    public MainAdapter(Context context, List<MyObject> data, ClickInterface clickInterface, MainCallback callBack) {
+    public MainAdapter(Context context, List<Obj> data, Click click, MainCallback callBack) {
         this.context = context;
         this.data = data;
-        this.clickInterface = clickInterface;
+        this.click = click;
         this.blackColor = context.getColor(R.color.dark);
         this.whiteColor = context.getColor(R.color.white);
         this.callBack = callBack;
@@ -34,12 +37,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MainAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MainAdapter.MyViewHolder(LayoutInflater.from(context).inflate(R.layout.row_main, parent, false));
+        return new MainAdapter.MyViewHolder(RowMainBinding.inflate(LayoutInflater.from(context), parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull MainAdapter.MyViewHolder holder, int pos) {
-        MyObject obj = data.get(pos);
+        Obj obj = data.get(pos);
         holder.name_icon.setBackgroundColor(obj.color);
         holder.name_icon.setText(obj.name);
         Drawable d = Objects.requireNonNull(AppCompatResources.getDrawable(
@@ -52,7 +55,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
             holder.name_icon.setShadowLayer(14,1,1,blackColor);
         }
         holder.name_icon.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
-        holder.name_icon.setOnClickListener(view1 -> clickInterface.onClickItem(pos, (obj.sets != 0/*Is exercise*/) ? "ex_id": "st_id"));
+        holder.name_icon.setOnClickListener(view1 -> click.onClickItem(pos, (obj.sets != 0/*Is exercise*/) ? "ex_id": "st_id"));
     }
 
     @Override
@@ -80,9 +83,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         Button name_icon;
 
-        public MyViewHolder(@NonNull View view) {
-            super(view);
-            name_icon = view.findViewById(R.id.mainButton);
+        public MyViewHolder(@NonNull RowMainBinding views) {
+            super(views.getRoot());
+            name_icon = views.mainButton;
         }
     }
 }
