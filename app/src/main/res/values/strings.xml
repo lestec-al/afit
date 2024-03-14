@@ -53,6 +53,6 @@
     <string name="you_completed">You completed</string>
     <string name="save_workout">Save workout</string>
     <string name="delete">Delete</string>
-    <string name="all_fit_points_info">This is the total number of minutes you exercised</string>
-    <string name="week_points_info">This is the number of minutes you exercised this week</string>
+    <string name="all_fit_points_info">Number of minutes you exercised</string>
+    <string name="week_points_info">Number of minutes you exercised this week</string>
 </resources>

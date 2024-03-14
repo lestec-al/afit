@@ -46,7 +46,7 @@ public class AllStatsAdapter extends RecyclerView.Adapter<AllStatsAdapter.MyView
     public void onBindViewHolder(@NonNull AllStatsAdapter.MyViewHolder holder, int pos) {
         Obj obj = data.get(pos);
         if (obj.time != null/*Is exercise*/) {
-            if (!obj.allWeights.equals("")) {
+            if (!obj.allWeights.isEmpty()) {
                 holder.tvWeights.setVisibility(View.VISIBLE);
                 holder.tvWeights.setText(obj.allWeights);
                 holder.tvWeights.setTextColor(obj.color);

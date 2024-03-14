@@ -70,7 +70,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
 
         mainColor = getColor(R.color.on_background);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setTitle("");//actionBar.hide();
+        if (actionBar != null) actionBar.setTitle("");
         db = new DB(this);
 
         // Date buttons
@@ -103,26 +103,13 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         // Dates
         String[] startEndDates = db.getAllDataGraphDates();
         Date dateToday = new Date();
-        startDate = (startEndDates[0].equals("")) ? dateToday: new Date(Long.parseLong(startEndDates[0]));
-        endDate = (startEndDates[1].equals("")) ? dateToday: new Date(Long.parseLong(startEndDates[1]));
-        // Get earliest date for all data
-        if (startEndDates[0].equals("")) {
-            for (int[] i: selectedItems) {
-                if (db.isEntriesTableExist(i[0], i[1] == 1)) {
-                    ArrayList<Obj> d = db.getTableEntries(i[0], i[1] == 1);
-                    if (d.size() > 0) {
-                        d.sort(Comparator.comparing(obj1 -> new Date(obj1.date)));
-                        Date newDate = new Date(d.get(0).date);
-                        if (newDate.before(startDate)) startDate = newDate;
-                    }
-                }
-            }
-        }
-        views.buttonDateStart.setText(Help.dateFormat(this, startDate));
-        views.buttonDateEnd.setText(Help.dateFormat(this, endDate));
+        startDate = (startEndDates[0].isEmpty()) ? dateToday: new Date(Long.parseLong(startEndDates[0]));
+        endDate = (startEndDates[1].isEmpty()) ? dateToday: new Date(Long.parseLong(startEndDates[1]));
+        boolean startDateNotExist = startDate == dateToday;
+
         allData = new ArrayList<>();
 
-        // Loop selected stats
+        // Loop data for RV
         for (int[] i: selectedItems) {
             boolean isExercise = i[1] == 1;
             // Check if selected items exist
@@ -134,9 +121,17 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
 
                 for (Obj item: data) {
                     Date d = new Date(item.date);
-                    if (d.compareTo(startDate) >= 0 && d.compareTo(endDate) <= 0) {
-                        item.color = obj.color;
-                        allData.add(item);
+
+                    if (d.compareTo(endDate) <= 0) {
+                        if (startDateNotExist || d.compareTo(startDate) >= 0) {
+                            item.color = obj.color;
+                            allData.add(item);
+
+                            // Get earliest date for all data
+                            if (startDateNotExist && startDate.after(d)) {
+                                startDate = d;
+                            }
+                        }
                     }
                 }
             } else {
@@ -145,12 +140,14 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
             }
         }
 
+        views.buttonDateStart.setText(Help.dateFormat(this, startDate));
+        views.buttonDateEnd.setText(Help.dateFormat(this, endDate));
+
         // Sort main data
         ArrayList<Obj> dataMain = db.getTableEntries(null, true);
         dataMain.addAll(db.getTableEntries(null, false));
-
-        LinkedHashMap<String, Integer> pos = db.getPositions();
         try {
+            LinkedHashMap<String, Integer> pos = db.getPositions();
             dataMain.sort(Comparator.comparing(obj1 -> pos.get(obj1.id + "_" + ((obj1.sets != 0/*Is exercise*/) ? "ex" : "st"))));
         } catch (Exception ignored) {}
 
@@ -159,24 +156,24 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         int allTimeSec = 0;
         int lastWeekMin = 0;
         int lastWeekSec = 0;
-
         int nowWeek = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
         int nowYear = Calendar.getInstance().get(Calendar.YEAR);
         Calendar objDate = Calendar.getInstance();
 
-        // Pie chart
+        // Setup pie chart
         views.pieLayout.removeAllViews();
-
         int allDataSize = allData.size();
         int allPieDataSize = 0;
         int idx = 0;
+
+        // Loop data for pie chart & scores
         for (Obj obj: dataMain) {
             // Loop selected stats
             for (int[] i: selectedItems) {
                 boolean isExercise = i[1] == 1;
                 // If item found
                 if (i[0] == obj.id && (isExercise == (obj.sets != 0))) {
-                    int allPreviousPieDataSize = allPieDataSize;
+                    int previousAllPieDataSize = allPieDataSize;
                     int thisDataSize = 0;
                     for (Obj item: db.getTableEntries(i[0], isExercise)) {
                         Date d = new Date(item.date);
@@ -207,7 +204,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
                         pie.setProgressTintList(ColorStateList.valueOf(obj.color));
 
                         // Rotate pie, set start where previous stat ended
-                        if (idx != 0) pie.setRotation(360f / (((float) allDataSize) / allPreviousPieDataSize));
+                        if (idx != 0) pie.setRotation(360f / (((float) allDataSize) / previousAllPieDataSize));
 
                         idx++;
                         views.pieLayout.addView(pie);
@@ -348,7 +345,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
             dViews.addValue.setText(passObj.longerValue);
             TextViewCompat.setCompoundDrawableTintList(dViews.addValue, mainColorS);
 
-            if (!passObj.allWeights.equals("")) {
+            if (!passObj.allWeights.isEmpty()) {
                 String weightStr = getText(R.string.weight) + ": " + passObj.allWeights;
                 dViews.addValue2.setText(weightStr);
                 dViews.addValue2.setVisibility(View.VISIBLE);
@@ -378,17 +375,17 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
 
         weekPointsButton = (Button) LayoutInflater.from(this).inflate(R.layout.view_point_button, null);
         weekPointsButton.setTooltipText(getText(R.string.week_points_info));
+        weekPointsButton.setOnClickListener(v -> weekPointsButton.performLongClick());
         Drawable dO = AppCompatResources.getDrawable(this, R.drawable.ic_time);
         if (dO != null) weekPointsButton.setCompoundDrawablesWithIntrinsicBounds(dO, null, null, null);
         menu.findItem(R.id.actionWeekPoints).setActionView(weekPointsButton);
-        weekPointsButton.setOnClickListener(v -> weekPointsButton.performLongClick());
 
         allPointsButton = (Button) LayoutInflater.from(this).inflate(R.layout.view_point_button, null);
         allPointsButton.setTooltipText(getText(R.string.all_fit_points_info));
+        allPointsButton.setOnClickListener(v -> allPointsButton.performLongClick());
         Drawable dF = AppCompatResources.getDrawable(this, R.drawable.ic_winner);
         if (dF != null) allPointsButton.setCompoundDrawablesWithIntrinsicBounds(dF, null, null, null);
         menu.findItem(R.id.actionAllPoints).setActionView(allPointsButton);
-        allPointsButton.setOnClickListener(v -> allPointsButton.performLongClick());
 
         updateAll();
         return true;

@@ -71,7 +71,7 @@ public class TrainingActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (repsResults.size() > 0) {
+                if (!repsResults.isEmpty()) {
                     // Save/not dialog
                     Object[] d = Help.editDialog(
                             TrainingActivity.this,
@@ -155,7 +155,7 @@ public class TrainingActivity extends AppCompatActivity {
                 );
                 ((ImageButton)d[1]).setOnClickListener(v1 -> {
                     String t = ((EditText)d[2]).getText().toString();
-                    if (!t.equals("")) {
+                    if (!t.isEmpty()) {
                         views.textWeightTraining.setText(t);
                         ((Dialog)d[0]).cancel();
                     }
@@ -258,9 +258,7 @@ public class TrainingActivity extends AppCompatActivity {
             stop = true;
             try {
                 thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            } catch (InterruptedException ignored) {}
             views.progressTime.setProgress(0);
             views.buttonSets.setVisibility(View.VISIBLE);
             views.buttonTime.setVisibility(View.GONE);
@@ -327,7 +325,7 @@ public class TrainingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) exit(false);
-        else if (item.getItemId() == R.id.actionSave && repsResults.size() > 0) exit(true);
+        else if (item.getItemId() == R.id.actionSave && !repsResults.isEmpty()) exit(true);
         return super.onOptionsItemSelected(item);
     }
 
@@ -342,7 +340,7 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     public void textToProgress(ArrayList<String> results, String text, LinearLayout layout) {
-        if (text.equals("")) text = "0.0";
+        if (text.isEmpty()) text = "0.0";
         results.add(text);
         TextView tv = new TextView(this);
         tv.setText(text);

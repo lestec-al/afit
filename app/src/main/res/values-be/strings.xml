@@ -49,6 +49,6 @@
     <string name="you_completed">Вы зрабілі</string>
     <string name="save_workout">Захаваць трэнаваньне</string>
     <string name="delete">Выдаліць</string>
-    <string name="all_fit_points_info">Гэта агульная колькасьць хвілінаў, у якія вы трэнаваліся</string>
-    <string name="week_points_info">Гэта колькасьць хвілінаў, у якія вы займаліся на гэтым тыдні</string>
+    <string name="all_fit_points_info">Колькасьць хвілінаў, у якія вы трэнаваліся за ўвесь час</string>
+    <string name="week_points_info">Колькасьць хвілінаў, у якія вы трэнаваліся на гэтым тыдні</string>
 </resources>

@@ -148,11 +148,11 @@ public class StatsActivity extends AppCompatActivity implements Click {
             data.sort(Comparator.comparing(obj -> new Date(obj.date)));
         // Setup date boundaries
         Date dateToday = new Date();
-        if (obj.start.equals(""))
+        if (obj.start.isEmpty())
             startDate = (dataSize > 0) ? new Date(data.get(0).date): dateToday;
         else
             startDate = new Date(Long.parseLong(obj.start));
-        if (obj.end.equals(""))
+        if (obj.end.isEmpty())
             endDate = (dataSize > 0) ? new Date(data.get(dataSize-1).date): dateToday;
         else
             endDate = new Date(Long.parseLong(obj.end));
@@ -255,7 +255,7 @@ public class StatsActivity extends AppCompatActivity implements Click {
         views.statsRV.setHasFixedSize(true);
         views.statsRV.setAdapter(new StatsAdapter(this, data, this));
         // Empty text
-        views.emptyTV.setVisibility((data.size() == 0) ? View.VISIBLE : View.GONE);
+        views.emptyTV.setVisibility((data.isEmpty()) ? View.VISIBLE : View.GONE);
     }
 
     // DIALOGS
@@ -285,7 +285,7 @@ public class StatsActivity extends AppCompatActivity implements Click {
                 dViews.pickDateButton.setText(Help.dateFormat(this, targetDate));
                 dViews.pickDateButton.setOnClickListener(view -> calendarDialog(targetDate, dViews.pickDateButton, null));
                 dViews.pickDateButton.setTextColor(obj.color);
-                if (data.size() > 0) {
+                if (!data.isEmpty()) {
                     dViews.numberPicker0.setValue((int) data.get(0).mainValue);
                     dViews.numberPicker1.setValue(Integer.parseInt(String.valueOf(data.get(0).mainValue).split("\\.")[1]));
                 } else {
@@ -333,7 +333,7 @@ public class StatsActivity extends AppCompatActivity implements Click {
             dViews.addValue.setText(passObj.longerValue);
             TextViewCompat.setCompoundDrawableTintList(dViews.addValue, mainColorS);
 
-            if (!passObj.allWeights.equals("")) {
+            if (!passObj.allWeights.isEmpty()) {
                 String weightStr = getText(R.string.weight) + ": " + passObj.allWeights;
                 dViews.addValue2.setText(weightStr);
                 dViews.addValue2.setVisibility(View.VISIBLE);

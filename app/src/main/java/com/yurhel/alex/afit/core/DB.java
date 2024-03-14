@@ -642,7 +642,6 @@ public class DB extends SQLiteOpenHelper {
             dbImport.close();
             return jArray;
         }  catch (Exception e) {
-            e.printStackTrace();
             return new JSONArray();
         }
     }
@@ -718,7 +717,6 @@ public class DB extends SQLiteOpenHelper {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             cleanDatabase();
             importDB(oldData.toString());
             return false;

@@ -49,6 +49,6 @@
     <string name="you_completed">Вы выполнили</string>
     <string name="save_workout">Сохранить тренировку</string>
     <string name="delete">Удалить</string>
-    <string name="all_fit_points_info">Это общее количество минут, в течение которых вы тренировались</string>
-    <string name="week_points_info">Это количество минут, в течение которых вы тренировались на этой неделе</string>
+    <string name="all_fit_points_info">Количество минут, в течение которых вы тренировались</string>
+    <string name="week_points_info">Количество минут, в течение которых вы тренировались на этой неделе</string>
 </resources>

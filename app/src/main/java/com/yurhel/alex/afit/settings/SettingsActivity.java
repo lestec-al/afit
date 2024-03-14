@@ -231,7 +231,6 @@ public class SettingsActivity extends AppCompatActivity {
                 os.close();
                 Toast.makeText(this, R.string.ok, Toast.LENGTH_LONG).show();
             } catch (Exception e) {
-                e.printStackTrace();
                 Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
             }
         }
@@ -252,7 +251,6 @@ public class SettingsActivity extends AppCompatActivity {
                     throw new Exception("Import error");
                 Toast.makeText(this, R.string.ok, Toast.LENGTH_LONG).show();
             } catch (Exception e) {
-                e.printStackTrace();
                 Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
             }
         }
@@ -297,7 +295,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                     if (isImport) {
                         // Try get data
-                        if (configID.equals("")) {
+                        if (configID.isEmpty()) {
                             runOnUiThread(() -> Toast.makeText(
                                     SettingsActivity.this, R.string.no_data, Toast.LENGTH_LONG
                             ).show());
@@ -310,7 +308,7 @@ public class SettingsActivity extends AppCompatActivity {
                         // Send data
                         AbstractInputStreamContent mediaContent =
                                 ByteArrayContent.fromString("application/json", db.exportDB().toString());
-                        if (configID.equals("")) {
+                        if (configID.isEmpty()) {
                             File fileMetadata = new File();
                             fileMetadata.setName("config.json");
                             fileMetadata.setParents(Collections.singletonList("appDataFolder"));
@@ -322,7 +320,6 @@ public class SettingsActivity extends AppCompatActivity {
                     runOnUiThread(() -> Toast.makeText(SettingsActivity.this, R.string.ok, Toast.LENGTH_LONG).show());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 runOnUiThread(() -> Toast.makeText(SettingsActivity.this, R.string.error, Toast.LENGTH_LONG).show());
             }
             if (actionAfter != null) runOnUiThread(actionAfter);

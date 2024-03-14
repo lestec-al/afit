@@ -171,9 +171,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                 int colorShadow = (isNight) ? whiteColor : blackColor;
                 // Set all stats for day to dialog
                 int itemsCount = 0;
+                RowStatsBinding vs = null;
                 for (Obj i: dataThisDay) {
                     itemsCount++;
-                    RowStatsBinding vs = RowStatsBinding.inflate(inflater, dView.itemsLayout, true);
+                    vs = RowStatsBinding.inflate(inflater, dView.itemsLayout, true);
 
                     vs.mainValue.setTextColor(i.color);
                     vs.mainValue.setShadowLayer(1,1,1, colorShadow);
@@ -186,7 +187,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                         allTimeMin += Integer.parseInt(t[0]);
                         allTimeSec += Integer.parseInt(t[1]);
 
-                        if (!i.allWeights.equals("")) {
+                        if (!i.allWeights.isEmpty()) {
                             vs.addValue2.setVisibility(View.VISIBLE);
                             vs.addValue2.setText(i.allWeights);
                             vs.addValue2.setTextColor(i.color);
@@ -209,6 +210,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     vs.rightValue.setTextColor(i.color);
                     vs.rightValue.setShadowLayer(1,1,1, colorShadow);
                 }
+
+                // Remove last item divider
+                if (itemsCount >= 0 && vs != null) vs.getRoot().setBackground(null);
 
                 // Empty text
                 dView.emptyText.setVisibility((itemsCount == 0) ? View.VISIBLE : View.GONE);

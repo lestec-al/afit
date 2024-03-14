@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
         views.mainRV.setAdapter(adapter);
 
         // Empty text
-        views.emptyTV.setVisibility((data.size() == 0) ? View.VISIBLE : View.GONE);
+        views.emptyTV.setVisibility((data.isEmpty()) ? View.VISIBLE : View.GONE);
     }
 
     @Override

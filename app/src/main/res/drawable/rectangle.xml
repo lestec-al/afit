@@ -2,6 +2,8 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:gravity="center_vertical|fill_horizontal">
         <shape android:shape="rectangle">
+            <corners
+                android:radius="20dp" />
             <stroke
                 android:width=".5dp"
                 android:color="@color/grey" />
