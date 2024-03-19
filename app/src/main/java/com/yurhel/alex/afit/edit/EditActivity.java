@@ -337,6 +337,10 @@ public class EditActivity extends AppCompatActivity {
                 }
                 startActivity(new Intent(EditActivity.this, MainActivity.class));
                 finish();
+            } else {
+                // Show error
+                views.nameLayout.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.red)));
+                views.nameErrorText.setVisibility(View.VISIBLE);
             }
             return true;
         }

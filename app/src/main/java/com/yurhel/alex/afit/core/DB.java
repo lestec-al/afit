@@ -15,7 +15,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 
 public class DB extends SQLiteOpenHelper {
     Context context;
@@ -45,69 +44,6 @@ public class DB extends SQLiteOpenHelper {
                 "ended TEXT, "+
                 "color INT)"
         );
-
-        String lang = Locale.getDefault().getLanguage();
-        // Add initial exercises
-        for (int i = 1; i < 3; i++) {
-            String name;
-            int color;
-            if (i == 1) {
-                switch (lang) {
-                    case "ru": name = "Подтягивания"; break;
-                    case "be": name = "Падцягвання"; break;
-                    case "uk": name = "Підтягування"; break;
-                    default: name = "Pull-Ups";
-                }
-                color = context.getColor(R.color.red);
-            } else { // if (i == 2)
-                switch (lang) {
-                    case "ru": name = "Отжимания"; break;
-                    case "be": name = "Адцісканні"; break;
-                    case "uk": name = "Віджимання"; break;
-                    default: name = "Push-Ups";
-                }
-                color = context.getColor(R.color.orange);
-            }
-            ContentValues cv = new ContentValues();
-            cv.put("name", name);
-            cv.put("rest", 120);
-            cv.put("reps", 5);
-            cv.put("sets", 5);
-            cv.put("weight", 0.0);
-            cv.put("start", "");
-            cv.put("ended", "");
-            cv.put("color", color);
-            db.insert("exercises", null, cv);
-            // Take ID from new created row
-            int id = 0;
-            Cursor cursor = db.rawQuery("SELECT * FROM exercises", null);
-            if (cursor.moveToLast()) id = cursor.getInt(0);
-            cursor.close();
-            // Create table with exercise statistics
-            db.execSQL(strCreateExEntryTable(id));
-        }
-
-        // Add initial stats
-        String name;
-        switch (lang) {
-            case "ru": name = "Вес"; break;
-            case "be":
-            case "uk": name = "Вага"; break;
-            default: name = "Weight";
-        }
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        cv.put("start", "");
-        cv.put("ended", "");
-        cv.put("color", context.getColor(R.color.green_main));
-        db.insert("stats", null, cv);
-        // Take ID from new created row
-        int id = 0;
-        Cursor cursor = db.rawQuery("SELECT * FROM stats", null);
-        if (cursor.moveToLast()) id = cursor.getInt(0);
-        cursor.close();
-        // Create table with user custom statistic
-        db.execSQL(strCreateStEntryTable(id));
     }
 
     private String strCreateExEntryTable(int id) {

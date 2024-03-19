@@ -1,10 +1,13 @@
 package com.yurhel.alex.afit;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
@@ -12,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.yurhel.alex.afit.core.Click;
 import com.yurhel.alex.afit.core.DB;
 import com.yurhel.alex.afit.core.Help;
@@ -85,6 +90,36 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         Help.setActionIconsColor(themeColor, menu, new int[] {R.id.actionAddCard, R.id.actionSettings});
+
+        if (data.isEmpty()) {
+            // Feature highlight
+            @SuppressLint("InflateParams")
+            ImageButton b = (ImageButton) LayoutInflater.from(this).inflate(R.layout.view_add_button, null);
+            b.setTooltipText(getString(R.string.add_card));
+            b.setOnClickListener(v -> {
+                startActivity(new Intent(MainActivity.this, EditActivity.class));
+                finish();
+            });
+            TapTargetView.showFor(
+                    this,
+                    TapTarget.forView(b, getString(R.string.add_card), "")
+                            .textColor(R.color.white)
+                            .drawShadow(true)
+                            .cancelable(true)
+                            .tintTarget(true)
+                            .targetRadius(30),
+                    new TapTargetView.Listener() {
+                        @Override
+                        public void onTargetClick(TapTargetView view) {
+                            super.onTargetClick(view);
+                            startActivity(new Intent(MainActivity.this, EditActivity.class));
+                            finish();
+                        }
+                    }
+            );
+            menu.findItem(R.id.actionAddCard).setActionView(b);
+        }
+
         return true;
     }
 

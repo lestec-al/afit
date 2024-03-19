@@ -18,7 +18,6 @@ import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +121,8 @@ public class CalendarActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 try {
                     int offset = recyclerView.computeHorizontalScrollOffset();
-                    if (offset % calendarViewWidth == 0) { // Item in position - update calendar
+                    if (offset % calendarViewWidth == 0) {
+                        // Item in position - update calendar
                         pos = offset / calendarViewWidth;
                         if (pos == 0) {
                             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)-1);
@@ -131,7 +131,8 @@ public class CalendarActivity extends AppCompatActivity {
                             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
                             updateCalendar();
                         }
-                    } else { // Position between - scroll to item
+                    } else {
+                        // Position in between - scroll to item
                         RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(CalendarActivity.this) {
                             @Override
                             protected int calculateTimeForScrolling(int dx) {
@@ -174,8 +175,7 @@ public class CalendarActivity extends AppCompatActivity {
     // TOOLBAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater mi = getMenuInflater();
-        mi.inflate(R.menu.calendar, menu);
+        getMenuInflater().inflate(R.menu.calendar, menu);
         menu.findItem(R.id.actionDateNow).setTitle(Help.dateFormat(this, new Date()));
         Help.setActionIconsColor(themeColor, menu, new int[] {R.id.actionDateNow, R.id.actionSetDate});
         return true;

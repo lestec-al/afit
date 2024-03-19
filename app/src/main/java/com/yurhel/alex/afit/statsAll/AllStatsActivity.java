@@ -227,8 +227,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         views.statsChooseRV.setAdapter(new AllStatsSmallAdapter(this, dataMain, allDataSize, this));
 
         // All data label
-        views.allEntries.setText(String.valueOf(allDataSize));
-        TextViewCompat.setCompoundDrawableTintList(views.allEntries, ColorStateList.valueOf(mainColor));
+        views.innerCircleValue.setText(String.valueOf(allDataSize));
 
         // Update rv list
         allData.sort(Comparator.comparing(obj1 -> new Date(obj1.date)));
@@ -244,6 +243,8 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         ));
 
         if (allDataSize == 0) {
+            // Hide inner circle layout
+            views.innerCircleLayout.setVisibility(View.GONE);
             // Empty text
             views.emptyTV.setVisibility(View.VISIBLE);
             // Empty graph
@@ -252,6 +253,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
             pie.setProgressTintList(ColorStateList.valueOf(getColor(R.color.grey_progress)));
             views.pieLayout.addView(pie);
         } else {
+            views.innerCircleLayout.setVisibility(View.VISIBLE);
             views.emptyTV.setVisibility(View.GONE);
         }
     }

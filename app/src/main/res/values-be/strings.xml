@@ -51,4 +51,5 @@
     <string name="delete">Выдаліць</string>
     <string name="all_fit_points_info">Колькасьць хвілінаў, у якія вы трэнаваліся за ўвесь час</string>
     <string name="week_points_info">Колькасьць хвілінаў, у якія вы трэнаваліся на гэтым тыдні</string>
+    <string name="empty_error_info">Трэба запоўніць поле</string>
 </resources>

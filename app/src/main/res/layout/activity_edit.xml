@@ -170,38 +170,56 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="5dp"
-        android:padding="5dp"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@drawable/divider">
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/nameLayout"
+            android:layout_marginHorizontal="10dp"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/divider">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textColor="@color/grey"
+                android:text="@string/name"
+                android:textSize="@dimen/small_text_size" />
+
+            <EditText
+                android:id="@+id/textName"
+                android:theme="@style/Texts"
+                android:importantForAutofill="no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:maxLength="30"
+                android:inputType="text"
+                android:textSize="@dimen/basic_text_size"
+                android:background="@null"
+                android:gravity="bottom"
+                android:hint="@string/type_text"
+                tools:ignore="LabelFor" />
+
+        </RelativeLayout>
 
         <TextView
+            android:visibility="gone"
+            android:id="@+id/nameErrorText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="top"
-            android:textColor="@color/grey"
-            android:text="@string/name"
-            android:textSize="@dimen/small_text_size" />
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/red"
+            android:layout_marginHorizontal="15dp"
+            android:text="@string/empty_error_info"/>
 
-        <EditText
-            android:id="@+id/textName"
-            android:theme="@style/Texts"
-            android:importantForAutofill="no"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:ems="10"
-            android:maxLength="30"
-            android:inputType="text"
-            android:textSize="@dimen/basic_text_size"
-            android:background="@null"
-            android:gravity="bottom"
-            android:hint="@string/type_text"
-            tools:ignore="LabelFor" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_marginHorizontal="10dp"
