@@ -99,7 +99,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
             // Change color for today
             if (c.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) && c.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) && c.get(Calendar.DAY_OF_MONTH) == day) {
-                holder.day.setBackground(AppCompatResources.getDrawable(context, R.drawable.rectangle_calendar));
+                holder.day.setBackground(AppCompatResources.getDrawable(context, R.drawable.rectangle_frame_filled));
                 holder.day.setBackgroundTintList(ColorStateList.valueOf(themeColor));
                 holder.day.setTextColor((isNight)? blackColor: whiteColor);
             }
@@ -116,7 +116,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                     if (!stop) {
                         // Set short data for day
                         TextView t = new TextView(context);
-                        t.setBackground(AppCompatResources.getDrawable(context, R.drawable.rectangle_calendar));
+                        t.setBackground(AppCompatResources.getDrawable(context, R.drawable.rectangle_frame_filled));
                         t.setBackgroundTintList(ColorStateList.valueOf(i.color));
                         if (i.color == whiteColor) {
                             t.setTextColor(blackColor);

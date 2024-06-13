@@ -1,13 +1,8 @@
 package com.yurhel.alex.afit;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
@@ -23,7 +18,6 @@ import com.yurhel.alex.afit.core.Help;
 import com.yurhel.alex.afit.core.Obj;
 import com.yurhel.alex.afit.databinding.ActivityMainBinding;
 import com.yurhel.alex.afit.edit.EditActivity;
-import com.yurhel.alex.afit.settings.SettingsActivity;
 import com.yurhel.alex.afit.stats.StatsActivity;
 
 import java.util.Comparator;
@@ -51,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
         });
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setTitle(R.string.app_name);
+        if (actionBar != null) actionBar.hide();
         themeColor = getColor(R.color.on_background);
         db = new DB(this);
 
@@ -76,33 +70,19 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
         touchHelper.attachToRecyclerView(views.mainRV);
         views.mainRV.setAdapter(adapter);
 
-        // Empty text
-        views.emptyTV.setVisibility((data.isEmpty()) ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void onClickItem(int pos, String option) {
-        startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra(option, data.get(pos).id));
-        finish();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        Help.setActionIconsColor(themeColor, menu, new int[] {R.id.actionAddCard, R.id.actionSettings});
-
         if (data.isEmpty()) {
+            // Show empty text
+            views.emptyTV.setVisibility(View.VISIBLE);
+
             // Feature highlight
-            @SuppressLint("InflateParams")
-            ImageButton b = (ImageButton) LayoutInflater.from(this).inflate(R.layout.view_add_button, null);
-            b.setTooltipText(getString(R.string.add_card));
-            b.setOnClickListener(v -> {
-                startActivity(new Intent(MainActivity.this, EditActivity.class));
-                finish();
-            });
             TapTargetView.showFor(
                     this,
-                    TapTarget.forView(b, getString(R.string.add_card), "")
+                    TapTarget.forView(
+                                views.navigation.findViewById(R.id.actionAddCard),
+                                getString(R.string.add_card),
+                                ""
+                            )
+                            .outerCircleColorInt(getColor(R.color.green_main))
                             .textColor(R.color.white)
                             .drawShadow(true)
                             .cancelable(true)
@@ -112,30 +92,21 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
                         @Override
                         public void onTargetClick(TapTargetView view) {
                             super.onTargetClick(view);
-                            startActivity(new Intent(MainActivity.this, EditActivity.class));
+                            startActivity(new Intent(getApplicationContext(), EditActivity.class));
                             finish();
                         }
                     }
             );
-            menu.findItem(R.id.actionAddCard).setActionView(b);
+        } else {
+            // Hide empty text
+            views.emptyTV.setVisibility(View.GONE);
         }
-
-        return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.actionAddCard) {
-            startActivity(new Intent(MainActivity.this, EditActivity.class));
-            finish();
-            return true;
-
-        } else if (item.getItemId() == R.id.actionSettings) {
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            finish();
-            return true;
-        }
-        return false;
+    public void onClickItem(int pos, String option) {
+        startActivity(new Intent(MainActivity.this, StatsActivity.class).putExtra(option, data.get(pos).id));
+        finish();
     }
 
     @Override

@@ -7,12 +7,8 @@ import android.content.pm.PackageInfo;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -55,7 +51,6 @@ import java.util.Objects;
 public class SettingsActivity extends AppCompatActivity {
     DB db;
     int themeColor;
-    Menu upMenu;
     ActivitySettingsBinding views;
 
     @Override
@@ -78,11 +73,10 @@ public class SettingsActivity extends AppCompatActivity {
         themeColor = getColor(R.color.on_background);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.settings);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            Help.setActionBackIconColor(this, themeColor, actionBar);
-        }
+        if (actionBar != null) actionBar.hide();
+
+        // Bottom navigation
+        Help.setupBottomNavigation(SettingsActivity.this, R.id.actionSettings, views.navigation, this::finish);
 
         // Try set app name and version
         try {
@@ -154,23 +148,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.save, menu);
-        upMenu = menu;
-        upMenu.findItem(R.id.actionSave).setVisible(false);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getOnBackPressedDispatcher().onBackPressed();
-            return true;
-        }
-        return false;
-    }
-
     private void askImportDialog(Runnable action) {
         Object[] d = Help.editDialog(
                 this,
@@ -206,17 +183,13 @@ public class SettingsActivity extends AppCompatActivity {
     @SuppressLint("InflateParams")
     private void setIndicatorVisibility(int visibility) {
         if (visibility == View.VISIBLE) {
-            // Create indicator
-            ProgressBar indicator = (ProgressBar) LayoutInflater.from(this).inflate(R.layout.view_indicator, null);
-            indicator.setProgressTintList(ColorStateList.valueOf(themeColor));
-            indicator.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
-            // Replace menu item with indicator and show it
-            upMenu.findItem(R.id.actionSave).setActionView(indicator);
-            upMenu.findItem(R.id.actionSave).setVisible(true);
+            // Show indicator
+            views.progressBar.setProgressTintList(ColorStateList.valueOf(themeColor));
+            views.progressBar.getIndeterminateDrawable().setColorFilter(themeColor, android.graphics.PorterDuff.Mode.SRC_IN);
+            views.progressBar.setVisibility(View.VISIBLE);
         } else {
             // Hide indicator
-            upMenu.findItem(R.id.actionSave).setVisible(false);
-            upMenu.findItem(R.id.actionSave).setActionView(null);
+            views.progressBar.setVisibility(View.GONE);
         }
     }
 

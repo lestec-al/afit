@@ -16,6 +16,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/calendarRV"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        app:reverseLayout="false"
         android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -26,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_nav_height"
         android:background="@drawable/divider_up"
-        app:labelVisibilityMode="labeled"
+        app:itemIconSize="@dimen/icon_size"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/main_down"
         app:itemActiveIndicatorStyle="@null"
         app:itemIconTint="@drawable/bottom_nav_item_color"

@@ -38,10 +38,11 @@
         android:id="@+id/upLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
         android:layout_marginStart="@dimen/margin"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="@dimen/margin"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/countLayout"
+        app:layout_constraintTop_toBottomOf="@+id/progressResultW"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -86,7 +87,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressResultW">
+        app:layout_constraintTop_toBottomOf="@+id/upLayout">
 
         <ProgressBar
             android:id="@+id/progressTime"

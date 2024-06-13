@@ -29,6 +29,8 @@ import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.calendar.CalendarActivity;
 import com.yurhel.alex.afit.databinding.DialogEditBinding;
+import com.yurhel.alex.afit.edit.EditActivity;
+import com.yurhel.alex.afit.settings.SettingsActivity;
 import com.yurhel.alex.afit.statsAll.AllStatsActivity;
 
 import java.util.Date;
@@ -136,6 +138,16 @@ public class Help {
 
                 } else if (item.getItemId() == R.id.actionGraph) {
                     startActivity(context, new Intent(context, AllStatsActivity.class), null);
+                    finishAction.run();
+                    return true;
+
+                } else if (item.getItemId() == R.id.actionAddCard) {
+                    startActivity(context, new Intent(context, EditActivity.class), null);
+                    finishAction.run();
+                    return true;
+
+                } else if (item.getItemId() == R.id.actionSettings) {
+                    startActivity(context, new Intent(context, SettingsActivity.class), null);
                     finishAction.run();
                     return true;
                 }

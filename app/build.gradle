@@ -10,8 +10,8 @@ android {
         applicationId 'com.yurhel.alex.afit'
         minSdk 28
         targetSdk 34
-        versionCode 30
-        versionName '30'
+        versionCode 31
+        versionName '31'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.jjoe64:graphview:4.2.2'
     // google/drive auth
     implementation 'com.google.apis:google-api-services-drive:v3-rev20230520-2.0.0'
-    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+    implementation 'com.google.android.gms:play-services-auth:21.1.0'
     implementation 'com.google.api-client:google-api-client-android:1.23.0'
     // Feature highlight
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.13.3'

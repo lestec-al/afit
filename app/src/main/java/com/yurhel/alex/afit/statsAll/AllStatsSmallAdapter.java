@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,6 +64,11 @@ public class AllStatsSmallAdapter extends RecyclerView.Adapter<AllStatsSmallAdap
         } else {
             holder.itemTextAdditional.setVisibility(View.GONE);
         }
+
+        // Root
+        holder.root.setOnClickListener(
+                buttonView -> clickInterface.onClickCheckBox(obj.id, (obj.sets != 0)? 1: 0, holder.itemCheck.isChecked())
+        );
     }
 
     @Override
@@ -73,8 +79,10 @@ public class AllStatsSmallAdapter extends RecyclerView.Adapter<AllStatsSmallAdap
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         CheckBox itemCheck;
         TextView itemTextName, itemTextAdditional;
+        LinearLayout root;
         public MyViewHolder(@NonNull RowStatsSmallBinding views) {
             super(views.getRoot());
+            root = views.getRoot();
             itemCheck = views.itemCheck;
             itemTextName = views.itemTextName;
             itemTextAdditional = views.itemTextAdditional;

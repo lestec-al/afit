@@ -385,7 +385,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         allPointsButton = (Button) LayoutInflater.from(this).inflate(R.layout.view_point_button, null);
         allPointsButton.setTooltipText(getText(R.string.all_fit_points_info));
         allPointsButton.setOnClickListener(v -> allPointsButton.performLongClick());
-        Drawable dF = AppCompatResources.getDrawable(this, R.drawable.ic_winner);
+        Drawable dF = AppCompatResources.getDrawable(this, R.drawable.ic_time_all);
         if (dF != null) allPointsButton.setCompoundDrawablesWithIntrinsicBounds(dF, null, null, null);
         menu.findItem(R.id.actionAllPoints).setActionView(allPointsButton);
 

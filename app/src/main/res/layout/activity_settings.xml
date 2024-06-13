@@ -8,6 +8,7 @@
     tools:context=".settings.SettingsActivity">
 
     <LinearLayout
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -89,13 +90,41 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/versionTV"
-        android:layout_margin="20dp"
+    <LinearLayout
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end|bottom"
-        android:textColor="@color/material_on_background_disabled"
-        tools:text="App version 1.72"/>
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/dark" />
+
+        <TextView
+            android:id="@+id/versionTV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end|bottom"
+            android:textColor="@color/material_on_background_disabled"
+            tools:text="App version 1.72"/>
+
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_nav_height"
+        android:background="@drawable/divider_up"
+        app:itemIconSize="@dimen/icon_size"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/main_down"
+        app:itemActiveIndicatorStyle="@null"
+        app:itemIconTint="@drawable/bottom_nav_item_color"
+        app:itemTextColor="@drawable/bottom_nav_item_color"
+        style="@style/BottomNav"/>
 
 </LinearLayout>

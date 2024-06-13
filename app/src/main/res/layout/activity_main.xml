@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <FrameLayout
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -34,7 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_nav_height"
         android:background="@drawable/divider_up"
-        app:labelVisibilityMode="labeled"
+        app:itemIconSize="@dimen/icon_size"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/main_down"
         app:itemActiveIndicatorStyle="@null"
         app:itemIconTint="@drawable/bottom_nav_item_color"

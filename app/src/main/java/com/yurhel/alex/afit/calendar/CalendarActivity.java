@@ -1,13 +1,5 @@
 package com.yurhel.alex.afit.calendar;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -16,23 +8,26 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.yurhel.alex.afit.MainActivity;
+import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.DB;
 import com.yurhel.alex.afit.core.Help;
-import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.core.Obj;
-import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.databinding.ActivityCalendarBinding;
 import com.yurhel.alex.afit.databinding.DialogStatsBinding;
-import com.yurhel.alex.afit.databinding.RowCalendarBigBinding;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -133,24 +128,7 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                     } else {
                         // Position in between - scroll to item
-                        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(CalendarActivity.this) {
-                            @Override
-                            protected int calculateTimeForScrolling(int dx) {
-                                return dx/3;
-                            }
-                        };
-                        int scrollNumber = offset - calendarViewWidth;
-                        if (scrollNumber < 0) {
-                            if (scrollNumber <= -stepWidth *2)
-                                smoothScroller.setTargetPosition(pos-1);
-                            else
-                                smoothScroller.setTargetPosition(pos);
-                        } else {
-                            if (scrollNumber >= stepWidth *2)
-                                smoothScroller.setTargetPosition(pos+1);
-                            else
-                                smoothScroller.setTargetPosition(pos);
-                        }
+                        RecyclerView.SmoothScroller smoothScroller = getSmoothScroller(offset, pos);
                         Objects.requireNonNull(views.calendarRV.getLayoutManager()).startSmoothScroll(smoothScroller);
                     }
                 } catch (Exception ignored) {}
@@ -161,14 +139,42 @@ public class CalendarActivity extends AppCompatActivity {
         Help.setupBottomNavigation(CalendarActivity.this, R.id.actionCalendar, views.navigation, this::finish);
     }
 
+    @NonNull
+    private RecyclerView.SmoothScroller getSmoothScroller(int offset, int pos) {
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(CalendarActivity.this) {
+            @Override
+            protected int calculateTimeForScrolling(int dx) {
+                return dx/3;
+            }
+        };
+        int scrollNumber = offset - calendarViewWidth;
+        if (scrollNumber < 0) {
+            if (scrollNumber <= -stepWidth *2) smoothScroller.setTargetPosition(pos-1);
+            else smoothScroller.setTargetPosition(pos);
+        } else {
+            if (scrollNumber >= stepWidth *2) smoothScroller.setTargetPosition(pos+1);
+            else smoothScroller.setTargetPosition(pos);
+        }
+        return smoothScroller;
+    }
+
     public void updateCalendar() {
         String d;
         if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR)) d = String.valueOf(DateFormat.format("LLLL", calendar));
         else d = String.valueOf(DateFormat.format("LLLL yyyy", calendar));
         actionBar.setTitle(d.substring(0, 1).toUpperCase() + d.substring(1));
-        views.calendarRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         views.calendarRV.setHasFixedSize(true);
-        views.calendarRV.setAdapter(new CalendarAdapterBig());
+        views.calendarRV.setAdapter(new CalendarAdapterBig(
+                calendar,
+                CalendarActivity.this,
+                data,
+                themeColor,
+                stepWidth,
+                stepHeight,
+                isNight,
+                whiteColor,
+                blackColor
+        ));
         views.calendarRV.scrollToPosition(1);
     }
 
@@ -246,58 +252,5 @@ public class CalendarActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public class CalendarAdapterBig extends RecyclerView.Adapter<CalendarAdapterBig.MyViewHolder> {
-        Calendar calBefore;
-        Calendar calAfter;
-        public CalendarAdapterBig() {
-            this.calBefore = Calendar.getInstance();
-            this.calBefore.setTime(calendar.getTime());
-            this.calBefore.set(Calendar.DAY_OF_MONTH, 1);
-            this.calBefore.set(Calendar.MONTH, calBefore.get(Calendar.MONTH)-1);
-            this.calAfter = Calendar.getInstance();
-            this.calAfter.setTime(calendar.getTime());
-            this.calAfter.set(Calendar.DAY_OF_MONTH, 1);
-            this.calAfter.set(Calendar.MONTH, calAfter.get(Calendar.MONTH)+1);
-        }
-        @NonNull
-        @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new MyViewHolder(
-                    RowCalendarBigBinding.inflate(LayoutInflater.from(CalendarActivity.this), parent, false)
-            );
-        }
-        @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int pos) {
-            Calendar c;
-            if (pos == 0) c = calBefore;
-            else if (pos == 2) c = calAfter;
-            else c = calendar;
-            holder.rv.setLayoutManager(new GridLayoutManager(CalendarActivity.this, 7));
-            holder.rv.setHasFixedSize(true);
-            holder.rv.setAdapter(new CalendarAdapter(
-                    CalendarActivity.this,
-                    data,
-                    c,
-                    themeColor,
-                    stepWidth,
-                    stepHeight,
-                    isNight,
-                    whiteColor,
-                    blackColor
-            ));
-        }
-        @Override
-        public int getItemCount() {
-            return 3;
-        }
-        public class MyViewHolder extends RecyclerView.ViewHolder {
-            RecyclerView rv;
-            public MyViewHolder(@NonNull RowCalendarBigBinding views) {
-                super(views.getRoot());
-                rv = views.calendarItem;
-            }
-        }
     }
 }

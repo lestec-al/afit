@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -55,6 +54,7 @@ public class TrainingActivity extends AppCompatActivity {
     int progressOneSetPX;
     int progressHeight;
     int colorWhite;
+    int colorDark;
     Intent notificationIntent;
     PowerManager.WakeLock wakeLock;
     Boolean withWeight;
@@ -100,7 +100,8 @@ public class TrainingActivity extends AppCompatActivity {
         exerciseID = getIntent().getIntExtra("ex_id", 0);
         obj = db.getOneMainObj(exerciseID, true);
 
-        views.infoOnButton.setShadowLayer(1,1,1,getColor(R.color.dark));
+        colorDark = getColor(R.color.dark);
+        views.infoOnButton.setShadowLayer(1,1,1,colorDark);
         progressHeight = getResources().getDimensionPixelSize(R.dimen.height_progress_result);
         colorWhite = getColor(R.color.white);
         doInfo = getText(R.string.do_exercise).toString();
@@ -124,11 +125,14 @@ public class TrainingActivity extends AppCompatActivity {
 
         views.progressTime.setMax(obj.rest);
         views.progressTime.setProgress(0);
+        views.progressTime.setProgressTintList(ColorStateList.valueOf(obj.color));
+
+        ColorStateList progressColor = ColorStateList.valueOf(obj.color).withAlpha(170);
 
         views.progressResult.setMax(obj.sets);
         views.progressResult.setProgress(0);
         views.progressResult.post(() -> progressOneSetPX = views.progressResult.getWidth() / obj.sets);
-        setProgressColor(obj.color, new ProgressBar[] {views.progressTime, views.progressResult});
+        views.progressResult.setProgressTintList(progressColor);
 
         // Up row with weight
         withWeight = getIntent().getBooleanExtra("withWeight", false);
@@ -139,7 +143,7 @@ public class TrainingActivity extends AppCompatActivity {
             views.progressResultW.setMax(obj.sets);
             views.progressResultW.setProgress(0);
             views.progressResultW.setVisibility(View.VISIBLE);
-            setProgressColor(obj.color, new ProgressBar[] {views.progressResultW});
+            views.progressResultW.setProgressTintList(progressColor);
 
             views.textWeightTraining.setBackgroundColor(obj.color);
             views.textWeightTraining.setText(String.valueOf(obj.weight));
@@ -207,7 +211,7 @@ public class TrainingActivity extends AppCompatActivity {
         Drawable dr = AppCompatResources.getDrawable(this, R.drawable.circle);
         if (dr != null) dr.setTint(obj.color);
         views.buttonSets.setBackground(dr);
-        views.buttonSets.setShadowLayer(14,1,1,getColor(R.color.dark));
+        views.buttonSets.setShadowLayer(14,1,1,colorDark);
         views.buttonSets.setText(String.valueOf(obj.reps));
         views.buttonSets.setOnTouchListener(this::checkTouchCorners);
         views.buttonSets.setOnClickListener(view -> {
@@ -245,7 +249,7 @@ public class TrainingActivity extends AppCompatActivity {
                 thread.start();
             }
         });
-        if (obj.color == colorWhite) views.buttonSets.setTextColor(getColor(R.color.dark));
+        if (obj.color == colorWhite) views.buttonSets.setTextColor(colorDark);
     }
 
     public void updateNotification(String msg) {
@@ -344,22 +348,10 @@ public class TrainingActivity extends AppCompatActivity {
         results.add(text);
         TextView tv = new TextView(this);
         tv.setText(text);
-        if (obj.color == colorWhite) {
-            tv.setTextColor(getColor(R.color.dark));
-        } else {
-            tv.setTextColor(colorWhite);
-            tv.setShadowLayer(14,1,1,getColor(R.color.dark));
-        }
+        tv.setTextColor((obj.color == colorWhite) ? colorDark : colorWhite);
         tv.setHeight(progressHeight);
         tv.setWidth(progressOneSetPX);
         tv.setGravity(Gravity.CENTER);
         layout.addView(tv);
-    }
-
-    private void setProgressColor(int color, ProgressBar[] progressBars) {
-        ColorStateList c = ColorStateList.valueOf(color);
-        for (ProgressBar progress: progressBars) {
-            progress.setProgressTintList(c);
-        }
     }
 }

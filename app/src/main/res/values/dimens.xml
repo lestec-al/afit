@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="bottom_nav_height">60dp</dimen>
-    <dimen name="margin">32dp</dimen>
-    <dimen name="rv_icon_size">20dp</dimen>
-    <dimen name="up_icon_size">24dp</dimen>
+    <dimen name="bottom_nav_height">50dp</dimen>
+    <dimen name="margin">22dp</dimen>
+    <dimen name="icon_size">26dp</dimen>
     <dimen name="small_text_size">15sp</dimen>
     <dimen name="basic_text_size">20sp</dimen>
     <dimen name="height_progress_result">30dp</dimen>

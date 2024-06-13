@@ -12,8 +12,18 @@
         android:title="@string/calendar" />
 
     <item
+        android:id="@+id/actionAddCard"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_card" />
+
+    <item
         android:id="@+id/actionGraph"
         android:icon="@drawable/bottom_nav_pie"
         android:title="@string/chart" />
+
+    <item
+        android:id="@+id/actionSettings"
+        android:icon="@drawable/bottom_nav_settings"
+        android:title="@string/settings" />
 
 </menu>
