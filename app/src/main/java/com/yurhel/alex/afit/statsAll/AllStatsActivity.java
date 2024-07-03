@@ -12,8 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,7 +19,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,7 +48,6 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
     DB db;
     int mainColor;
     Date startDate, endDate;
-    Button weekPointsButton, allPointsButton;
     ActivityAllStatsBinding views;
 
     @Override
@@ -68,25 +64,38 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
             }
         });
 
+        views.weekPointsButton.setTooltipText(getText(R.string.week_points_info));
+        views.weekPointsButton.setOnClickListener(v -> views.weekPointsButton.performLongClick());
+        views.allPointsButton.setTooltipText(getText(R.string.all_fit_points_info));
+        views.allPointsButton.setOnClickListener(v -> views.allPointsButton.performLongClick());
+
         mainColor = getColor(R.color.on_background);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setTitle("");
+        if (actionBar != null) actionBar.hide();
         db = new DB(this);
 
         // Date buttons
-        views.buttonDateStart.setOnClickListener(v -> calendarDialog(true));
-        views.buttonDateEnd.setOnClickListener(v -> calendarDialog(false));
-        Help.setButtonsTextColor(mainColor, new Button[] {views.buttonDateStart, views.buttonDateEnd});
+        views.showHideView.buttonDateStart.setOnClickListener(v -> calendarDialog(true));
+        views.showHideView.buttonDateEnd.setOnClickListener(v -> calendarDialog(false));
+        Help.setButtonsTextColor(mainColor, new Button[] {views.showHideView.buttonDateStart, views.showHideView.buttonDateEnd});
+
+        // If data is empty, hide graph layout
+        ArrayList<Obj> dataMain = db.getTableEntries(null, true);
+        dataMain.addAll(db.getTableEntries(null, false));
+        if (dataMain.isEmpty()) {
+            views.layoutForHide.setVisibility(View.GONE);
+            views.showHideView.buttonGraphVisibility.setVisibility(View.GONE);
+        }
 
         // Show/Hide graph button
-        views.buttonGraphVisibility.setColorFilter(mainColor);
-        views.buttonGraphVisibility.setOnClickListener(v -> {
+        views.showHideView.buttonGraphVisibility.setColorFilter(mainColor);
+        views.showHideView.buttonGraphVisibility.setOnClickListener(v -> {
             if (views.layoutForHide.getVisibility() == View.VISIBLE) {
                 views.layoutForHide.setVisibility(View.GONE);
-                views.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_down));
+                views.showHideView.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_down));
             } else {
                 views.layoutForHide.setVisibility(View.VISIBLE);
-                views.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_up));
+                views.showHideView.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_up));
             }
         });
 
@@ -140,8 +149,8 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
             }
         }
 
-        views.buttonDateStart.setText(Help.dateFormat(this, startDate));
-        views.buttonDateEnd.setText(Help.dateFormat(this, endDate));
+        views.showHideView.buttonDateStart.setText(Help.dateFormat(this, startDate));
+        views.showHideView.buttonDateEnd.setText(Help.dateFormat(this, endDate));
 
         // Sort main data
         ArrayList<Obj> dataMain = db.getTableEntries(null, true);
@@ -214,16 +223,14 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         }
 
         // Update score ???
-        if (allPointsButton != null) allPointsButton.setText(
+        views.allPointsButton.setText(
                 String.valueOf(allTimeMin + (allTimeSec / 60) + ((allTimeSec % 60 > 0) ? 1 : 0))
         );
-        if (weekPointsButton != null) weekPointsButton.setText(
+        views.weekPointsButton.setText(
                 String.valueOf(lastWeekMin + (lastWeekSec / 60) + ((lastWeekSec % 60 > 0) ? 1 : 0))
         );
 
         // Update Graph legend
-        views.statsChooseRV.setLayoutManager(new LinearLayoutManager(this));
-        views.statsChooseRV.setHasFixedSize(true);
         views.statsChooseRV.setAdapter(new AllStatsSmallAdapter(this, dataMain, allDataSize, this));
 
         // All data label
@@ -336,11 +343,10 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
             dialog.setContentView(dViews.getRoot());
             ColorStateList mainColorS = ColorStateList.valueOf(getColor(R.color.on_background));
 
-            String durationStr = " " + passObj.time + " ";
-            dViews.time.setText(durationStr);
-            TextViewCompat.setCompoundDrawableTintList(dViews.time, mainColorS);
-
-            String resultStr = " " + (int) passObj.mainValue + " ";
+            String resultStr = getString(R.string.you_completed) + " " +
+                    (int) passObj.mainValue + " " +
+                    getString(R.string.reps_in) + " " +
+                    passObj.time;
             dViews.mainValue.setText(resultStr);
             TextViewCompat.setCompoundDrawableTintList(dViews.mainValue, mainColorS);
 
@@ -370,35 +376,6 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
     }
 
     // NAVIGATION
-    @SuppressLint("InflateParams")
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.stats_all, menu);
-
-        weekPointsButton = (Button) LayoutInflater.from(this).inflate(R.layout.view_point_button, null);
-        weekPointsButton.setTooltipText(getText(R.string.week_points_info));
-        weekPointsButton.setOnClickListener(v -> weekPointsButton.performLongClick());
-        Drawable dO = AppCompatResources.getDrawable(this, R.drawable.ic_time);
-        if (dO != null) weekPointsButton.setCompoundDrawablesWithIntrinsicBounds(dO, null, null, null);
-        menu.findItem(R.id.actionWeekPoints).setActionView(weekPointsButton);
-
-        allPointsButton = (Button) LayoutInflater.from(this).inflate(R.layout.view_point_button, null);
-        allPointsButton.setTooltipText(getText(R.string.all_fit_points_info));
-        allPointsButton.setOnClickListener(v -> allPointsButton.performLongClick());
-        Drawable dF = AppCompatResources.getDrawable(this, R.drawable.ic_time_all);
-        if (dF != null) allPointsButton.setCompoundDrawablesWithIntrinsicBounds(dF, null, null, null);
-        menu.findItem(R.id.actionAllPoints).setActionView(allPointsButton);
-
-        updateAll();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) getOnBackPressedDispatcher().onBackPressed();
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public void onClickCheckBox(int statsId, int isObjExercise, Boolean isCheck) {
         db.setOrDelAllDataSelected(statsId, isObjExercise, isCheck);

@@ -10,27 +10,55 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/allPointsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="1201"
+            android:textColor="@color/on_background"
+            android:drawableLeft="@drawable/ic_time_all"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <Button
+            android:id="@+id/weekPointsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="29"
+            android:textColor="@color/on_background"
+            android:drawableLeft="@drawable/ic_time"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/layoutForHide"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="230dp"
             android:orientation="horizontal">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/statsChooseRV"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:scrollbarSize="@dimen/scrollbarSize"
                 android:scrollbars="vertical"
                 android:verticalScrollbarPosition="left"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
             <FrameLayout
-                android:layout_width="230dp"
-                android:layout_height="230dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:layout_marginEnd="10dp"
                 android:orientation="vertical">
 
@@ -52,7 +80,7 @@
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="(100%)"
+                        android:text="100%"
                         tools:ignore="HardcodedText" />
 
                 </LinearLayout>
@@ -67,47 +95,9 @@
 
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:background="@drawable/divider">
-
-            <Button
-                android:id="@+id/buttonDateStart"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="2023.01.05"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                tools:textColor="@color/green_main"/>
-
-            <ImageButton
-                android:id="@+id/buttonGraphVisibility"
-                android:layout_width="48dp"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/ic_arrow_up"
-                style="@style/Widget.AppCompat.Light.ActionButton"
-                app:layout_constraintEnd_toStartOf="@+id/buttonDateEnd"
-                app:layout_constraintStart_toEndOf="@+id/buttonDateStart"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="graph"
-                tools:ignore="HardcodedText" />
-
-            <Button
-                android:id="@+id/buttonDateEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="2023.02.06"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                tools:textColor="@color/green_main"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include
+            android:id="@+id/showHideView"
+            layout="@layout/view_show_hide_graph" />
 
     </LinearLayout>
 

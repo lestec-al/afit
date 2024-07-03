@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/divider">
+
+    <Button
+        android:id="@+id/buttonDateStart"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        tools:text="2023.01.05"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        tools:textColor="@color/green_main"/>
+
+    <ImageButton
+        android:id="@+id/buttonGraphVisibility"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_arrow_up"
+        style="@style/Widget.AppCompat.Light.ActionButton"
+        android:tooltipText="@string/show_hide_graph"
+        android:contentDescription="graph"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/buttonDateEnd"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        tools:text="2023.02.06"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        tools:textColor="@color/green_main"/>
+
+</LinearLayout>

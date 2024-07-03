@@ -102,19 +102,23 @@ public class StatsActivity extends AppCompatActivity implements Click {
         withWeight = db.getIsWeightShowForMainStat(oneID + "_" + ((isExercise) ? "ex" : "st"));
 
         // Date buttons
-        views.buttonDateStart.setOnClickListener(v -> calendarDialog(startDate, views.buttonDateStart, true));
-        views.buttonDateEnd.setOnClickListener(v -> calendarDialog(endDate, views.buttonDateEnd, false));
-        // Show/Hide graph button
+        views.showHideView.buttonDateStart.setOnClickListener(
+                v -> calendarDialog(startDate, views.showHideView.buttonDateStart, true)
+        );
+        views.showHideView.buttonDateEnd.setOnClickListener(
+                v -> calendarDialog(endDate, views.showHideView.buttonDateEnd, false)
+        );
 
-        views.buttonGraphVisibility.setOnClickListener(v -> {
+        // Show/Hide graph button
+        views.showHideView.buttonGraphVisibility.setOnClickListener(v -> {
             if (views.graphLayout.getVisibility() == View.VISIBLE) {
                 views.graphLayout.setVisibility(View.GONE);
-                views.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_down));
+                views.showHideView.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_down));
             } else {
                 views.graphLayout.setVisibility(View.VISIBLE);
-                views.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_up));
+                views.showHideView.buttonGraphVisibility.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_arrow_up));
             }
-            views.buttonGraphVisibility.setColorFilter(obj.color);
+            views.showHideView.buttonGraphVisibility.setColorFilter(obj.color);
         });
         // Auto scroll
         views.statsRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -141,7 +145,7 @@ public class StatsActivity extends AppCompatActivity implements Click {
     private void updateAll(boolean onCreate) {
         obj = db.getOneMainObj(oneID, isExercise);
         if (!onCreate) setUpActionBar();
-        views.buttonGraphVisibility.setColorFilter(obj.color);
+        views.showHideView.buttonGraphVisibility.setColorFilter(obj.color);
         data = db.getTableEntries(oneID, isExercise);
         int dataSize = data.size();
         if (dataSize > 0)
@@ -156,9 +160,9 @@ public class StatsActivity extends AppCompatActivity implements Click {
             endDate = (dataSize > 0) ? new Date(data.get(dataSize-1).date): dateToday;
         else
             endDate = new Date(Long.parseLong(obj.end));
-        views.buttonDateStart.setText(Help.dateFormat(this, startDate));
-        views.buttonDateEnd.setText(Help.dateFormat(this, endDate));
-        Help.setButtonsTextColor(obj.color, new Button[] {views.buttonDateStart, views.buttonDateEnd});
+        views.showHideView.buttonDateStart.setText(Help.dateFormat(this, startDate));
+        views.showHideView.buttonDateEnd.setText(Help.dateFormat(this, endDate));
+        Help.setButtonsTextColor(obj.color, new Button[] {views.showHideView.buttonDateStart, views.showHideView.buttonDateEnd});
         // Cut data within date boundaries + get short info
         int oneSetMax = 0;
         double statsMin = 0.0;
@@ -322,11 +326,10 @@ public class StatsActivity extends AppCompatActivity implements Click {
             dialog.setContentView(dViews.getRoot());
             ColorStateList mainColorS = ColorStateList.valueOf(getColor(R.color.on_background));
 
-            String durationStr = " " + passObj.time + " ";
-            dViews.time.setText(durationStr);
-            TextViewCompat.setCompoundDrawableTintList(dViews.time, mainColorS);
-
-            String resultStr = " " + (int) passObj.mainValue + " ";
+            String resultStr = getString(R.string.you_completed) + " " +
+                    (int) passObj.mainValue + " " +
+                    getString(R.string.reps_in) + " " +
+                    passObj.time;
             dViews.mainValue.setText(resultStr);
             TextViewCompat.setCompoundDrawableTintList(dViews.mainValue, mainColorS);
 

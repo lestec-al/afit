@@ -8,9 +8,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -27,16 +29,17 @@ import com.yurhel.alex.afit.core.DB;
 import com.yurhel.alex.afit.core.Help;
 import com.yurhel.alex.afit.core.Obj;
 import com.yurhel.alex.afit.databinding.ActivityCalendarBinding;
+import com.yurhel.alex.afit.databinding.DialogCalendarStatsBinding;
 import com.yurhel.alex.afit.databinding.DialogStatsBinding;
+import com.yurhel.alex.afit.databinding.RowStatsBinding;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.Objects;
 
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity implements CalendarClick {
     int themeColor;
     Calendar calendar;
     Calendar today;
@@ -48,6 +51,7 @@ public class CalendarActivity extends AppCompatActivity {
     boolean isNight;
     int whiteColor, blackColor;
     ActivityCalendarBinding views;
+    boolean isDialogOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,26 +114,27 @@ public class CalendarActivity extends AppCompatActivity {
 
         // Scroll calendar settings
         views.calendarRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int pos = 1;
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 try {
-                    int offset = recyclerView.computeHorizontalScrollOffset();
-                    if (offset % calendarViewWidth == 0) {
-                        // Item in position - update calendar
-                        pos = offset / calendarViewWidth;
-                        if (pos == 0) {
-                            calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)-1);
-                            updateCalendar();
-                        } else if (pos == 2) {
-                            calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
-                            updateCalendar();
-                        }
-                    } else {
-                        // Position in between - scroll to item
-                        RecyclerView.SmoothScroller smoothScroller = getSmoothScroller(offset, pos);
-                        Objects.requireNonNull(views.calendarRV.getLayoutManager()).startSmoothScroll(smoothScroller);
+                    float pos = recyclerView.computeHorizontalScrollOffset() / (float) calendarViewWidth;
+                    if (pos == 0) {
+                        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)-1);
+                        updateCalendar();
+                    } else if (pos == 2) {
+                        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
+                        updateCalendar();
+                    } else if (pos != 1) {
+                        // Position in between - scroll to item (1 it's a middle position)
+                        RecyclerView.SmoothScroller scroller = new LinearSmoothScroller(CalendarActivity.this) {
+                            @Override protected int calculateTimeForScrolling(int dx) { return dx/3; }
+                        };
+                        if (pos < 1) scroller.setTargetPosition(0); // To left
+                        else scroller.setTargetPosition(2); // To right
+
+                        RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+                        if (lm != null) lm.startSmoothScroll(scroller);
                     }
                 } catch (Exception ignored) {}
             }
@@ -139,31 +144,13 @@ public class CalendarActivity extends AppCompatActivity {
         Help.setupBottomNavigation(CalendarActivity.this, R.id.actionCalendar, views.navigation, this::finish);
     }
 
-    @NonNull
-    private RecyclerView.SmoothScroller getSmoothScroller(int offset, int pos) {
-        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(CalendarActivity.this) {
-            @Override
-            protected int calculateTimeForScrolling(int dx) {
-                return dx/3;
-            }
-        };
-        int scrollNumber = offset - calendarViewWidth;
-        if (scrollNumber < 0) {
-            if (scrollNumber <= -stepWidth *2) smoothScroller.setTargetPosition(pos-1);
-            else smoothScroller.setTargetPosition(pos);
-        } else {
-            if (scrollNumber >= stepWidth *2) smoothScroller.setTargetPosition(pos+1);
-            else smoothScroller.setTargetPosition(pos);
-        }
-        return smoothScroller;
-    }
-
     public void updateCalendar() {
-        String d;
-        if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR)) d = String.valueOf(DateFormat.format("LLLL", calendar));
-        else d = String.valueOf(DateFormat.format("LLLL yyyy", calendar));
+        String d = DateFormat.format(
+                (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR)) ? "LLLL" : "LLLL yyyy",
+                calendar
+        ).toString();
         actionBar.setTitle(d.substring(0, 1).toUpperCase() + d.substring(1));
-        views.calendarRV.setHasFixedSize(true);
+
         views.calendarRV.setAdapter(new CalendarAdapterBig(
                 calendar,
                 CalendarActivity.this,
@@ -173,8 +160,11 @@ public class CalendarActivity extends AppCompatActivity {
                 stepHeight,
                 isNight,
                 whiteColor,
-                blackColor
+                blackColor,
+                this
         ));
+        views.calendarRV.setItemViewCacheSize(2);
+        views.calendarRV.setHasFixedSize(true);
         views.calendarRV.scrollToPosition(1);
     }
 
@@ -252,5 +242,98 @@ public class CalendarActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(Date cForLabel, ArrayList<Obj> data) {
+        if (isDialogOpen) return;
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        // Calendar stats dialog
+        Dialog dialog = new Dialog(this);
+        DialogCalendarStatsBinding dView = DialogCalendarStatsBinding.inflate(inflater);
+        dialog.setContentView(dView.getRoot());
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        dView.label.setText(Help.dateFormat(this, cForLabel));
+
+        // Calc training time
+        int allTimeMin = 0;
+        int allTimeSec = 0;
+
+        int colorShadow = (isNight) ? whiteColor : blackColor;
+        // Set all stats for day to dialog
+        int itemsCount = 0;
+        RowStatsBinding vs = null;
+        for (Obj i: data) {
+            itemsCount++;
+            vs = RowStatsBinding.inflate(inflater, dView.itemsLayout, true);
+
+            vs.mainValue.setTextColor(i.color);
+            vs.mainValue.setShadowLayer(1,1,1, colorShadow);
+            vs.addValue.setTextColor(i.color);
+            vs.addValue.setShadowLayer(1,1,1, colorShadow);
+
+            if (i.time != null/*Is exercise*/) {
+                // Get training times
+                String[] t = i.time.split(":");
+                allTimeMin += Integer.parseInt(t[0]);
+                allTimeSec += Integer.parseInt(t[1]);
+
+                if (!i.allWeights.isEmpty()) {
+                    vs.addValue2.setVisibility(View.VISIBLE);
+                    vs.addValue2.setText(i.allWeights);
+                    vs.addValue2.setTextColor(i.color);
+                    vs.addValue2.setShadowLayer(1,1,1, colorShadow);
+                } else {
+                    vs.addValue2.setVisibility(View.GONE);
+                }
+                vs.time.setText(i.time);
+                vs.time.setTextColor(i.color);
+                vs.time.setShadowLayer(1,1,1, colorShadow);
+
+                vs.addValue.setText(i.longerValue);
+                vs.mainValue.setText(String.valueOf((int) i.mainValue));
+            } else {
+                vs.addValue.setText(i.longerValue);
+                vs.mainValue.setText(String.valueOf(i.mainValue));
+            }
+
+            vs.rightValue.setText(i.name);
+            vs.rightValue.setTextColor(i.color);
+            vs.rightValue.setShadowLayer(1,1,1, colorShadow);
+        }
+
+        // Remove last item divider
+        if (itemsCount >= 0 && vs != null) vs.getRoot().setBackground(null);
+
+        // Empty text
+        dView.emptyText.setVisibility((itemsCount == 0) ? View.VISIBLE : View.GONE);
+
+        // Finish calc training time
+        TextView allTime = dView.allTime;
+        if (allTimeMin > 0 || allTimeSec > 0) {
+            if (allTimeSec > 59) {
+                allTimeMin += allTimeSec / 60;
+                if (allTimeSec % 60 > 30) allTimeMin += 1;
+            } else {
+                if (allTimeSec > 30) allTimeMin += 1;
+            }
+            String allTimeText = allTimeMin + " " + getText(R.string.training_min);
+            allTime.setText(allTimeText);
+        } else {
+            allTime.setVisibility(View.GONE);
+        }
+
+        // Make sure only one dialog opens ?
+        dialog.setOnCancelListener(dialog1 -> isDialogOpen = false);
+        isDialogOpen = true;
+
+        dialog.show();
     }
 }

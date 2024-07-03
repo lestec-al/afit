@@ -58,56 +58,20 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/mainValue"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/basic_text_size"
-                android:paddingVertical="5dp"
-                android:drawablePadding="5dp"
-                android:text="@string/you_completed"/>
-
-            <TextView
-                android:id="@+id/mainValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/basic_text_size"
-                android:paddingVertical="5dp"
-                android:drawablePadding="5dp"
-                tools:text=" 50 "/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/basic_text_size"
-                android:paddingVertical="5dp"
-                android:drawablePadding="5dp"
-                android:text="@string/reps_in"/>
-
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/basic_text_size"
-                android:paddingVertical="5dp"
-                android:drawablePadding="5dp"
-                tools:text=" 14:00 "/>
-
-        </LinearLayout>
+            android:textSize="@dimen/basic_text_size"
+            tools:text="@string/you_completed"/>
 
         <TextView
             android:id="@+id/addValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="@dimen/basic_text_size"
-            android:paddingVertical="5dp"
-            android:drawablePadding="5dp"
             tools:text="10 + 10 + 10 + 10 + 10"/>
 
         <TextView
@@ -115,9 +79,8 @@
             android:id="@+id/addValue2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="@dimen/basic_text_size"
-            android:paddingVertical="5dp"
-            android:drawablePadding="5dp"
             tools:text="Weight: 4.0 + 4.0 + 4.0 + 4.0"/>
 
     </LinearLayout>

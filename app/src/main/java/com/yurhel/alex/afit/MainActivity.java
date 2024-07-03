@@ -92,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
                         @Override
                         public void onTargetClick(TapTargetView view) {
                             super.onTargetClick(view);
+                            // Trying fix crash (after returning from EditActivity -> fast click) ?
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ignored) {}
                             startActivity(new Intent(getApplicationContext(), EditActivity.class));
                             finish();
                         }
