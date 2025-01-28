@@ -1,8 +1,8 @@
 # AFIT - Android App
 
-<img src="https://github.com/lestec-al/afit/raw/main/readme_logo.png"/>
+<img src="https://github.com/lestec-al/afit/raw/master/readme_logo.png"/>
 
-<img src="https://github.com/lestec-al/afit/raw/main/readme_pic.png"/>
+<img src="https://github.com/lestec-al/afit/raw/master/readme_pic.png"/>
 
 ## Tech Stack
 - Android Studio
