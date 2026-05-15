@@ -20,11 +20,13 @@ import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.TextViewCompat;
 
+import com.yurhel.alex.afit.BaseActivity;
 import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.DB;
@@ -37,7 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-public class EditActivity extends AppCompatActivity {
+public class EditActivity extends BaseActivity {
     DB db;
     int mainColor;
     boolean isCardCreation;
@@ -55,6 +57,13 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         views = ActivityEditBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
 
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {

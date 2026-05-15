@@ -20,9 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
+import com.yurhel.alex.afit.BaseActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.DB;
 import com.yurhel.alex.afit.core.Help;
@@ -37,7 +39,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class TrainingActivity extends AppCompatActivity {
+public class TrainingActivity extends BaseActivity {
     androidx.appcompat.app.ActionBar actionBar;
     ArrayList<String> repsResults = new ArrayList<>();
     ArrayList<String> repsWeights = new ArrayList<>();
@@ -66,6 +68,13 @@ public class TrainingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         views = ActivityTrainingBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
 
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {

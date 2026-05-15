@@ -21,11 +21,13 @@ import android.widget.ProgressBar;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.yurhel.alex.afit.BaseActivity;
 import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.Click;
@@ -43,7 +45,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
-public class AllStatsActivity extends AppCompatActivity implements AllStatsClick, Click {
+public class AllStatsActivity extends BaseActivity implements AllStatsClick, Click {
     ArrayList<Obj> allData;
     DB db;
     int mainColor;
@@ -55,6 +57,14 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         super.onCreate(savedInstanceState);
         views = ActivityAllStatsBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
+
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -100,7 +110,7 @@ public class AllStatsActivity extends AppCompatActivity implements AllStatsClick
         });
 
         // Bottom navigation
-        Help.setupBottomNavigation(AllStatsActivity.this, R.id.actionGraph, views.navigation, this::finish);
+        Help.setupBottomNavigation(AllStatsActivity.this, R.id.actionGraph, views.navigation.getRoot(), this::finish);
 
         updateAll();
     }

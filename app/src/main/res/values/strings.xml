@@ -2,7 +2,7 @@
 <resources>
     <string name="ok" translatable="false">OK</string>
     <string name="app_link" translatable="false">https://play.google.com/store/apps/details?id=com.yurhel.alex.afit</string>
-    <string name="privacy_link" translatable="false">https://sites.google.com/view/afitapp</string>
+    <string name="privacy_link" translatable="false">https://lestec-al.github.io/lestec-al/privacy-policy</string>
     <string name="app_name" translatable="false">AFit</string>
     <string name="do_exercise">Do</string>
     <string name="stop">STOP</string>

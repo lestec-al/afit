@@ -6,7 +6,8 @@ import android.view.View;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -24,7 +25,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Click, MainCallback {
+public class MainActivity extends BaseActivity implements Click, MainCallback {
     DB db;
     List<Obj> data;
     int themeColor;
@@ -35,6 +36,13 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
         super.onCreate(savedInstanceState);
         views = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
 
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
@@ -50,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
         db = new DB(this);
 
         // Bottom navigation
-        Help.setupBottomNavigation(MainActivity.this, R.id.actionHome, views.navigation, this::finish);
+        Help.setupBottomNavigation(MainActivity.this, R.id.actionHome, views.navigation.getRoot(), this::finish);
 
         // Get data
         data = db.getTableEntries(null, true);
@@ -78,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements Click, MainCallba
             TapTargetView.showFor(
                     this,
                     TapTarget.forView(
-                                views.navigation.findViewById(R.id.actionAddCard),
+                                views.navigation.getRoot().findViewById(R.id.actionAddCard),
                                 getString(R.string.add_card),
                                 ""
                             )

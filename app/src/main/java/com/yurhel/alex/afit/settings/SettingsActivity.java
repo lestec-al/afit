@@ -15,7 +15,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.TextViewCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,6 +33,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.yurhel.alex.afit.BaseActivity;
 import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.DB;
@@ -48,7 +50,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
     DB db;
     int themeColor;
     ActivitySettingsBinding views;
@@ -58,6 +60,13 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         views = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
 
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
@@ -76,7 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) actionBar.hide();
 
         // Bottom navigation
-        Help.setupBottomNavigation(SettingsActivity.this, R.id.actionSettings, views.navigation, this::finish);
+        Help.setupBottomNavigation(SettingsActivity.this, R.id.actionSettings, views.navigation.getRoot(), this::finish);
 
         // Try set app name and version
         try {

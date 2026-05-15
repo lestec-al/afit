@@ -22,9 +22,10 @@ import android.widget.ImageButton;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +38,7 @@ import com.jjoe64.graphview.LabelFormatter;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.yurhel.alex.afit.BaseActivity;
 import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.Click;
@@ -56,7 +58,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class StatsActivity extends AppCompatActivity implements Click {
+public class StatsActivity extends BaseActivity implements Click {
     DB db;
     boolean isExercise;
     int oneID;
@@ -75,6 +77,13 @@ public class StatsActivity extends AppCompatActivity implements Click {
         super.onCreate(savedInstanceState);
         views = ActivityStatsBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
 
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {

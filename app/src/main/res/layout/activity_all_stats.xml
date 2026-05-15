@@ -122,17 +122,6 @@
 
     </FrameLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_nav_height"
-        android:background="@drawable/divider_up"
-        app:itemIconSize="@dimen/icon_size"
-        app:labelVisibilityMode="unlabeled"
-        app:menu="@menu/main_down"
-        app:itemActiveIndicatorStyle="@null"
-        app:itemIconTint="@drawable/bottom_nav_item_color"
-        app:itemTextColor="@drawable/bottom_nav_item_color"
-        style="@style/BottomNav"/>
+    <include layout="@layout/bottom_bar" android:id="@+id/navigation" />
 
 </LinearLayout>

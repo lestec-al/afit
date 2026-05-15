@@ -1,7 +1,5 @@
 package com.yurhel.alex.afit.core;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +21,7 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yurhel.alex.afit.MainActivity;
@@ -123,31 +122,38 @@ public class Help {
             BottomNavigationView nav,
             Runnable finishAction
     ) {
+        // Apply insets to nav bar
+        ViewCompat.setOnApplyWindowInsetsListener(nav, (v, i) -> {
+            v.setPadding(0, 0, 0, 0);
+            return i;
+        });
+        // Set up nav bar
         nav.setSelectedItemId(selectedAction);
         nav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() != selectedAction) {
-                if (item.getItemId() == R.id.actionHome) {
-                    startActivity(context, new Intent(context, MainActivity.class), null);
+            int itemId = item.getItemId();
+            if (itemId != selectedAction) {
+                if (itemId == R.id.actionHome) {
+                    context.startActivity(new Intent(context, MainActivity.class), null);
                     finishAction.run();
                     return true;
 
-                } else if (item.getItemId() == R.id.actionCalendar) {
-                    startActivity(context, new Intent(context, CalendarActivity.class), null);
+                } else if (itemId == R.id.actionCalendar) {
+                    context.startActivity(new Intent(context, CalendarActivity.class), null);
                     finishAction.run();
                     return true;
 
-                } else if (item.getItemId() == R.id.actionGraph) {
-                    startActivity(context, new Intent(context, AllStatsActivity.class), null);
+                } else if (itemId == R.id.actionGraph) {
+                    context.startActivity(new Intent(context, AllStatsActivity.class), null);
                     finishAction.run();
                     return true;
 
-                } else if (item.getItemId() == R.id.actionAddCard) {
-                    startActivity(context, new Intent(context, EditActivity.class), null);
+                } else if (itemId == R.id.actionAddCard) {
+                    context.startActivity(new Intent(context, EditActivity.class), null);
                     finishAction.run();
                     return true;
 
-                } else if (item.getItemId() == R.id.actionSettings) {
-                    startActivity(context, new Intent(context, SettingsActivity.class), null);
+                } else if (itemId == R.id.actionSettings) {
+                    context.startActivity(new Intent(context, SettingsActivity.class), null);
                     finishAction.run();
                     return true;
                 }

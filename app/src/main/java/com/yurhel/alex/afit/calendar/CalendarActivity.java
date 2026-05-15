@@ -19,10 +19,12 @@ import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.yurhel.alex.afit.BaseActivity;
 import com.yurhel.alex.afit.MainActivity;
 import com.yurhel.alex.afit.R;
 import com.yurhel.alex.afit.core.DB;
@@ -39,7 +41,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
-public class CalendarActivity extends AppCompatActivity implements CalendarClick {
+public class CalendarActivity extends BaseActivity implements CalendarClick {
     int themeColor;
     Calendar calendar;
     Calendar today;
@@ -58,6 +60,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarClick
         super.onCreate(savedInstanceState);
         views = ActivityCalendarBinding.inflate(getLayoutInflater());
         setContentView(views.getRoot());
+
+        // Apply insets to root view
+        ViewCompat.setOnApplyWindowInsetsListener(views.getRoot(), (v, i) -> {
+            var bars = i.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return i;
+        });
 
         // On back pressed
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
@@ -141,7 +150,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarClick
         });
 
         // Bottom navigation
-        Help.setupBottomNavigation(CalendarActivity.this, R.id.actionCalendar, views.navigation, this::finish);
+        Help.setupBottomNavigation(CalendarActivity.this, R.id.actionCalendar, views.navigation.getRoot(), this::finish);
     }
 
     public void updateCalendar() {
