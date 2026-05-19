@@ -1,0 +1,244 @@
+package com.yurhel.alex.afit.ui.screen_stats
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.jjoe64.graphview.series.DataPoint
+import com.yurhel.alex.afit.data.LocalRepo
+import com.yurhel.alex.afit.data.Obj
+import java.util.Calendar
+import java.util.Date
+
+class StatsViewModel(
+    val localRepo: LocalRepo,
+    private val objType: String,
+    private val objId: Int,
+    isAfterWorkout: Boolean
+): ViewModel() {
+    class Factory(
+        private val localRepo: LocalRepo,
+        private val objType: String,
+        private val objId: Int,
+        private val isAfterWorkout: Boolean
+    ): ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = StatsViewModel(
+            localRepo, objType, objId, isAfterWorkout
+        ) as T
+    }
+
+    var title by mutableStateOf("")
+        private set
+    var graphData: GraphData? by mutableStateOf(null)
+        private set
+    fun updateAll() {
+        val isExercise = objType == "ex_id"
+        val obj = localRepo.getOneMainObj(objId, isExercise)
+        title = obj.name
+        allNumberOfSets.clear()
+        allNumberOfSets.add(0)
+        var data = localRepo.getTableEntries(
+            objId,
+            isExercise,
+            if (obj.start.isEmpty()) 0 else obj.start.toLong(),
+            if (obj.end.isEmpty()) 0 else obj.end.toLong()
+        ).toList()
+        if (isExercise) {
+            data = data.filter {
+                // Filter by: all, with or without weight
+                val res = when (weightFilter) {
+                    WeightFilter.All -> true
+                    WeightFilter.With -> it.allWeights.isNotEmpty()
+                    WeightFilter.Without -> it.allWeights.isEmpty()
+                }
+                if (!res) false else {
+                    // Filter by number of sets
+                    val sets = it.longerValue.split("+").size
+                    allNumberOfSets.add(sets)
+                    if (numberOfSets == 0) true else sets == numberOfSets
+                }
+            }
+        }
+        val dataSize: Int = data.size
+        if (dataSize > 0) data = data.sortedWith(Comparator.comparing { Date(it.date) })
+        // Setup date boundaries
+        val dateToday = System.currentTimeMillis()
+        val startDate = if (obj.start.isEmpty()) {
+            if ((dataSize > 0)) data[0].date else dateToday
+        } else {
+            obj.start.toLong()
+        }
+        val endDate = if (obj.end.isEmpty()) {
+            if ((dataSize > 0)) data[dataSize - 1].date else dateToday
+        } else {
+            obj.end.toLong()
+        }
+        // Setup graph data & get short info
+        var oneSetMax = 0
+        var statsMin = 0.0
+        var statsMax = 0.0
+        val xyData = ArrayList<DataPoint>()
+        data.forEach { item ->
+            xyData.add(DataPoint(Date(item.date), item.mainValue))
+            // Get short info
+            if (isExercise) {
+                for (i in item.longerValue.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()) {
+                    if (i != "+") {
+                        val iInt = i.toInt()
+                        if (iInt > oneSetMax) oneSetMax = iInt
+                    }
+                }
+            }
+            if (item.mainValue > statsMax) statsMax = item.mainValue
+            if (statsMin == 0.0) statsMin = item.mainValue
+            else if (item.mainValue < statsMin) statsMin = item.mainValue
+        }
+        // Update reps (max value when workout starts)
+        if (isExercise && oneSetMax > 0) {
+            localRepo.updateExercise(
+                obj.name, objId, obj.rest, oneSetMax + 1, obj.sets, obj.weight, obj.color
+            )
+        }
+        // Graph update
+        graphData = GraphData(
+            oneId = objId,
+            listData = data.reversed(),
+            xyData = xyData,
+            startDate = startDate,
+            endDate = endDate,
+            statsMin = statsMin,
+            statsMax = statsMax,
+            objColor = obj.color,
+            // Update short info
+            isExercise = isExercise,
+            size = data.size.toString(),
+            heightValue = if ((isExercise)) "${statsMax.toInt()}," else statsMax.toString(),
+            smallValue = if ((isExercise)) oneSetMax.toString() else statsMin.toString()
+        )
+    }
+
+    var isGraphHidden by mutableStateOf(false)
+        private set
+    fun flipGraphVisibility() {
+        isGraphHidden = !isGraphHidden
+    }
+
+    var editBottomSheetOpen by mutableStateOf(false)
+        private set
+    fun updateEditBottomSheetOpen(value: Boolean) {
+        editBottomSheetOpen = value
+    }
+
+    var addBottomSheetOpen by mutableStateOf(false)
+        private set
+    fun updateAddBottomSheetOpen(value: Boolean) {
+        addBottomSheetOpen = value
+    }
+
+    var showExBottomSheetOpen by mutableStateOf(false)
+        private set
+    fun updateShowExBottomSheetOpen(value: Boolean) {
+        showExBottomSheetOpen = value
+    }
+
+    var isEditEntry by mutableStateOf(false)
+        private set
+    var editedEntry by mutableStateOf<Obj?>(null)
+        private set
+    fun updateIsEditValue(
+        isEdit: Boolean,
+        entry: Obj?
+    ) {
+        isEditEntry = isEdit
+        editedEntry = entry
+    }
+
+    var isDatePickerON by mutableStateOf(false)
+        private set
+    var dateButtonType by mutableStateOf(DateButtonType.Start)
+    fun setIsDatePickerON(
+        value: Boolean,
+        buttonType: DateButtonType? = null
+    ) {
+        isDatePickerON = value
+        if (buttonType != null) dateButtonType = buttonType
+    }
+
+    fun updateMonthsData(
+        month: Int? = null,
+        year: Int? = null,
+        day: Int? = null
+    ) {
+        val isStartButton = dateButtonType == DateButtonType.Start
+        val date = if (month == null || year == null || day == null) "" else {
+            val c = Calendar.getInstance()
+            c.set(Calendar.MONTH, month)
+            c.set(Calendar.YEAR, year)
+            c.set(
+                Calendar.DAY_OF_MONTH,
+                day//if (isStartButton) 1 else c.getActualMaximum(Calendar.DAY_OF_MONTH)
+            )
+            "${c.timeInMillis}"
+        }
+        localRepo.setDate(
+            date,
+            objId,
+            objType == "ex_id",
+            isStartButton
+        )
+        updateAll()
+    }
+
+    var isAfterWorkoutState by mutableStateOf(isAfterWorkout)
+        private set
+    fun updateIsAfterWorkoutState(b: Boolean) {
+        isAfterWorkoutState = b
+    }
+
+    var allNumberOfSets = mutableSetOf<Int>(0)
+        private set
+    var numberOfSets by mutableIntStateOf(0)
+        private set
+    fun updateNumberOfSets() {
+        var setVal = false
+        for (it in allNumberOfSets.sorted()) {
+            if (setVal) {
+                numberOfSets = it
+                break
+            }
+            if (numberOfSets == it) {
+                setVal = true
+            }
+            if (allNumberOfSets.maxOf { it } == it) {
+                numberOfSets = 0
+            }
+        }
+        updateAll()
+    }
+
+    var weightFilter by mutableStateOf(WeightFilter.All)
+        private set
+    fun updateWeightFilter(it: WeightFilter? = null) {
+        weightFilter = if (it == null) {
+            when (weightFilter) {
+                WeightFilter.All -> WeightFilter.With
+                WeightFilter.With -> WeightFilter.Without
+                WeightFilter.Without -> WeightFilter.All
+            }
+        } else {
+            if (weightFilter == it) WeightFilter.All else it
+        }
+        updateAll()
+    }
+
+    init {
+        updateAll()
+        // Show congrats, when came to this screen after workout
+        updateIsEditValue(isEdit = true, entry = graphData?.listData?.firstOrNull())
+        updateShowExBottomSheetOpen(isAfterWorkout)
+    }
+}
