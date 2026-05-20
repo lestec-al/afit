@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -62,13 +65,15 @@ fun CardItems(
                 IconButton(onClick = { viewModel.updateViewType(
                     when(viewModel.viewType) {
                         ViewType.Grid -> ViewType.Column
-                        ViewType.Column -> ViewType.Grid
+                        ViewType.Column -> ViewType.SmallGrid
+                        ViewType.SmallGrid -> ViewType.Grid
                     }
                 ) }) {
                     Icon(
                         painter = painterResource(when(viewModel.viewType) {
                             ViewType.Grid -> R.drawable.ic_list
-                            ViewType.Column -> R.drawable.ic_grid
+                            ViewType.Column -> R.drawable.ic_small_grid
+                            ViewType.SmallGrid -> R.drawable.ic_grid
                         }),
                         contentDescription = "change view"
                     )
@@ -82,7 +87,7 @@ fun CardItems(
         // Show buttons to all cards
         when (viewModel.viewType) {
             ViewType.Column -> {
-                viewModel.data.forEach {
+                viewModel.data.forEachIndexed { id, it ->
                     CardItem(
                         onClick = onCard,
                         obj = it,
@@ -90,7 +95,9 @@ fun CardItems(
                             .padding(horizontal = 4.dp)
                             .fillMaxWidth()
                     )
-                    Spacer(Modifier.height(2.dp))
+                    if (id != viewModel.data.size - 1) {
+                        Spacer(Modifier.height(2.dp))
+                    }
                 }
             }
             ViewType.Grid -> {
@@ -99,7 +106,9 @@ fun CardItems(
                     contentPadding = PaddingValues(horizontal = 4.dp),
                     verticalItemSpacing = 4.dp,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.heightIn(max = (((viewModel.data.size / 2) * 104) + 500).dp)
+                    modifier = Modifier
+                        .padding(top = 1.dp)
+                        .heightIn(max = (((viewModel.data.size / 2) * 104) + 500).dp)
                 ) {
                     items(items = viewModel.data) {
                         CardGraphItem(
@@ -109,6 +118,23 @@ fun CardItems(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
+                        )
+                    }
+                }
+            }
+            ViewType.SmallGrid -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(horizontal = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.heightIn(max = (((viewModel.data.size / 2) * 104) + 500).dp)
+                ) {
+                    items(items = viewModel.data) {
+                        CardSmallItem(
+                            onClick = onCard,
+                            obj = it,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }

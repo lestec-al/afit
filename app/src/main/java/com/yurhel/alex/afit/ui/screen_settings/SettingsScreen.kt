@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -124,20 +121,11 @@ fun SettingScreen(
                                         },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (it.iconId != null) {
-                                        Icon(
-                                            painter = painterResource(it.iconId),
-                                            contentDescription = null,
-                                            modifier = Modifier.padding(12.dp)
-                                        )
-                                    }
-                                    if (it.iconVector != null) {
-                                        Icon(
-                                            imageVector = it.iconVector,
-                                            contentDescription = null,
-                                            modifier = Modifier.padding(12.dp)
-                                        )
-                                    }
+                                    Icon(
+                                        painter = painterResource(it.iconId),
+                                        contentDescription = null,
+                                        modifier = Modifier.padding(12.dp)
+                                    )
                                     Text(
                                         text = text,
                                         style = MaterialTheme.typography.titleMedium
@@ -145,7 +133,11 @@ fun SettingScreen(
                                     if (items == vm.otherSettings) {
                                         Spacer(Modifier.weight(1f))
                                         Icon(
-                                            imageVector = if (vm.isShowData) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                            painter = painterResource(
+                                                if (vm.showData) R.drawable.ic_arrow_up else {
+                                                    R.drawable.ic_arrow_down
+                                                }
+                                            ),
                                             contentDescription = null,
                                             modifier = Modifier.padding(horizontal = 12.dp)
                                         )
@@ -153,7 +145,7 @@ fun SettingScreen(
                                 }
                             }
                         }
-                        if (items == vm.otherSettings && vm.isShowData) {
+                        if (items == vm.otherSettings && vm.showData) {
                             LazyColumn(
                                 modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                                 verticalArrangement = Arrangement.spacedBy(2.dp)

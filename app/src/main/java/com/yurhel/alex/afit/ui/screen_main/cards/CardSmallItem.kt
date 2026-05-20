@@ -20,7 +20,7 @@ import com.yurhel.alex.afit.R
 import com.yurhel.alex.afit.data.Obj
 
 @Composable
-fun CardItem(
+fun CardSmallItem(
     onClick: (String, Int) -> Unit,
     obj: Obj,
     modifier: Modifier
@@ -39,7 +39,7 @@ fun CardItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .padding(10.dp)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

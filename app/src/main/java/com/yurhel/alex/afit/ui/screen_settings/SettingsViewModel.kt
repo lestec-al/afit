@@ -4,9 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher as Launcher
 import androidx.activity.result.ActivityResult
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -39,25 +36,21 @@ class SettingsViewModel(
     }
 
     val syncSettings = listOf(
-        Setting(text = R.string.import_db, iconId = R.drawable.ic_file_download)
-        { _, _, _ ->
+        Setting(text = R.string.import_db, iconId = R.drawable.ic_file_download) { _, _, _ ->
             setAskDialogVisibility(true, R.string.import_db)
         },
-        Setting(text = R.string.export_db, iconId = R.drawable.ic_file_upload)
-        { _, launcherExport, _ ->
-            if (launcherExport != null) storageRepo.exportDB(launcherExport)
+        Setting(text = R.string.export_db, iconId = R.drawable.ic_file_upload) { _, lExport, _ ->
+            if (lExport != null) storageRepo.exportDB(lExport)
         },
-        Setting(text = R.string.importDriveDB, iconId = R.drawable.ic_cloud_download)
-        { _, _, _ ->
+        Setting(text = R.string.importDriveDB, iconId = R.drawable.ic_cloud_download) { _, _, _ ->
             setAskDialogVisibility(true, R.string.importDriveDB)
         },
-        Setting(text = R.string.exportDriveDB, iconId = R.drawable.ic_cloud_upload)
-        { _, _, launcherAuth ->
-            if (launcherAuth != null) syncRemote(false, launcherAuth)
+        Setting(text = R.string.exportDriveDB, iconId = R.drawable.ic_cloud_upload) { _, _, lAuth ->
+            if (lAuth != null) syncRemote(false, lAuth)
         }
     )
     val linksSettings = listOf(
-        Setting(text = R.string.privacy_policy, iconVector = Icons.Default.Shield) { context, _, _ ->
+        Setting(text = R.string.privacy_policy, iconId = R.drawable.ic_privacy) { context, _, _ ->
             context.startActivity(
                 Intent(Intent.ACTION_VIEW).setData(
                     context.getString(R.string.privacy_link).toUri()
@@ -66,12 +59,12 @@ class SettingsViewModel(
         }
     )
     val otherSettings = listOf(
-        Setting(text = R.string.stats_visibility, iconVector = Icons.Default.Visibility) { _, _, _ ->
-            isShowData = !isShowData
+        Setting(text = R.string.stats_visibility, iconId = R.drawable.ic_visibility) { _, _, _ ->
+            showData = !showData
         }
     )
 
-    var isShowData by mutableStateOf(false)
+    var showData by mutableStateOf(false)
         private set
     var data by mutableStateOf(listOf<Obj>())
         private set

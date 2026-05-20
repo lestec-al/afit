@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ok" translatable="false">OK</string>
-    <string name="privacy_link" translatable="false">https://lestec-al.github.io/lestec-al/privacy-policy</string>
     <string name="app_name" translatable="false">AFit</string>
+
+    <string name="privacy_link" translatable="false">https://lestec-al.github.io/lestec-al/privacy-policy</string>
+
     <string name="do_exercise">Do</string>
     <string name="stop">STOP</string>
     <string name="rest">Rest time</string>

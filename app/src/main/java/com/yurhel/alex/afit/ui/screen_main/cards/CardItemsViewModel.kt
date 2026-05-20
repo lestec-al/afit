@@ -30,11 +30,19 @@ class CardItemsViewModel(val localRepo: LocalRepo): ViewModel() {
     }
 
     var viewType by mutableStateOf(
-        if (localRepo.device == "col") ViewType.Column else ViewType.Grid
+        when (localRepo.device) {
+            "col" -> ViewType.Column
+            "grid" -> ViewType.Grid
+            else -> ViewType.SmallGrid
+        }
     )
         private set
     fun updateViewType(value: ViewType) {
-        localRepo.device = if (value == ViewType.Column) "col" else "grid"
+        localRepo.device = when (value) {
+            ViewType.Grid -> "grid"
+            ViewType.SmallGrid -> "smallGrid"
+            ViewType.Column -> "col"
+        }
         viewType = value
     }
 
