@@ -15,6 +15,9 @@
             android:pivotX="10">
             <path
                 android:fillColor="@color/green_main"
+                android:strokeColor="@color/green_main"
+                android:strokeWidth="0.8"
+                android:strokeLineJoin="round"
                 android:pathData="M20.57,14.86L22,13.43 20.57,12 17,15.57 8.43,7 12,3.43 10.57,2 9.14,3.43 7.71,2 5.57,4.14 4.14,2.71 2.71,4.14l1.43,1.43L2,7.71l1.43,1.43L2,10.57 3.43,12 7,8.43 15.57,17 12,20.57 13.43,22l1.43,-1.43L16.29,22l2.14,-2.14 1.43,1.43 1.43,-1.43 -1.43,-1.43L22,16.29z"/>
         </group>
         <group
@@ -24,12 +27,21 @@
             android:pivotX="4">
             <path
                 android:fillColor="@color/green_main"
+                android:strokeColor="@color/green_main"
+                android:strokeWidth="0.8"
+                android:strokeLineJoin="round"
                 android:pathData="M4,9h4v11h-4z"/>
             <path
                 android:fillColor="@color/green_main"
+                android:strokeColor="@color/green_main"
+                android:strokeWidth="0.8"
+                android:strokeLineJoin="round"
                 android:pathData="M16,13h4v7h-4z"/>
             <path
                 android:fillColor="@color/green_main"
+                android:strokeColor="@color/green_main"
+                android:strokeWidth="0.8"
+                android:strokeLineJoin="round"
                 android:pathData="M10,4h4v16h-4z"/>
         </group>
     </group>
