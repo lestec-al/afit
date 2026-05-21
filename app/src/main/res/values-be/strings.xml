@@ -52,7 +52,7 @@
     <string name="all_fit_points_info">Трэніруйся больш, каб лепей прасунуцца!</string>
     <string name="week_points_info">Гэта колькасьць хвілінаў, у якія вы трэнаваліся на гэтым тыдні</string>
     <string name="empty_error_info">Трэба запоўніць поле</string>
-    <string name="ex_st_cards">Трэнаваньня й іншая статыстыка</string>
+    <string name="ex_st_cards">Карткі</string>
     <string name="workout_score_is">Ваш узровень:</string>
     <string name="week_score_is">Вашыя тыднёвыя балы:</string>
     <string name="congratulations">"Віншуем "</string>
@@ -62,4 +62,5 @@
     <string name="stats_visibility">Бачнасьць статыстыкі</string>
     <string name="day">Дзень</string>
     <string name="all">Усе</string>
+    <string name="lang">Мова</string>
 </resources>

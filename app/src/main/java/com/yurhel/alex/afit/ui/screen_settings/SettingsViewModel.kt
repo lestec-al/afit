@@ -35,7 +35,7 @@ class SettingsViewModel(
         ) as T
     }
 
-    val syncSettings = listOf(
+    private val syncSettings = listOf(
         Setting(text = R.string.import_db, iconId = R.drawable.ic_file_download) { _, _, _ ->
             setAskDialogVisibility(true, R.string.import_db)
         },
@@ -49,7 +49,7 @@ class SettingsViewModel(
             if (lAuth != null) syncRemote(false, lAuth)
         }
     )
-    val linksSettings = listOf(
+    private val linksSettings = listOf(
         Setting(text = R.string.privacy_policy, iconId = R.drawable.ic_privacy) { context, _, _ ->
             context.startActivity(
                 Intent(Intent.ACTION_VIEW).setData(
@@ -58,13 +58,22 @@ class SettingsViewModel(
             )
         }
     )
-    val otherSettings = listOf(
+    val statsSettings = listOf(
         Setting(text = R.string.stats_visibility, iconId = R.drawable.ic_visibility) { _, _, _ ->
-            showData = !showData
+            showStats = !showStats
+        }
+    )
+    val languageSettings = listOf(
+        Setting(text = R.string.lang, iconId = R.drawable.ic_language) { _, _, _ ->
+            showLangs = !showLangs
         }
     )
 
-    var showData by mutableStateOf(false)
+    val settings = listOf(syncSettings, linksSettings, statsSettings, languageSettings)
+
+    var showStats by mutableStateOf(false)
+        private set
+    var showLangs by mutableStateOf(false)
         private set
     var data by mutableStateOf(listOf<Obj>())
         private set

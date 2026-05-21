@@ -21,3 +21,11 @@ data class Hidden(
     val statsId: Int,
     val isExercise: Boolean
 )
+
+val languages = listOf(
+    Pair("English", "en"),
+    Pair("Беларуская", "be"),
+    Pair("Български", "bg"),
+    Pair("Русский", "ru"),
+    Pair("Українська", "uk")
+)

@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +38,7 @@ import com.yurhel.alex.afit.ui.screen_settings.components.AskDialog
 import com.yurhel.alex.afit.ui.screen_settings.components.CheckedCardItem
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.colorResource
+import com.yurhel.alex.afit.ui.screen_settings.components.LanguageSelector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,26 +94,25 @@ fun SettingScreen(
             )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding),
-            contentAlignment = if (vm.isLoading) Alignment.Center else Alignment.TopStart
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                listOf(vm.syncSettings, vm.linksSettings, vm.otherSettings).forEach { items ->
+                items(items = vm.settings) { items ->
                     ElevatedCard(modifier = Modifier.padding(horizontal = 10.dp)) {
-                        LazyColumn {
-                            items(items = items) {
-                                val text = stringResource(it.text)
+                        Column {
+                            items.forEach {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .defaultMinSize(minHeight = 50.dp)
                                         .clickable(
                                             enabled = !vm.isLoading,
-                                            onClickLabel = text,
                                             role = Role.Button
                                         ) {
                                             it.action(context, launcherExport, launcherAuth)
@@ -127,14 +125,20 @@ fun SettingScreen(
                                         modifier = Modifier.padding(12.dp)
                                     )
                                     Text(
-                                        text = text,
+                                        text = stringResource(it.text),
                                         style = MaterialTheme.typography.titleMedium
                                     )
-                                    if (items == vm.otherSettings) {
+                                    if (items == vm.statsSettings || items == vm.languageSettings) {
+                                        val showIndicator = if (it.text == R.string.stats_visibility) {
+                                            vm.showStats
+                                        } else {
+                                            vm.showLangs
+                                        }
+
                                         Spacer(Modifier.weight(1f))
                                         Icon(
                                             painter = painterResource(
-                                                if (vm.showData) R.drawable.ic_arrow_up else {
+                                                if (showIndicator) R.drawable.ic_arrow_up else {
                                                     R.drawable.ic_arrow_down
                                                 }
                                             ),
@@ -145,12 +149,12 @@ fun SettingScreen(
                                 }
                             }
                         }
-                        if (items == vm.otherSettings && vm.showData) {
-                            LazyColumn(
-                                modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
+                        if (items == vm.statsSettings && vm.showStats) {
+                            Column(
+                                modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp),
                                 verticalArrangement = Arrangement.spacedBy(2.dp)
                             ) {
-                                itemsIndexed(items = vm.data) { idx, obj ->
+                                vm.data.forEachIndexed { idx, obj ->
                                     if (idx != 0) HorizontalDivider()
                                     CheckedCardItem(
                                         onClick = vm::onObjClick,
@@ -160,22 +164,22 @@ fun SettingScreen(
                                     )
                                 }
                             }
+                        } else if (items == vm.languageSettings && vm.showLangs) {
+                            LanguageSelector()
                         }
                     }
                 }
-                Spacer(Modifier
-                    .height(32.dp)
-                    .weight(1f))
-                Text(
-                    text = vm.getAppVersion(context),
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    color = colorResource(R.color.grey),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium
-                )
             }
+            Spacer(Modifier.height(32.dp).weight(1f))
+            Text(
+                text = vm.getAppVersion(context),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                color = colorResource(R.color.grey),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

@@ -2,9 +2,10 @@ package com.yurhel.alex.afit.ui.screen_settings.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +26,7 @@ fun CheckedCardItem(
     Row(
         modifier = modifier
             .padding(start = 10.dp)
-            .fillMaxSize(),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -36,6 +37,10 @@ fun CheckedCardItem(
         )
         Checkbox(
             checked = hiddens.find { it.statsId == obj.id && it.isExercise == obj.isExercise } == null,
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colorScheme.onBackground,
+                checkmarkColor = MaterialTheme.colorScheme.background
+            ),
             onCheckedChange = {
                 onClick(obj.isExercise, obj.id, it)
             }

@@ -57,7 +57,7 @@
     <string name="all_fit_points_info">Exercise more to level up!</string>
     <string name="week_points_info">This is the number of minutes you exercised this week</string>
     <string name="empty_error_info">Field required</string>
-    <string name="ex_st_cards">Exercise &amp; Statistic cards</string>
+    <string name="ex_st_cards">Cards</string>
     <string name="workout_score_is">Your level is:</string>
     <string name="week_score_is">Your week score is:</string>
     <string name="congratulations">Congratulations</string>
@@ -67,4 +67,5 @@
     <string name="stats_visibility">Stats visibility</string>
     <string name="day">Day</string>
     <string name="all">All</string>
+    <string name="lang">Language</string>
 </resources>

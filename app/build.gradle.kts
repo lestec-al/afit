@@ -42,6 +42,9 @@ android {
         // Need for Google/Drive auth to work ?
         resources.excludes.add("META-INF/*")
     }
+    androidResources {
+        generateLocaleConfig = true
+    }
 }
 
 dependencies {
@@ -55,6 +58,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.appcompat)
     // Graph
     implementation(libs.graphview)
     // Google/Drive auth

@@ -2,9 +2,9 @@ package com.yurhel.alex.afit
 
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,7 +28,7 @@ import com.yurhel.alex.afit.ui.screen_training.TrainingScreen
 import com.yurhel.alex.afit.ui.screen_training.TrainingViewModel
 import com.yurhel.alex.afit.ui.theme.AFitTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         LocalRepo.getInstance(this).closeDB()
