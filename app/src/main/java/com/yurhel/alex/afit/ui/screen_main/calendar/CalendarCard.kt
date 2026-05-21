@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -106,21 +106,16 @@ fun CalendarCard(
             // Info text
             Text(
                 text = vm.nameOfMonth.upperFirstChar(),
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .weight(1f),
                 style = MaterialTheme.typography.titleMedium
             )
-            Spacer(Modifier.weight(1f))
             // Set date button
             IconButton(onClick = {
                 vm.setIsDatePickerON(true)
             }) {
                 Icon(painterResource(R.drawable.ic_calendar_edit), stringResource(R.string.set_date))
-            }
-            // Set date now button
-            IconButton(onClick = {
-                vm.get3MonthsData(vm.today, pagerState)
-            }) {
-                Icon(painterResource(R.drawable.ic_calendar_now), stringResource(R.string.set_date))
             }
         }
         HorizontalDivider()
@@ -139,16 +134,16 @@ fun CalendarCard(
                 modifier = Modifier.height(gridHeightDp.dp + weekDaysNamesHeight)
             ) {
                 // Row with day names
-                vm.weekNames.forEach { item {
+                items(items = vm.weekNames) {
                     Box(
                         modifier = Modifier.height(weekDaysNamesHeight),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(text = it)
                     }
-                } }
+                }
                 // Days
-                month.days.forEach { item {
+                items(items = month.days) {
                     Box(
                         modifier = Modifier
                             .height(itemHeight.dp)
@@ -218,7 +213,7 @@ fun CalendarCard(
                             }
                         }
                     }
-                } }
+                }
             }
         }
     }

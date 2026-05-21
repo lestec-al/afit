@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.yurhel.alex.afit.ui.help.MonthPickerBottomSheet
 import com.yurhel.alex.afit.ui.help.edit.EditBottomSheet
-import com.yurhel.alex.afit.ui.help.edit.EditBottomSheetViewModel
+import com.yurhel.alex.afit.ui.help.edit.EditBottomSheetController
 import com.yurhel.alex.afit.ui.screen_stats.DateButtonType
 import com.yurhel.alex.afit.ui.screen_stats.StatsViewModel
 import java.util.Calendar
@@ -28,7 +28,7 @@ fun SetupBottomSheets(
                 vm.updateEditBottomSheetOpen(false)
                 onBack()
             },
-            vm = EditBottomSheetViewModel(vm.localRepo, vm.graphData?.isExercise, vm.graphData?.oneId)
+            vm = EditBottomSheetController(vm.localRepo, vm.graphData?.isExercise, vm.graphData?.oneId)
         )
     }
     if (vm.addBottomSheetOpen) {
@@ -38,7 +38,7 @@ fun SetupBottomSheets(
                 vm.updateAddBottomSheetOpen(false)
                 vm.updateAll()
             },
-            vm = AddStBottomSheetViewModel(
+            vm = AddStBottomSheetController(
                 localRepo = vm.localRepo,
                 isEdit = vm.isEditEntry,
                 isExercise = vm.graphData!!.isExercise,

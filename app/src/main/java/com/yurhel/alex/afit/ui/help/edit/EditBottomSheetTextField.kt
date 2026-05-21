@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 fun EditBottomSheetTextField(
     idx: Int,
     obj: SettingsObj,
-    vm: EditBottomSheetViewModel,
+    vm: EditBottomSheetController,
     itemColor: Color,
     modifier: Modifier
 ) {

@@ -8,12 +8,27 @@ import androidx.lifecycle.ViewModelProvider
 import com.jjoe64.graphview.series.DataPoint
 import com.yurhel.alex.afit.data.LocalRepo
 import com.yurhel.alex.afit.data.Obj
+import com.yurhel.alex.afit.data.getScores
+import com.yurhel.alex.afit.ui.screen_main.upbar.LevelObj
 import java.util.Date
 
-class CardItemsViewModel(val localRepo: LocalRepo): ViewModel() {
+class MainViewModel(val localRepo: LocalRepo): ViewModel() {
     class Factory(private val localRepo: LocalRepo): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = CardItemsViewModel(localRepo) as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = MainViewModel(localRepo) as T
+    }
+
+    val scores = getScores(localRepo)
+    val levelObj = calculateLevel()
+
+    private fun calculateLevel(): LevelObj {
+        val x = "${(scores.allPoints / 1000f) + 1}".split('.')
+        val currentLevel = x[0]
+        return LevelObj(
+            currentLevel = currentLevel,
+            nextLevel = "${currentLevel.toInt() + 1}",
+            progress = "0.${x[1]}".toFloat()
+        )
     }
 
     var data by mutableStateOf(listOf<Obj>())
@@ -23,10 +38,17 @@ class CardItemsViewModel(val localRepo: LocalRepo): ViewModel() {
         data = localRepo.getMainTableEntries(true, true) + localRepo.getMainTableEntries(false, true)
     }
 
+    var isUpSheetVisible by mutableStateOf(false)
+        private set
+    fun setUpSheetVisibility(visible: Boolean) {
+        isUpSheetVisible = visible
+    }
+
     var editBottomSheetOpen by mutableStateOf(false)
         private set
-    fun updateEditBottomSheetOpen(value: Boolean) {
-        editBottomSheetOpen = value
+    fun updateEditBottomSheet(visibility: Boolean, withDataUpdate: Boolean = false) {
+        if (withDataUpdate) updateData()
+        editBottomSheetOpen = visibility
     }
 
     var viewType by mutableStateOf(

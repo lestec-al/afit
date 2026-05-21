@@ -26,27 +26,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.yurhel.alex.afit.R
 import com.yurhel.alex.afit.ui.help.EmptyBox
-import com.yurhel.alex.afit.ui.help.edit.EditBottomSheet
-import com.yurhel.alex.afit.ui.help.edit.EditBottomSheetViewModel
 import androidx.compose.ui.res.stringResource
 
 @Composable
 fun CardItems(
     onCard: (String, Int) -> Unit,
     modifier: Modifier,
-    viewModel: CardItemsViewModel
+    viewModel: MainViewModel
 ) {
-    if (viewModel.editBottomSheetOpen) {
-        EditBottomSheet(
-            onDismiss = { viewModel.updateEditBottomSheetOpen(false) },
-            onSave = {
-                viewModel.updateData()
-                viewModel.updateEditBottomSheetOpen(false)
-            },
-            onDelete = {},
-            vm = EditBottomSheetViewModel(viewModel.localRepo, null, null)
-        )
-    }
     ElevatedCard(modifier = modifier.fillMaxWidth()) {
         // Upper row with text & actions
         Row(
@@ -57,7 +44,7 @@ fun CardItems(
             // Info text
             Text(
                 text = stringResource(R.string.ex_st_cards),
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.titleMedium
             )
             Row {
@@ -77,10 +64,6 @@ fun CardItems(
                         }),
                         contentDescription = "change view"
                     )
-                }
-                // Add card button
-                IconButton(onClick = { viewModel.updateEditBottomSheetOpen(true) }) {
-                    Icon(painterResource(R.drawable.ic_add), stringResource(R.string.add_card))
                 }
             }
         }

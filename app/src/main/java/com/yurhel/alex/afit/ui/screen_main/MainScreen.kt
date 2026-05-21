@@ -20,32 +20,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yurhel.alex.afit.R
-import com.yurhel.alex.afit.data.LocalRepo
 import com.yurhel.alex.afit.data.getAllScoreEmoji
-import com.yurhel.alex.afit.data.getScores
 import com.yurhel.alex.afit.data.getWeekScoreEmoji
 import com.yurhel.alex.afit.ui.screen_main.calendar.CalendarCard
 import com.yurhel.alex.afit.ui.screen_main.calendar.CalendarCardViewModel
 import com.yurhel.alex.afit.ui.screen_main.cards.CardItems
-import com.yurhel.alex.afit.ui.screen_main.cards.CardItemsViewModel
-import com.yurhel.alex.afit.ui.screen_main.upbar.LevelObj
+import com.yurhel.alex.afit.ui.screen_main.cards.MainViewModel
 import com.yurhel.alex.afit.ui.screen_main.upbar.ScoreLevelItem
 import com.yurhel.alex.afit.ui.screen_main.upbar.ScoreTextItem
 import com.yurhel.alex.afit.ui.screen_main.upbar.UpSheet
 import androidx.compose.ui.res.stringResource
+import com.yurhel.alex.afit.ui.help.edit.EditBottomSheet
+import com.yurhel.alex.afit.ui.help.edit.EditBottomSheetController
+import kotlin.String
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,27 +47,21 @@ fun MainScreen(
     onBack: () -> Unit,
     onSettings: () -> Unit,
     onCard: (String, Int) -> Unit,
-    localRepo: LocalRepo
+    calendarVm: CalendarCardViewModel,
+    vm: MainViewModel
 ) {
     BackHandler(onBack = onBack)
-    val context = LocalContext.current
-    val scores by remember { mutableStateOf(getScores(localRepo)) }
-    var isUpSheetVisible by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     @SuppressLint("ConfigurationScreenWidthHeight")
-    val calendarMaxGridHeight = LocalConfiguration.current.screenHeightDp
-    val levelObj by remember {
-        val x = "${(scores.allPoints / 1000f) + 1}".split('.')
-        val currentLevel = x[0]
-        mutableStateOf(
-            @SuppressLint("LocalContextGetResourceValueCall")
-            LevelObj(
-                title = "${getAllScoreEmoji()} ${context.getString(R.string.workout_score_is)}",
-                descriptions = listOf(context.getString(R.string.all_fit_points_info)),
-                currentLevel = currentLevel,
-                nextLevel = "${currentLevel.toInt() + 1}",
-                progress = "0.${x[1]}".toFloat()
-            )
+    val calendarMaxHeight = LocalConfiguration.current.screenHeightDp
+
+    if (vm.editBottomSheetOpen) {
+        EditBottomSheet(
+            onDismiss = { vm.updateEditBottomSheet(false) },
+            onSave = { vm.updateEditBottomSheet(false, true) },
+            onDelete = {},
+            vm = EditBottomSheetController(vm.localRepo, null, null)
         )
     }
 
@@ -89,16 +77,19 @@ fun MainScreen(
                             interactionSource = null,
                             indication = null
                         ) {
-                            isUpSheetVisible = !isUpSheetVisible
+                            vm.setUpSheetVisibility(!vm.isUpSheetVisible)
                         },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "${getAllScoreEmoji()} ${levelObj.currentLevel}")
+                        Text(text = "${getAllScoreEmoji()} ${vm.levelObj.currentLevel}")
                         Spacer(Modifier.width(16.dp))
-                        Text(text = "${getWeekScoreEmoji()} ${scores.weekPoints}")
+                        Text(text = "${getWeekScoreEmoji()} ${vm.scores.weekPoints}")
                     }
                 },
                 actions = {
+                    IconButton(onClick = { vm.updateEditBottomSheet(true) }) {
+                        Icon(painterResource(R.drawable.ic_add), stringResource(R.string.add_card))
+                    }
                     IconButton(onClick = onSettings) {
                         Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings))
                     }
@@ -114,29 +105,33 @@ fun MainScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             CalendarCard(
-                gridHeightDp = calendarMaxGridHeight / 2,
+                gridHeightDp = calendarMaxHeight / 2,
                 modifier = Modifier.padding(horizontal = 4.dp),
-                vm = viewModel(factory = CalendarCardViewModel.Factory(localRepo))
+                vm = calendarVm
             )
             Spacer(Modifier.height(8.dp))
             CardItems(
                 onCard = onCard,
                 modifier = Modifier.padding(horizontal = 4.dp),
-                viewModel = viewModel(factory = CardItemsViewModel.Factory(localRepo))
+                viewModel = vm
             )
             Spacer(Modifier.height(8.dp))
         }
         UpSheet(
-            onDismiss = { isUpSheetVisible = false },
-            isVisible = isUpSheetVisible,
+            onDismiss = { vm.setUpSheetVisibility(false) },
+            isVisible = vm.isUpSheetVisible,
             padding = innerPadding
         ) {
             ScoreLevelItem(
-                obj = levelObj,
+                title = "${getAllScoreEmoji()} ${stringResource(R.string.workout_score_is)}",
+                descriptions = listOf(stringResource(R.string.all_fit_points_info)),
+                currentLevel = vm.levelObj.currentLevel,
+                nextLevel = vm.levelObj.nextLevel,
+                progress = vm.levelObj.progress,
                 modifier = Modifier.padding(bottom = 20.dp, start = 10.dp, end = 10.dp)
             )
             ScoreTextItem(
-                title = "${getWeekScoreEmoji()} ${stringResource(R.string.week_score_is)} ${scores.weekPoints}",
+                title = "${getWeekScoreEmoji()} ${stringResource(R.string.week_score_is)} ${vm.scores.weekPoints}",
                 descriptions = listOf(
                     Pair(stringResource(R.string.week_points_info), null)
                 ),

@@ -50,7 +50,7 @@ fun EditBottomSheet(
     onDismiss: () -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
-    vm: EditBottomSheetViewModel
+    vm: EditBottomSheetController
 ) {
     val context = LocalContext.current
     val itemColor = if (vm.editedObj != null) {

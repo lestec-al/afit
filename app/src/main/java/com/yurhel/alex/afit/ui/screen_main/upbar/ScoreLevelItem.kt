@@ -20,7 +20,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ScoreLevelItem(
-    obj: LevelObj,
+    title: String,
+    descriptions: List<String>,
+    currentLevel: String,
+    nextLevel: String,
+    progress: Float,
     modifier: Modifier
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
@@ -30,12 +34,12 @@ fun ScoreLevelItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = obj.currentLevel,
+                text = currentLevel,
                 modifier = Modifier.padding(horizontal = 15.dp),
                 style = MaterialTheme.typography.titleMedium
             )
             LinearProgressIndicator(
-                progress = { obj.progress },
+                progress = { progress },
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .height(15.dp)
@@ -45,20 +49,20 @@ fun ScoreLevelItem(
                 drawStopIndicator = {}
             )
             Text(
-                text = obj.nextLevel,
+                text = nextLevel,
                 modifier = Modifier.padding(horizontal = 15.dp),
                 style = MaterialTheme.typography.titleMedium
             )
         }
         Text(
-            text = "${obj.title} ${obj.currentLevel}",
+            text = "$title $currentLevel",
             modifier = Modifier
                 .padding(horizontal = 15.dp)
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium
         )
-        obj.descriptions.forEach {
+        descriptions.forEach {
             Spacer(Modifier.height(10.dp))
             Text(
                 text = it,

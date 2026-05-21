@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.math.roundToInt
 
-class AddStBottomSheetViewModel(
+class AddStBottomSheetController(
     val localRepo: LocalRepo,
     val isEdit: Boolean,
     val isExercise: Boolean,

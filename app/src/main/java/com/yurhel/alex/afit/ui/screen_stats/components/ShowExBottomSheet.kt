@@ -116,11 +116,10 @@ fun ShowExBottomSheet(
                 )
             }
             if (!isShowCongratsText) {
-                Spacer(Modifier.height(10.dp))
                 // Delete button
                 Card(
                     modifier = Modifier
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                        .padding(horizontal = 10.dp, vertical = 15.dp)
                         .fillMaxWidth()
                         .height(45.dp)
                         .combinedClickable(

@@ -20,6 +20,8 @@ import com.yurhel.alex.afit.data.RemoteRepo
 import com.yurhel.alex.afit.ui.help.Screen
 import com.yurhel.alex.afit.ui.help.nav
 import com.yurhel.alex.afit.ui.screen_main.MainScreen
+import com.yurhel.alex.afit.ui.screen_main.calendar.CalendarCardViewModel
+import com.yurhel.alex.afit.ui.screen_main.cards.MainViewModel
 import com.yurhel.alex.afit.ui.screen_settings.SettingScreen
 import com.yurhel.alex.afit.ui.screen_settings.SettingsViewModel
 import com.yurhel.alex.afit.ui.screen_stats.StatsScreen
@@ -62,7 +64,8 @@ class MainActivity : AppCompatActivity() {
                             onCard = { type, id ->
                                 nav.nav("${Screen.Stats.name}/${type}/${id}/${false}")
                             },
-                            localRepo = localRepo
+                            calendarVm = viewModel(factory = CalendarCardViewModel.Factory(localRepo)),
+                            vm = viewModel(factory = MainViewModel.Factory(localRepo))
                         )
                     }
 

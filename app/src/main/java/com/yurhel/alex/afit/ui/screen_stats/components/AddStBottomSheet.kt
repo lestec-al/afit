@@ -46,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 fun AddStBottomSheet(
     onDismiss: () -> Unit,
     onAction: () -> Unit,
-    vm: AddStBottomSheetViewModel
+    vm: AddStBottomSheetController
 ) {
     LaunchedEffect(Unit) {
         // Initial data update

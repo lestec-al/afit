@@ -16,7 +16,7 @@ import com.yurhel.alex.afit.data.Obj
 import kotlin.math.max
 import kotlin.random.Random
 
-class EditBottomSheetViewModel(
+class EditBottomSheetController(
     private val localRepo: LocalRepo,
     val isExercise: Boolean?,
     private val objId: Int?
