@@ -5,6 +5,8 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,6 +56,10 @@ class MainActivity : AppCompatActivity() {
                     startDestination = if (savedWorkout == null) Screen.Main.name else {
                         "${Screen.Training.name}/${savedWorkout.exId}"
                     },
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None },
                     modifier = Modifier.fillMaxSize()
                 ) {
                     // Main screen

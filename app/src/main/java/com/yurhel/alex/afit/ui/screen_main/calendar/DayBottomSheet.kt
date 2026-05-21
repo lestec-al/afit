@@ -71,6 +71,7 @@ fun DayBottomSheet(
                     EmptyBox()
                 }
             }
+            Spacer(Modifier.height(10.dp))
         }
     }
 }

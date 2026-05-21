@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonDefaults
@@ -124,53 +125,53 @@ fun StatsScreen(
             // Graph
             ElevatedCard(modifier = Modifier.padding(horizontal = 4.dp)) {
                 // Top row
-                Row(
+                LazyRow(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Sort buttons
-                    if (isExercise) {
-                        TextButton(
-                            onClick = vm::updateNumberOfSets,
-                            colors = ButtonDefaults.textButtonColors(contentColor = color)
-                        ) {
-                            Text(text = "${stringResource(R.string.sets)}: ${
-                                if (vm.numberOfSets == 0) allText else vm.numberOfSets
-                            }")
-                        }
-                        Spacer(Modifier.weight(1f))
-                    }
                     // Short info
-                    Icon(painterResource(R.drawable.ic_st_entries), null)
-                    Text(text = vm.graphData?.size ?: "")
-                    Spacer(Modifier.width(8.dp))
-                    Icon(painterResource(R.drawable.ic_st_up), null)
-                    Text(text = vm.graphData?.heightValue ?: "")
-                    if (!isExercise) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_st_down),
-                            contentDescription = null,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
+                    item {
+                        Spacer(Modifier.width(12.dp))
+                        Icon(painterResource(R.drawable.ic_st_entries), null)
+                        Text(text = vm.graphData?.size ?: "")
+                        Spacer(Modifier.width(8.dp))
+                        Icon(painterResource(R.drawable.ic_st_up), null)
+                        Text(text = vm.graphData?.heightValue ?: "")
+                        if (!isExercise) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_st_down),
+                                contentDescription = null,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                        Text(text = vm.graphData?.smallValue ?: "")
                     }
-                    Text(text = vm.graphData?.smallValue ?: "")
                     // Sort buttons
                     if (isExercise) {
-                        Spacer(Modifier.weight(1f))
-                        TextButton(
-                            onClick = vm::updateWeightFilter,
-                            colors = ButtonDefaults.textButtonColors(contentColor = color)
-                        ) {
-                            Text(text = "${stringResource(R.string.weight)}: ${
-                                when (vm.weightFilter) {
-                                    WeightFilter.All -> allText
-                                    WeightFilter.With -> "✓"
-                                    WeightFilter.Without -> "✗"
-                                }
-                            }")
+                        item {
+                            TextButton(
+                                onClick = vm::updateNumberOfSets,
+                                colors = ButtonDefaults.textButtonColors(contentColor = color)
+                            ) {
+                                Text(text = "${stringResource(R.string.sets)}: ${
+                                    if (vm.numberOfSets == 0) allText else vm.numberOfSets
+                                }")
+                            }
+                            TextButton(
+                                onClick = vm::updateWeightFilter,
+                                colors = ButtonDefaults.textButtonColors(contentColor = color)
+                            ) {
+                                Text(text = "${stringResource(R.string.weight)}: ${
+                                    when (vm.weightFilter) {
+                                        WeightFilter.All -> allText
+                                        WeightFilter.With -> "✓"
+                                        WeightFilter.Without -> "✗"
+                                    }
+                                }")
+                            }
                         }
                     }
                 }
@@ -236,12 +237,12 @@ fun StatsScreen(
                 // Date buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(
                         onClick = { vm.setIsDatePickerON(true, DateButtonType.Start) },
-                        colors = ButtonDefaults.textButtonColors(contentColor = color)
+                        colors = ButtonDefaults.textButtonColors(contentColor = color),
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text(text = if (vm.graphData?.startDate == null) "" else {
                             vm.graphData!!.startDate.formatMillsDate(context)
@@ -249,7 +250,8 @@ fun StatsScreen(
                     }
                     IconButton(
                         onClick = { vm.flipGraphVisibility() },
-                        colors = IconButtonDefaults.iconButtonColors(contentColor = color)
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = color),
+                        modifier = Modifier.weight(1f)
                     ) {
                         Icon(
                             painter = painterResource(
@@ -260,7 +262,8 @@ fun StatsScreen(
                     }
                     TextButton(
                         onClick = { vm.setIsDatePickerON(true, DateButtonType.End) },
-                        colors = ButtonDefaults.textButtonColors(contentColor = color)
+                        colors = ButtonDefaults.textButtonColors(contentColor = color),
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text(text = if (vm.graphData?.endDate != null) {
                             vm.graphData!!.endDate.formatMillsDate(context)
