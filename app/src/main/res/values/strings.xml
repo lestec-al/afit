@@ -4,6 +4,7 @@
     <string name="app_name" translatable="false">AFit</string>
 
     <string name="privacy_link" translatable="false">https://lestec-al.github.io/lestec-al/privacy-policy</string>
+    <string name="email_link" translatable="false">mailto:alexyurgel@gmail.com</string>
 
     <string name="do_exercise">Do</string>
     <string name="stop">STOP</string>
@@ -32,12 +33,12 @@
     <string name="exportDriveDB">Export data to the cloud</string>
     <string name="importDriveDB">Import data from the cloud</string>
     <string name="auth_info">If you need cloud sync, please connect Google account</string>
-    <string name="no_data">No data available</string>
+    <string name="no_cards_info">Tap + to create your first card</string>
     <string name="data_replace">All existing data will be replaced</string>
     <string name="connect_cloud">Connect to the cloud</string>
     <string name="app_ver">Version:</string>
-    <string name="empty_text">It\'s empty here</string>
-    <string name="privacy_policy">Privacy Policy</string>
+    <string name="no_data_info">No data yet</string>
+    <string name="privacy_policy">Privacy policy</string>
     <string name="start_workout">Start workout</string>
     <string name="delete_card">Delete card</string>
     <string name="training_min">min of activity</string>
@@ -68,4 +69,7 @@
     <string name="day">Day</string>
     <string name="all">All</string>
     <string name="lang">Language</string>
+    <string name="no_day_stats_info">Nothing yet for this day</string>
+    <string name="about_app">About the app</string>
+    <string name="support">Contact support</string>
 </resources>

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.yurhel.alex.afit.R
 import com.yurhel.alex.afit.ui.help.EmptyBox
 import androidx.compose.ui.res.stringResource
+import com.yurhel.alex.afit.ui.screen_main.MainViewModel
 
 @Composable
 fun CardItems(
@@ -124,7 +125,7 @@ fun CardItems(
             }
         }
         if (viewModel.data.isEmpty()) {
-            EmptyBox()
+            EmptyBox(R.string.no_cards_info)
         }
         Spacer(Modifier.height(4.dp))
     }

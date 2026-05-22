@@ -84,7 +84,7 @@ class RemoteRepo(val context: Context) {
                 if (isImport) {
                     // Try get data
                     if (confId.isEmpty()) {
-                        showToast(R.string.no_data)
+                        showToast(R.string.no_data_info)
                     } else {
                         val outputStream = ByteArrayOutputStream()
                         service.files()[confId].executeMediaAndDownloadTo(outputStream)

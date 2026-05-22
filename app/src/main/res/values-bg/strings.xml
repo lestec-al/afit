@@ -27,11 +27,11 @@
     <string name="exportDriveDB">Експортиране на данни в облака</string>
     <string name="importDriveDB">Импортиране на данни от облака</string>
     <string name="auth_info">Ако имате нужда от облачна синхронизация, моля, свържете Google акаунт</string>
-    <string name="no_data">Няма налични данни</string>
+    <string name="no_cards_info">Натиснете +, за да създадете първия си картон</string>
     <string name="data_replace">Всички съществуващи данни ще бъдат заменени</string>
     <string name="connect_cloud">Свързване с облака</string>
     <string name="app_ver">Версия:</string>
-    <string name="empty_text">Тук е празно</string>
+    <string name="no_data_info">Все още няма данни</string>
     <string name="privacy_policy">Политика за поверителност</string>
     <string name="start_workout">Започни тренировка</string>
     <string name="delete_card">Изтрий карта</string>
@@ -63,4 +63,7 @@
     <string name="day">Ден</string>
     <string name="all">Вс.</string>
     <string name="lang">Език</string>
+    <string name="no_day_stats_info">Нищо за този ден</string>
+    <string name="about_app">За приложението</string>
+    <string name="support">Пишете на поддръжката</string>
 </resources>

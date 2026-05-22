@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.yurhel.alex.afit.R
 import com.yurhel.alex.afit.ui.help.EmptyBox
 import com.yurhel.alex.afit.ui.help.RowStats
 import java.util.Date
@@ -68,7 +69,7 @@ fun DayBottomSheet(
                     )
                 }
                 if (vm.dataForDay.isEmpty()) {
-                    EmptyBox()
+                    EmptyBox(R.string.no_day_stats_info)
                 }
             }
             Spacer(Modifier.height(10.dp))

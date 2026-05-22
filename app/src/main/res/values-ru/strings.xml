@@ -27,11 +27,11 @@
     <string name="exportDriveDB">Экспорт данных в облако</string>
     <string name="importDriveDB">Импорт данных из облака</string>
     <string name="auth_info">Если вам нужна облачная синхронизация, подключите учетную запись Google</string>
-    <string name="no_data">Данные отсутствуют</string>
+    <string name="no_cards_info">Нажмите +, чтобы создать первую карточку</string>
     <string name="data_replace">Все существующие данные будут заменены</string>
     <string name="connect_cloud">Подключить облако</string>
     <string name="app_ver">Версия:</string>
-    <string name="empty_text">Здесь пусто</string>
+    <string name="no_data_info">Пока нет данных</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
     <string name="start_workout">Начать тренировку</string>
     <string name="delete_card">Удалить карточку</string>
@@ -63,4 +63,7 @@
     <string name="day">День</string>
     <string name="all">Все</string>
     <string name="lang">Язык</string>
+    <string name="no_day_stats_info">Ничего на этот день</string>
+    <string name="about_app">О приложении</string>
+    <string name="support">Написать в поддержку</string>
 </resources>

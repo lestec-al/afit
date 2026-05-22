@@ -21,4 +21,4 @@ data class GraphData(
 
 enum class DateButtonType { Start, End }
 
-enum class WeightFilter { All, With, Without }
+enum class Filter { All, With, Without }

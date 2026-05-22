@@ -35,7 +35,7 @@ class SettingsViewModel(
         ) as T
     }
 
-    private val syncSettings = listOf(
+    val syncSettings = listOf(
         Setting(text = R.string.import_db, iconId = R.drawable.ic_file_download) { _, _, _ ->
             setAskDialogVisibility(true, R.string.import_db)
         },
@@ -49,36 +49,33 @@ class SettingsViewModel(
             if (lAuth != null) syncRemote(false, lAuth)
         }
     )
-    private val linksSettings = listOf(
-        Setting(text = R.string.privacy_policy, iconId = R.drawable.ic_privacy) { context, _, _ ->
-            context.startActivity(
-                Intent(Intent.ACTION_VIEW).setData(
-                    context.getString(R.string.privacy_link).toUri()
-                )
-            )
-        }
-    )
     val statsSettings = listOf(
         Setting(text = R.string.stats_visibility, iconId = R.drawable.ic_visibility) { _, _, _ ->
             showStats = !showStats
         }
     )
-    val languageSettings = listOf(
+    val langSettings = listOf(
         Setting(text = R.string.lang, iconId = R.drawable.ic_language) { _, _, _ ->
             showLangs = !showLangs
         }
     )
-
-    val settings = listOf(syncSettings, linksSettings, statsSettings, languageSettings)
+    val aboutSettings = listOf(
+        Setting(text = R.string.about_app, iconId = R.drawable.ic_info) { _, _, _ ->
+            showAbout = !showAbout
+        }
+    )
 
     var showStats by mutableStateOf(false)
         private set
     var showLangs by mutableStateOf(false)
         private set
+    var showAbout by mutableStateOf(false)
+        private set
     var data by mutableStateOf(listOf<Obj>())
         private set
     var hiddens by mutableStateOf(listOf<Hidden>())
         private set
+
     fun updateData() {
         data = localRepo.getMainTableEntries(true, false) + localRepo.getMainTableEntries(false, false)
         hiddens = localRepo.getHidden()
@@ -95,6 +92,10 @@ class SettingsViewModel(
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             "${context.getString(R.string.app_ver)} ${pInfo.versionName}"
         } catch (_: Exception) { "" }
+    }
+
+    fun openLink(context: Context, linkId: Int) {
+        context.startActivity(Intent(Intent.ACTION_VIEW).setData(context.getString(linkId).toUri()))
     }
 
     var isLoading by mutableStateOf(false)

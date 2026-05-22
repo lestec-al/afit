@@ -1,4 +1,4 @@
-package com.yurhel.alex.afit.ui.screen_main.cards
+package com.yurhel.alex.afit.ui.screen_main
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +9,8 @@ import com.jjoe64.graphview.series.DataPoint
 import com.yurhel.alex.afit.data.LocalRepo
 import com.yurhel.alex.afit.data.Obj
 import com.yurhel.alex.afit.data.getScores
+import com.yurhel.alex.afit.ui.screen_main.cards.GraphDataLite
+import com.yurhel.alex.afit.ui.screen_main.cards.ViewType
 import com.yurhel.alex.afit.ui.screen_main.upbar.LevelObj
 import java.util.Date
 

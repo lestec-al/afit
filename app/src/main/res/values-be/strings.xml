@@ -27,11 +27,11 @@
     <string name="exportDriveDB">Экспарт даных у воблака</string>
     <string name="importDriveDB">Імпарт даных з воблака</string>
     <string name="auth_info">Калі вам патрэбна воблачная сынхранізацыя, падключыце ўліковы запіс Google</string>
-    <string name="no_data">Дадзеных няма</string>
+    <string name="no_cards_info">Націсьніце +, каб стварыць першую картку</string>
     <string name="data_replace">Усе існуючыя даныя будуць заменены</string>
     <string name="connect_cloud">Падключыць воблака</string>
     <string name="app_ver">Вэрсыя:</string>
-    <string name="empty_text">Тут пуста</string>
+    <string name="no_data_info">Пакуль няма даных</string>
     <string name="privacy_policy">Палітыка прыватнасьці</string>
     <string name="start_workout">Пачаць трэнаваньне</string>
     <string name="delete_card">Выдаліць картку</string>
@@ -63,4 +63,7 @@
     <string name="day">Дзень</string>
     <string name="all">Усе</string>
     <string name="lang">Мова</string>
+    <string name="no_day_stats_info">Нічога на гэты дзень</string>
+    <string name="about_app">Пра дадатак</string>
+    <string name="support">Напісаць у падтрымку</string>
 </resources>

@@ -32,7 +32,6 @@ import com.yurhel.alex.afit.data.getWeekScoreEmoji
 import com.yurhel.alex.afit.ui.screen_main.calendar.CalendarCard
 import com.yurhel.alex.afit.ui.screen_main.calendar.CalendarCardViewModel
 import com.yurhel.alex.afit.ui.screen_main.cards.CardItems
-import com.yurhel.alex.afit.ui.screen_main.cards.MainViewModel
 import com.yurhel.alex.afit.ui.screen_main.upbar.ScoreLevelItem
 import com.yurhel.alex.afit.ui.screen_main.upbar.ScoreTextItem
 import com.yurhel.alex.afit.ui.screen_main.upbar.UpSheet

@@ -48,21 +48,31 @@ class StatsViewModel(
         ).toList()
         if (isExercise) {
             data = data.filter {
-                // Filter by: all, with or without weight
+                // First filter by: all, with or without weight
                 val res = when (weightFilter) {
-                    WeightFilter.All -> true
-                    WeightFilter.With -> it.allWeights.isNotEmpty()
-                    WeightFilter.Without -> it.allWeights.isEmpty()
+                    Filter.All -> true
+                    Filter.With -> it.allWeights.isNotEmpty()
+                    Filter.Without -> it.allWeights.isEmpty()
                 }
+                // If object must be shown (according the first filter)
+                // Then filter by number of sets
                 if (!res) false else {
-                    // Filter by number of sets
                     val sets = it.longerValue.split("+").size
                     allNumberOfSets.add(sets)
                     if (numberOfSets == 0) true else sets == numberOfSets
                 }
             }
+        } else {
+            data = data.filter {
+                // Filter by: all, with or without note
+                when (noteFilter) {
+                    Filter.All -> true
+                    Filter.With -> it.longerValue.isNotEmpty()
+                    Filter.Without -> it.longerValue.isEmpty()
+                }
+            }
         }
-        val dataSize: Int = data.size
+        val dataSize = data.size
         if (dataSize > 0) data = data.sortedWith(Comparator.comparing { Date(it.date) })
         // Setup date boundaries
         val dateToday = System.currentTimeMillis()
@@ -220,17 +230,24 @@ class StatsViewModel(
         updateAll()
     }
 
-    var weightFilter by mutableStateOf(WeightFilter.All)
+    var weightFilter by mutableStateOf(Filter.All)
         private set
-    fun updateWeightFilter(it: WeightFilter? = null) {
-        weightFilter = if (it == null) {
-            when (weightFilter) {
-                WeightFilter.All -> WeightFilter.With
-                WeightFilter.With -> WeightFilter.Without
-                WeightFilter.Without -> WeightFilter.All
-            }
-        } else {
-            if (weightFilter == it) WeightFilter.All else it
+    fun updateWeightFilter() {
+        weightFilter = when (weightFilter) {
+            Filter.All -> Filter.With
+            Filter.With -> Filter.Without
+            Filter.Without -> Filter.All
+        }
+        updateAll()
+    }
+
+    var noteFilter by mutableStateOf(Filter.All)
+        private set
+    fun updateNoteFilter() {
+        noteFilter = when (noteFilter) {
+            Filter.All -> Filter.With
+            Filter.With -> Filter.Without
+            Filter.Without -> Filter.All
         }
         updateAll()
     }
@@ -240,5 +257,9 @@ class StatsViewModel(
         // Show congrats, when came to this screen after workout
         updateIsEditValue(isEdit = true, entry = graphData?.listData?.firstOrNull())
         updateShowExBottomSheetOpen(isAfterWorkout)
+        // Hide graph if no data
+        if (graphData == null || graphData?.size == "0") {
+            isGraphHidden = true
+        }
     }
 }

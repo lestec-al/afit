@@ -22,8 +22,8 @@ import com.yurhel.alex.afit.data.RemoteRepo
 import com.yurhel.alex.afit.ui.help.Screen
 import com.yurhel.alex.afit.ui.help.nav
 import com.yurhel.alex.afit.ui.screen_main.MainScreen
+import com.yurhel.alex.afit.ui.screen_main.MainViewModel
 import com.yurhel.alex.afit.ui.screen_main.calendar.CalendarCardViewModel
-import com.yurhel.alex.afit.ui.screen_main.cards.MainViewModel
 import com.yurhel.alex.afit.ui.screen_settings.SettingScreen
 import com.yurhel.alex.afit.ui.screen_settings.SettingsViewModel
 import com.yurhel.alex.afit.ui.screen_stats.StatsScreen

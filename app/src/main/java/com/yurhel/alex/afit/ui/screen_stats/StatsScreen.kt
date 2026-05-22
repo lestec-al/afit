@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -63,8 +65,10 @@ fun StatsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+
     @SuppressLint("ConfigurationScreenWidthHeight")
     val statsHeight = LocalConfiguration.current.screenHeightDp / 3
+
     val color = vm.graphData?.objColor?.let { Color(it) } ?: Color.Unspecified
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground.toArgb()
     val allText = stringResource(R.string.all)
@@ -93,24 +97,6 @@ fun StatsScreen(
                     }
                 },
                 actions = {
-                    // Start workout or add entry button
-                    IconButton(
-                        onClick = {
-                            if (isExercise) onWorkout() else {
-                                vm.updateIsEditValue(false, vm.graphData?.listData?.firstOrNull())
-                                vm.updateAddBottomSheetOpen(true)
-                            }
-                        },
-                        colors = IconButtonDefaults.iconButtonColors(contentColor = color)
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                if (isExercise) R.drawable.ic_start_workout else R.drawable.ic_add
-                            ),
-                            contentDescription = "Entry"
-                        )
-                    }
-                    // Setting button
                     IconButton(
                         onClick = { vm.updateEditBottomSheetOpen(true) },
                         colors = IconButtonDefaults.iconButtonColors(contentColor = color)
@@ -118,6 +104,31 @@ fun StatsScreen(
                         Icon(painterResource(R.drawable.ic_settings), "Settings")
                     }
                 }
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = {
+                    if (isExercise) onWorkout() else {
+                        vm.updateIsEditValue(false, vm.graphData?.listData?.firstOrNull())
+                        vm.updateAddBottomSheetOpen(true)
+                    }
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(
+                            if (isExercise) R.drawable.ic_start_workout else R.drawable.ic_add
+                        ),
+                        contentDescription = null
+                    )
+                },
+                text = {
+                    Text(text = stringResource(
+                        if (isExercise) R.string.start_workout else R.string.add_st
+                    ))
+                },
+                containerColor = color,
+                contentColor = Color.White
             )
         }
     ) { innerPadding ->
@@ -150,8 +161,8 @@ fun StatsScreen(
                         Text(text = vm.graphData?.smallValue ?: "")
                     }
                     // Sort buttons
-                    if (isExercise) {
-                        item {
+                    item {
+                        if (isExercise) {
                             TextButton(
                                 onClick = vm::updateNumberOfSets,
                                 colors = ButtonDefaults.textButtonColors(contentColor = color)
@@ -166,9 +177,22 @@ fun StatsScreen(
                             ) {
                                 Text(text = "${stringResource(R.string.weight)}: ${
                                     when (vm.weightFilter) {
-                                        WeightFilter.All -> allText
-                                        WeightFilter.With -> "✓"
-                                        WeightFilter.Without -> "✗"
+                                        Filter.All -> allText
+                                        Filter.With -> "✓"
+                                        Filter.Without -> "✗"
+                                    }
+                                }")
+                            }
+                        } else {
+                            TextButton(
+                                onClick = vm::updateNoteFilter,
+                                colors = ButtonDefaults.textButtonColors(contentColor = color)
+                            ) {
+                                Text(text = "${stringResource(R.string.note)}: ${
+                                    when (vm.noteFilter) {
+                                        Filter.All -> allText
+                                        Filter.With -> "✓"
+                                        Filter.Without -> "✗"
                                     }
                                 }")
                             }
@@ -274,7 +298,11 @@ fun StatsScreen(
                 }
             }
             // List
-            LazyColumn(state = listState) {
+            LazyColumn(
+                state = listState,
+                // Add extra bottom padding so the FAB doesn't hide the last item
+                contentPadding = PaddingValues(bottom = 80.dp)
+            ) {
                 items(items = vm.graphData?.listData ?: emptyList()) {
                     RowStats(
                         onClick = {
@@ -296,7 +324,7 @@ fun StatsScreen(
                 }
             }
             // Text for empty
-            if (vm.graphData?.listData?.isEmpty() == true) EmptyBox()
+            if (vm.graphData?.listData?.isEmpty() == true) EmptyBox(R.string.no_data_info)
         }
     }
 }
