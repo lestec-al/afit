@@ -58,6 +58,3 @@ fun getScores(localRepo: LocalRepo): ScoresObj {
         newScores
     }
 }
-
-fun getAllScoreEmoji() = "\uD83C\uDFC6"
-fun getWeekScoreEmoji() = "\uD83D\uDDD3"
