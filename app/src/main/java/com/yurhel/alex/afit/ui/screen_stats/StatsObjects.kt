@@ -7,10 +7,13 @@ data class GraphData(
     val oneId: Int,
     val listData: List<Obj>,
     val xyData: List<DataPoint>,
+    val xyData2: List<DataPoint>,
     val startDate: Long,
     val endDate: Long,
     val statsMin: Double,
     val statsMax: Double,
+    val statsMin2: Double,
+    val statsMax2: Double,
     val objColor: Int,
     // Short info
     val isExercise: Boolean,

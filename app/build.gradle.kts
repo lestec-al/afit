@@ -1,38 +1,37 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.yurhel.alex.afit"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.yurhel.alex.afit"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 35
-        versionName = "35"
-
+        targetSdk = 37
+        versionCode = 36
+        versionName = "36"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         viewBinding = true
@@ -63,7 +62,7 @@ dependencies {
     implementation(libs.graphview)
     // Google/Drive auth
     implementation(libs.google.api.services.drive)
-    implementation(libs.play.services.auth)
+    implementation(libs.google.play.services.auth)
     implementation(libs.google.api.client.android)
     // Test
     //testImplementation(libs.junit)

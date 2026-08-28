@@ -46,6 +46,7 @@
     <string name="home">Начало</string>
     <string name="workout_is_over">Тренировката приключи</string>
     <string name="reps_in">повторения за</string>
+    <string name="reps">Повторения</string>
     <string name="you_completed">Изпълнихте</string>
     <string name="save_workout">Запази тренировката</string>
     <string name="delete">Изтрий</string>

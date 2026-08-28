@@ -97,6 +97,10 @@ class EditBottomSheetController(
         val name = if (nameValue == "") "Example" else nameValue
         val color = getWholeColor().toArgb()
 
+        if (editedObj != null) {
+            localRepo.setWeights(objId!!, withWeight)
+        }
+
         if (selectedCard == CardTypes.Stats) {
             if (editedObj != null) {
                 localRepo.updateStats(name, objId!!, color)
@@ -140,7 +144,6 @@ class EditBottomSheetController(
     }
 
     fun weightSwitch(newValue: Boolean) {
-        localRepo.setWeights(objId!!, newValue)
         withWeight = newValue
     }
 }

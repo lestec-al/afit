@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -50,6 +49,7 @@ fun CalendarCard(
     modifier: Modifier,
     vm: CalendarCardViewModel
 ) {
+    val height = TextUnit(10f, TextUnitType.Sp)
     val isDark = isSystemInDarkTheme()
     val context = LocalContext.current
     val itemHeight = gridHeightDp / 6
@@ -144,73 +144,69 @@ fun CalendarCard(
                 }
                 // Days
                 items(items = month.days) {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .height(itemHeight.dp)
-                            .border(width = 0.3.dp, color = DividerDefaults.color)
+                            .border(
+                                width = if (it.isToday) 2.dp else 0.3.dp,
+                                color = if (it.isToday) {
+                                    if (isDark) Color.White else Color.Black
+                                } else {
+                                    DividerDefaults.color
+                                }
+                            )
                             .clickable {
                                 vm.setIsShowDayDialog(context, true, it)
                             },
-                        contentAlignment = Alignment.TopCenter
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            // Day number
+                        // Day number
+                        Text(
+                            text = it.dayNumber,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            color = if (it.isThisMonth) {
+                                Color.Unspecified
+                            } else {
+                                if (isDark) {
+                                    Color.White.copy(alpha = 0.4f)
+                                } else {
+                                    Color.Black.copy(alpha = 0.4f)
+                                }
+                            }
+                        )
+                        // Stats for the specific day
+                        it.listOfStats.forEach { it1 ->
+                            val text = if ((it1.isExercise)) {
+                                it1.mainValue.toInt().toString()
+                            } else {
+                                it1.mainValue.toString()
+                            }
                             Text(
-                                text = it.dayNumber,
+                                text = when {
+                                    text.length > 4 -> text.substring(0, 4)
+                                    (text.isEmpty() || text == "0" || text == "0.0") -> ""
+                                    else -> text
+                                },
                                 modifier = Modifier
-                                    .padding(horizontal = 8.dp)
+                                    .padding(horizontal = 4.dp, vertical = 0.5.dp)
                                     .fillMaxWidth()
                                     .background(
-                                        color = if (it.isToday) {
-                                            MaterialTheme.colorScheme.onBackground
-                                        } else {
-                                            Color.Transparent
-                                        },
-                                        shape = CardDefaults.shape
+                                        color = Color(it1.color),
+                                        shape = RoundedCornerShape(4.dp)
                                     ),
                                 textAlign = TextAlign.Center,
-                                color = if (it.isToday) {
-                                    if (isDark) Color.Black else Color.White
+                                color = if (it1.color == Color.White.toArgb()) {
+                                    Color.Black
                                 } else {
-                                    if (it.isThisMonth) {
-                                        Color.Unspecified
-                                    } else {
-                                        if (isDark) {
-                                            Color.White.copy(alpha = 0.4f)
-                                        } else {
-                                            Color.Black.copy(alpha = 0.4f)
-                                        }
-                                    }
-                                }
+                                    Color.White
+                                },
+                                fontSize = height,
+                                lineHeight = height,
+                                style = MaterialTheme.typography.bodySmall
                             )
-                            // Stats for the specific day
-                            it.listOfStats.forEach { it1 ->
-                                val text = if ((it1.isExercise)) {
-                                    it1.mainValue.toInt().toString()
-                                } else {
-                                    it1.mainValue.toString()
-                                }
-                                val height = TextUnit(10f, TextUnitType.Sp)
-                                Text(
-                                    text = when {
-                                        text.length > 4 -> text.substring(0, 4)
-                                        (text.isEmpty() || text == "0" || text == "0.0") -> ""
-                                        else -> text
-                                    },
-                                    modifier = Modifier
-                                        .padding(horizontal = 4.dp, vertical = 0.5.dp)
-                                        .fillMaxWidth()
-                                        .background(
-                                            color = Color(it1.color),
-                                            shape = RoundedCornerShape(4.dp)
-                                        ),
-                                    textAlign = TextAlign.Center,
-                                    color = if (it1.color == Color.White.toArgb()) Color.Black else Color.White,
-                                    fontSize = height,
-                                    lineHeight = height,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
                         }
                     }
                 }

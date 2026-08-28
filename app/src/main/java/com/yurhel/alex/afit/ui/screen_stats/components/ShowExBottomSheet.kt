@@ -1,7 +1,6 @@
 package com.yurhel.alex.afit.ui.screen_stats.components
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,16 +27,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.yurhel.alex.afit.R
 import com.yurhel.alex.afit.data.LocalRepo
 import com.yurhel.alex.afit.data.Obj
 import com.yurhel.alex.afit.ui.help.formatMillsDate
 import androidx.compose.ui.res.stringResource
+import com.yurhel.alex.afit.ui.screen_main.upbar.ScoreIcon
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowExBottomSheet(
     onDismiss: () -> Unit,
@@ -58,15 +56,15 @@ fun ShowExBottomSheet(
         Column(
             modifier = Modifier
                 .padding(horizontal = 10.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (isShowCongratsText) {
                 // Congratulations emoji & text
-                Text(
-                    text = "\uD83C\uDFC5",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontSize = TextUnit(70f, TextUnitType.Sp)
+                ScoreIcon(
+                    iconId = R.drawable.pic_medal,
+                    size = 64.dp,
+                    paddingEnd = 0.dp
                 )
                 Text(
                     text = stringResource(R.string.congratulations),
@@ -74,7 +72,7 @@ fun ShowExBottomSheet(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge
                 )
-                Spacer(Modifier.height(25.dp))
+                Spacer(Modifier.height(15.dp))
             }
             // Date
             Text(

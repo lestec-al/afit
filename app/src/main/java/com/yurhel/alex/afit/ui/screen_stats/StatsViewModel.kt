@@ -91,8 +91,24 @@ class StatsViewModel(
         var statsMin = 0.0
         var statsMax = 0.0
         val xyData = ArrayList<DataPoint>()
+        var statsMin2 = 0.0
+        var statsMax2 = 0.0
+        val xyData2 = ArrayList<DataPoint>()
         data.forEach { item ->
             xyData.add(DataPoint(Date(item.date), item.mainValue))
+            // Second scale
+            var allWeightsOneNumber = 0.0
+            item.allWeights
+                .takeIf { it != null && it.isNotEmpty() }
+                ?.split(" + ")
+                ?.forEach {
+                    if (it.isNotEmpty()) {
+                        allWeightsOneNumber += it.toDouble()
+                    }
+                }
+            if (allWeightsOneNumber > 0) {
+                xyData2.add(DataPoint(Date(item.date), allWeightsOneNumber))
+            }
             // Get short info
             if (isExercise) {
                 for (i in item.longerValue.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
@@ -106,6 +122,10 @@ class StatsViewModel(
             if (item.mainValue > statsMax) statsMax = item.mainValue
             if (statsMin == 0.0) statsMin = item.mainValue
             else if (item.mainValue < statsMin) statsMin = item.mainValue
+            // Second scale
+            if (allWeightsOneNumber > statsMax2) statsMax2 = allWeightsOneNumber
+            if (statsMin2 == 0.0) statsMin2 = allWeightsOneNumber
+            else if (allWeightsOneNumber < statsMin2) statsMin2 = allWeightsOneNumber
         }
         // Update reps (max value when workout starts)
         if (isExercise && oneSetMax > 0) {
@@ -118,10 +138,13 @@ class StatsViewModel(
             oneId = objId,
             listData = data.reversed(),
             xyData = xyData,
+            xyData2 = xyData2,
             startDate = startDate,
             endDate = endDate,
             statsMin = statsMin,
             statsMax = statsMax,
+            statsMin2 = statsMin2,
+            statsMax2 = statsMax2,
             objColor = obj.color,
             // Update short info
             isExercise = isExercise,
@@ -209,7 +232,7 @@ class StatsViewModel(
         isAfterWorkoutState = b
     }
 
-    var allNumberOfSets = mutableSetOf<Int>(0)
+    var allNumberOfSets = mutableSetOf(0)
         private set
     var numberOfSets by mutableIntStateOf(0)
         private set
@@ -262,4 +285,6 @@ class StatsViewModel(
             isGraphHidden = true
         }
     }
+
+    fun getIsShowWeightGraph() = localRepo.getIsWeightShowForMainStat(objId)
 }

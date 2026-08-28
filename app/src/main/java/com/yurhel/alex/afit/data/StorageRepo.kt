@@ -34,22 +34,22 @@ class StorageRepo(val context: Context) {
     fun resultImportDb(result: ActivityResult, importDB: (String, Context) -> Boolean) {
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
             try {
-                val `is`: InputStream? = context.contentResolver.openInputStream(
-                    Objects.requireNonNull<Uri?>(result.data!!.data)
-                )
-                val `in` = BufferedReader(InputStreamReader(`is`, StandardCharsets.UTF_8))
-                var inputLine: String?
-                val response = StringBuilder()
-                while ((`in`.readLine().also { inputLine = it }) != null) {
-                    response.append(inputLine)
+                result.data?.data?.also { uri ->
+                    val iStream: InputStream? = context.contentResolver.openInputStream(uri)
+                    val bf = BufferedReader(InputStreamReader(iStream, StandardCharsets.UTF_8))
+                    var inputLine: String?
+                    val response = StringBuilder()
+                    while ((bf.readLine().also { inputLine = it }) != null) {
+                        response.append(inputLine)
+                    }
+                    bf.close()
+                    iStream?.close()
+                    if (!importDB(response.toString(), context)) {
+                        throw Exception("Import error")
+                    }
+                    showToast(R.string.ok)
                 }
-                `in`.close()
-                `is`?.close()
-                if (!importDB(response.toString(), context)) {
-                    throw java.lang.Exception("Import error")
-                }
-                showToast(R.string.ok)
-            } catch (_: java.lang.Exception) {
+            } catch (_: Exception) {
                 showToast(R.string.error)
             }
         }

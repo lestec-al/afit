@@ -20,7 +20,7 @@
         tools:ignore="DiscouragedApi">
 
         <service
-            android:name=".ui.screen_training.NotificationService"
+            android:name=".data.NotificationService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="specialUse"

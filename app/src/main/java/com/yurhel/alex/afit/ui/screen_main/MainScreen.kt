@@ -18,11 +18,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -48,7 +46,6 @@ fun MainScreen(
     vm: MainViewModel
 ) {
     BackHandler(onBack = onBack)
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val allScoreIconId = R.drawable.pic_medal
     val weekScoreIconId = R.drawable.pic_week
 
@@ -58,16 +55,14 @@ fun MainScreen(
     if (vm.editBottomSheetOpen) {
         EditBottomSheet(
             onDismiss = { vm.updateEditBottomSheet(false) },
-            onSave = { vm.updateEditBottomSheet(false, true) },
+            onSave = { vm.updateEditBottomSheet(visibility = false, withDataUpdate = true) },
             onDelete = {},
             vm = EditBottomSheetController(vm.localRepo, null, null)
         )
     }
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = {
@@ -94,8 +89,7 @@ fun MainScreen(
                     IconButton(onClick = onSettings) {
                         Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings))
                     }
-                },
-                scrollBehavior = scrollBehavior
+                }
             )
         }
     ) { innerPadding ->

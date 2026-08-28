@@ -52,6 +52,7 @@
     <string name="home">Home</string>
     <string name="workout_is_over">Workout is over</string>
     <string name="reps_in">reps in</string>
+    <string name="reps">Reps</string>
     <string name="you_completed">You completed</string>
     <string name="save_workout">Save workout</string>
     <string name="delete">Delete</string>

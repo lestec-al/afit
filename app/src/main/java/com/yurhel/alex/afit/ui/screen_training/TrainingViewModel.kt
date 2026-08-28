@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.yurhel.alex.afit.R
 import com.yurhel.alex.afit.data.LocalRepo
+import com.yurhel.alex.afit.data.NotificationService
 import com.yurhel.alex.afit.data.Obj
 import com.yurhel.alex.afit.data.SavedWorkout
 import java.util.Date

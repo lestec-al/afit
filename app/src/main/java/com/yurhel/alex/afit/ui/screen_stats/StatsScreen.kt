@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -52,7 +53,6 @@ import com.yurhel.alex.afit.ui.help.RowStats
 import com.yurhel.alex.afit.ui.help.formatMillsDate
 import com.yurhel.alex.afit.ui.screen_stats.components.SetupBottomSheets
 import kotlinx.coroutines.launch
-import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,8 +71,11 @@ fun StatsScreen(
 
     val color = vm.graphData?.objColor?.let { Color(it) } ?: Color.Unspecified
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground.toArgb()
+    val legendBackColor = Color.Transparent.toArgb()
     val allText = stringResource(R.string.all)
     val isExercise = vm.graphData?.isExercise == true
+    val graphLegendValStr = stringResource(R.string.reps)
+    val graphLegendWeightStr = stringResource(R.string.weight)
 
     SetupBottomSheets(
         onBack = onBack,
@@ -203,9 +206,7 @@ fun StatsScreen(
                 if (!vm.isGraphHidden) {
                     key(vm.graphData) {
                         AndroidView(
-                            factory = {
-                                GraphView(it)
-                            },
+                            factory = { GraphView(it) },
                             modifier = Modifier
                                 .height(statsHeight.dp)
                                 .fillMaxWidth()
@@ -218,6 +219,7 @@ fun StatsScreen(
 
                                 val graphDataSt = vm.graphData
                                 if (graphDataSt != null && graphDataSt.xyData.size > 1) {
+                                    // Main scale
                                     val graphViewPort = graphView.viewport
                                     graphViewPort.isXAxisBoundsManual = true
                                     graphViewPort.setMinX(graphDataSt.startDate.toDouble())
@@ -240,6 +242,7 @@ fun StatsScreen(
                                     graphLabels.horizontalLabelsColor = onBackgroundColor
                                     graphLabels.gridColor = onBackgroundColor
                                     val series = LineGraphSeries(graphDataSt.xyData.toTypedArray<DataPoint>())
+                                    series.title = graphLegendValStr
                                     series.thickness = 7
                                     series.color = graphDataSt.objColor
                                     series.setOnDataPointTapListener { _, dataPoint ->
@@ -253,6 +256,26 @@ fun StatsScreen(
                                         }
                                     }
                                     graphView.addSeries(series)
+                                    // Second scale
+                                    if (graphDataSt.xyData2.isNotEmpty() && vm.getIsShowWeightGraph()) {
+                                        graphLabels.verticalLabelsSecondScaleColor = onBackgroundColor
+                                        val series2 = LineGraphSeries(graphDataSt.xyData2.toTypedArray<DataPoint>())
+                                        series2.title = graphLegendWeightStr
+                                        series2.thickness = 3
+                                        series2.color = onBackgroundColor
+                                        if (graphDataSt.statsMin2 < graphDataSt.statsMax2) {
+                                            // the y bounds are always manual for second scale
+                                            val second = graphView.getSecondScale()
+                                            second.setMinY(graphDataSt.statsMin2)
+                                            second.setMaxY(graphDataSt.statsMax2)
+                                            second.addSeries(series2)
+                                        }
+                                        // Legend
+                                        graphView.legendRenderer.isVisible = true
+                                        graphView.legendRenderer.textColor = onBackgroundColor
+                                        graphView.legendRenderer.backgroundColor = legendBackColor
+                                        graphView.legendRenderer.setFixedPosition(0,0)
+                                    }
                                 }
                             }
                         )
@@ -264,7 +287,9 @@ fun StatsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(
-                        onClick = { vm.setIsDatePickerON(true, DateButtonType.Start) },
+                        onClick = {
+                            vm.setIsDatePickerON(true, DateButtonType.Start)
+                        },
                         colors = ButtonDefaults.textButtonColors(contentColor = color),
                         modifier = Modifier.weight(1f)
                     ) {

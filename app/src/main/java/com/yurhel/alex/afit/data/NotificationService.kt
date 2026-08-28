@@ -1,4 +1,4 @@
-package com.yurhel.alex.afit.ui.screen_training
+package com.yurhel.alex.afit.data
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -11,30 +11,30 @@ import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import com.yurhel.alex.afit.R
-import com.yurhel.alex.afit.data.LocalRepo
-import com.yurhel.alex.afit.data.SavedWorkout
+import com.yurhel.alex.afit.ui.screen_training.TrainingStage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class NotificationService : Service() {
     companion object {
-        var isWorkoutRunning: Boolean = false
-        private var intent: Intent? = null
+        var intentSound: Intent? = null
 
         fun start(context: Context) {
-            if (!isWorkoutRunning) {
-                isWorkoutRunning = true
-                intent = Intent(context, NotificationService::class.java)
-                context.startService(intent)
+            if (intentSound == null) {
+                intentSound = Intent(context, NotificationService::class.java)
+                try {
+                    context.startForegroundService(intentSound)
+                } catch (_: Exception) {}
             }
         }
         fun stop(context: Context) {
-            context.stopService(intent)
-            intent = null
-            isWorkoutRunning = false
+            context.stopService(intentSound)
+            intentSound = null
         }
     }
 
@@ -66,8 +66,8 @@ class NotificationService : Service() {
                 builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
             }
             // Service loop
-            while (isWorkoutRunning) {
-                delay(200)
+            while (intentSound != null) {
+                delay(200.milliseconds)
 
                 var obj: SavedWorkout? = db.savedWorkout
                 when (obj?.stage) {
@@ -83,7 +83,7 @@ class NotificationService : Service() {
                             timer -= 1
                             if (timer == 1) player.start()
                             obj = db.savedWorkout
-                            delay(1000)
+                            delay(1.seconds)
                         }
                         if (obj?.stage == TrainingStage.Rest.name) {
                             db.savedWorkout = obj.copy(stage = TrainingStage.DoExercise.name)
@@ -93,7 +93,7 @@ class NotificationService : Service() {
                 }
             }
             launch {
-                delay(1000)
+                delay(1.seconds)
                 player.release()
             }
             // Stop notification after
