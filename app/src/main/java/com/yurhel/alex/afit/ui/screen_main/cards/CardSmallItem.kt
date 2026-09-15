@@ -45,7 +45,9 @@ fun CardSmallItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = obj.name,
+                text = obj.name.let {
+                    if (it.length > 15) "${it.substring(0, 15)}..." else it
+                },
                 color = if (obj.color == Color.White.toArgb()) Color.Black else Color.White,
                 style = MaterialTheme.typography.titleMedium
             )

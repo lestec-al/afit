@@ -75,12 +75,14 @@ fun CardItems(
                     CardItem(
                         onClick = onCard,
                         obj = it,
+                        graphData = viewModel.getCardData(it).first,
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
                             .fillMaxWidth()
+                            .height(50.dp)
                     )
                     if (id != viewModel.data.size - 1) {
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(4.dp))
                     }
                 }
             }
