@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 
 data class Setting(
-    @StringRes val text: Int,
-    @DrawableRes val iconId: Int,
+    val text: Int,
+    val iconId: Int,
     val action: (
         context: Context,
         launcherExport: ManagedActivityResultLauncher<Intent, ActivityResult>?,

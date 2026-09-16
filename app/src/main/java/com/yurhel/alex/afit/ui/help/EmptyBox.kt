@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun EmptyBox(stringId: Int) {
@@ -18,6 +19,9 @@ fun EmptyBox(stringId: Int) {
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = stringResource(stringId))
+        Text(
+            text = stringResource(stringId),
+            textAlign = TextAlign.Center
+        )
     }
 }

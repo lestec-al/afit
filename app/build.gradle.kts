@@ -11,8 +11,8 @@ android {
         applicationId = "com.yurhel.alex.afit"
         minSdk = 26
         targetSdk = 37
-        versionCode = 36
-        versionName = "36"
+        versionCode = 37
+        versionName = "37"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,8 +41,14 @@ android {
         // Need for Google/Drive auth to work ?
         resources.excludes.add("META-INF/*")
     }
+    // Trying to add all languages to the bundle version of app ?
     androidResources {
         generateLocaleConfig = true
+    }
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 }
 
